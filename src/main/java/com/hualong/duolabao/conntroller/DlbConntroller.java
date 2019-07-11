@@ -22,15 +22,6 @@ public class DlbConntroller {
     @Autowired
     private DlbService dlbService;
 
-
-    @ResponseBody
-    @RequestMapping(value = "/api/getGoods", method = {RequestMethod.POST,RequestMethod.GET}) //, produces = "application/json;charset=UTF-8"
-    public String getCartInfo(@RequestBody JSONObject jsonParam) {
-        log.info(this.getClass().getName()+" "+ Thread.currentThread().getStackTrace()[1].getMethodName()+"获取的参数: {}",jsonParam.toJSONString());
-        return "";
-    }
-
-
     @ResponseBody
     @RequestMapping(value = "/api/getGoods", method = {RequestMethod.POST,RequestMethod.GET}) //, produces = "application/json;charset=UTF-8"
     public String getGoods(@RequestBody JSONObject jsonParam) {

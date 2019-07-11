@@ -22,8 +22,7 @@ public class ClusterDataSourceConfig {
     // 精确到 cluster 目录，以便跟其他数据源隔离  com.hlyf.gyl.dao.cluster
     static final String PACKAGE = "com.hualong.duolabao.dao.cluster";
     static final String MAPPER_LOCATION = "classpath:mapper/dlbmapper/*.xml";
-    //SQL语句输出
-    static final String SQL_PRINT = "classpath:mybatis-config.xml";
+
 
     @Value("${cluster.datasource.url}")
     private String url;

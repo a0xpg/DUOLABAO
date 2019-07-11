@@ -1,5 +1,6 @@
 package com.hualong.duolabao;
 
+import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.dao.cluster.DlbDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +18,18 @@ public class DuolabaoApplicationTests {
 
 	@Autowired
 	private DlbDao dlbDao;
+
+	@Autowired
+	private DlbConnfig dlbConnfig;
 	@Test
 	public void contextLoads() {
 		Integer integer=dlbDao.Exec("delete");
 		log.info("我是影响行数  {}",integer);
+	}
+
+	@Test
+	public void getDlbConnfig() {
+		log.info("得到哆啦宝的配置  {}",dlbConnfig.getMerchantno());
 	}
 
 }
