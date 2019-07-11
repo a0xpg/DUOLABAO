@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hualong.duolabao.dao.cluster.DlbDao">
+
+    <!-- 得到单个门店信息 -->
+    <select id="get_cStroe" resultType="com.hualong.duolabao.domin.Store" parameterType="java.lang.String">
+        SELECT cStore='['+cStoreNo+'] '+cStoreName,cStoreNo,cStoreName  FROM t_Store
+        where ISNULL(iTypeStore,0)= 0
+        <if test="cStroreNo !=null" > AND cStoreNo=#{cStroreNo}</if>
+    </select>
+
+    <update id="Exec"  >
+        <![CDATA[
+        		{call p_createBLBGoodsInfo(
+        					#{callJsonText,mode=IN,jdbcType=VARCHAR}
+        					)
+        		}
+    	]]>
+    </update>
+
+    <!--得到购物车-->
+    <select id="GetGoodsCartInfo" parameterType="java.lang.String" resultType="com.hualong.duolabao.domin.GoodsInfo">
+
+        <![CDATA[
+            SELECT     id,name,amount,discountAmount,discountName ,
+                        basePrice,price ,qty,weight,isWeight,barcode ,
+                        unit,lineId
+            FROM tDlbGoodsInfo
+            WHERE cartld=#{cartld}
+        ]]>
+
+    </select>
+</mapper>
