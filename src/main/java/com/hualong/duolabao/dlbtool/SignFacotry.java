@@ -29,7 +29,7 @@ public class SignFacotry {
      * @return
      * @throws ApiSysException  错误码
      */
-    GlobalEumn verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo) throws ApiSysException {
+    public static void verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo) throws ApiSysException {
         try{
             if(!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("cipherJson") ||
                     !jsonObject.containsKey("sign") || !jsonObject.containsKey("systemId") ||
@@ -40,7 +40,6 @@ public class SignFacotry {
             }
             try{
                 if(verify(jsonObject.getString("cipherJson") + jsonObject.getString("uuid"), md5Key, jsonObject.getString("sign"))){
-                    return GlobalEumn.SUCCESS;
                 } else {
                     log.error(" 校验签名失败  ");
                     throw new ApiSysException(ErrorEnum.SSCO001006);
@@ -56,5 +55,11 @@ public class SignFacotry {
             throw new ApiSysException(ErrorEnum.SSCO001006);
         }
     }
+
+    public static void main(String[] args) {
+
+    }
+
+
 
 }
