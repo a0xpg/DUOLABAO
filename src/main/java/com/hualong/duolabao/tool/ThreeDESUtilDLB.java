@@ -1,5 +1,7 @@
 package com.hualong.duolabao.tool;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
@@ -113,7 +115,26 @@ public class ThreeDESUtilDLB {
         return uuid;
     }
     public static void main(String[] args) throws Exception {
-        test02();
+        test03();
+    }
+
+    private static void test03() throws Exception {
+        String desKey = "6l7HDfs0bumRv6dF6SPf5XXpXkWwyP30";
+
+        String st1="{\"merchantNo\":\"XILIAN\",\"cipherJson\":" +
+                "\"ae8bb26153c2db4f4cb16f51e4df3852f0fccb4d9475b03309569a7e8aa5729efb7cbae8228e6d178cc2dcbb0e82712e7840108dc5f3c4706c06bee060810d10211c56965a69ad4deda60fcf890cdbdddf0f67dc09d15d26a4fcf1b291713666dbf8b3db77151fc35d966754675e31df\",\"sign\":\"e67ca965f200495b0c545d7a679ee4bd\",\"systemId\":\"jdpay-offlinepay-isvaccess\"," +
+                "\"uuid\":\"79e6f115-fbe5-4f28-8c0a-6a0facbeee41\",\"tenant\":\"1519833291\",\"storeId\":\"1001\"}";
+        JSONObject jsonObject= JSON.parseObject(st1);
+
+        st1=jsonObject.getString("cipherJson");
+        System.out.println(decrypt(st1, desKey, "utf-8"));//{"fa":"a"}
+
+        String uuid=jsonObject.getString("uuid");
+        String md5Key = "D8C2313325E1E049FE19AFAC122B987F";
+        String md5 = md5(st1 + uuid, md5Key);
+        System.out.println(md5);//64f0c913d4655e214e7661d4dc8b73ae
+        System.out.println(verify(st1 + uuid, md5Key, md5));//true
+
     }
 
     private static void test02() throws Exception {

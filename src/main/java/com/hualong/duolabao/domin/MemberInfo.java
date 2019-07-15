@@ -1,6 +1,7 @@
 package com.hualong.duolabao.domin;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.*;
 import lombok.experimental.Accessors;
 

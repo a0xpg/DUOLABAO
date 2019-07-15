@@ -55,9 +55,9 @@ public class ResultMsg implements Serializable {
     }
 
     public static void main(String[] args) {
-        ResultMsg resultMsg = new ResultMsg(true,"1001","正确",(String)null);
+        ResultMsg resultMsg = new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null);
 
-        resultMsg = new ResultMsg(true,"1001","正确",(ResultMsg)resultMsg);
+        //resultMsg = new ResultMsg(true,"1001","正确",(ResultMsg)resultMsg);
 
         String jsonString = JSON.toJSONString(resultMsg);
         System.out.println(jsonString);

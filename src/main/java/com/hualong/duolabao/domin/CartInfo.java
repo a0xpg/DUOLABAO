@@ -1,6 +1,7 @@
 package com.hualong.duolabao.domin;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -39,14 +40,11 @@ public class CartInfo extends DlbCommon{
     /**
      *  商品信息
      */
-    private List<GoodsInfo> items;
-
+    private List<GoodsInfo> items=new ArrayList<GoodsInfo>();
     /**
      *  会员信息
      */
     private MemberInfo memberInfo;
-
-
 
     private CartInfo(String storeId, String sn, String cartId, String merchantOrderId,
                      BigDecimal totalFee, BigDecimal discountFee, BigDecimal actualFee,
@@ -115,14 +113,39 @@ public class CartInfo extends DlbCommon{
         memberInfo.setCardNum("568");
         memberInfo.setPhoneNum("986");
 
-        CartInfo cartInfo=new CartInfo("123", "123", "123", "568",
-                BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), items, memberInfo);
+        // WriteNullListAsEmpty 将Collection类型字段的字段空值输出为[]
+        // WriteNullStringAsEmpty 将字符串类型字段的空值输出为空字符串 ""
+        // WriteNullNumberAsZero 将数值类型字段的空值输出为0
+        // WriteNullBooleanAsFalse 将Boolean类型字段的空值输出为false
 
-        s1=JSON.toJSONString(cartInfo);
+        CartInfo cartInfo=new CartInfo("123", "123", "123", "568",
+                BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), null, null);
+
+        s1=JSON.toJSONString(cartInfo,SerializerFeature.WriteNullListAsEmpty,
+                SerializerFeature.WriteNullStringAsEmpty,
+                SerializerFeature.WriteNullNumberAsZero,
+                SerializerFeature.WriteNullBooleanAsFalse,
+                SerializerFeature.WriteMapNullValue,
+                SerializerFeature.PrettyFormat);
 
         System.out.println(s1);
 
-        System.out.println(StringEscapeUtils.unescapeJavaScript(s1));
+        s1=JSON.toJSONString(cartInfo,SerializerFeature.WriteNullListAsEmpty,
+                SerializerFeature.WriteNullStringAsEmpty,
+                SerializerFeature.WriteNullNumberAsZero,
+                SerializerFeature.WriteMapNullValue);
+
+        System.out.println(s1);
+
+//        System.out.println(StringEscapeUtils.unescapeJavaScript(s1));
+//
+//        cartInfo=new CartInfo(s1, "123", "123", "568",
+//                BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), null, memberInfo);
+//
+//        s1=JSON.toJSONString(cartInfo, SerializerFeature.WriteNullListAsEmpty);
+//        System.out.println(s1);
+//
+//        System.out.println(StringEscapeUtils.unescapeJavaScript(s1));
 
 
 

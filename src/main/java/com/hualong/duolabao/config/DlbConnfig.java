@@ -21,5 +21,8 @@ public class DlbConnfig {
     @Value("${dlb.mdkey}")
     private String mdkey;
 
+    @Value("${dlb.isdandian}")
+    private Boolean isdandian;
+
 
 }
