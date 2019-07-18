@@ -1,5 +1,7 @@
 package com.hualong.duolabao.dao;
 
+import com.hualong.duolabao.result.ResultMsg;
+
 /**
  * Created by Administrator on 2018-11-01.
  */
@@ -64,5 +66,8 @@ public class test {
                 "}";
         jsonStr=jsonStr.replaceAll("\\t","").replaceAll("\\n","");
         System.out.println(jsonStr);
+
+        ResultMsg resultMsg=new ResultMsg();
+        System.out.println(resultMsg==null);
     }
 }

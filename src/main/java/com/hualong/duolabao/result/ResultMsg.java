@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Accessors(chain=true)
 @ToString
@@ -33,6 +32,12 @@ public class ResultMsg implements Serializable {
     private String retMessage;
     private Object data;
 
+    public ResultMsg(boolean success, String retCode, String retMessage, Object data) {
+        this.success = success;
+        this.retCode = retCode;
+        this.retMessage = retMessage;
+        this.data = data;
+    }
 
     public static void GetTypeClass(String var0){
         if(var0.getClass().toString().equals("class java.lang.String")){

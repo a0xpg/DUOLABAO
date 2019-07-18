@@ -19,7 +19,7 @@
     </update>
 
     <!--得到购物车-->
-    <select id="GetGoodsCartInfo" parameterType="java.lang.String" resultType="com.hualong.duolabao.domin.GoodsInfo">
+    <select id="GetGoodsCartInfo" parameterType="java.lang.String" resultType="com.hualong.duolabao.domin.GoodsInfoBeifen">
 
         <![CDATA[
             SELECT     id,name,amount,discountAmount,discountName ,

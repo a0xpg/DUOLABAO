@@ -1,13 +1,12 @@
 package com.hualong.duolabao.dao.cluster;
 
 
-import com.hualong.duolabao.domin.GoodsInfo;
+import com.hualong.duolabao.domin.GoodsInfoBeifen;
 import org.apache.catalina.Store;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2018-11-13.
@@ -19,7 +18,7 @@ public interface DlbDao {
 
     Integer Exec(@Param("callJsonText")String callJsonText);
 
-    List<GoodsInfo> GetGoodsCartInfo(@Param("cartId")String cartId);
+    List<GoodsInfoBeifen> GetGoodsCartInfo(@Param("cartId")String cartId);
 
 
 }

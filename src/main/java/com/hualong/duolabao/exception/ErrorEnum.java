@@ -5,9 +5,17 @@ package com.hualong.duolabao.exception;
  */
 public enum  ErrorEnum implements ExceptionEnum {
 
+    //系统相关(SSCO001)
     SUCCESS("000000", "请求成功"),
     SSCO001001("SSCO001001", "系统处理异常"),
+    SSCO001002("SSCO001002", "系统处理错误"),
+    SSCO001003("SSCO001003", "系统处理超时"),
+    SSCO001004("SSCO001004", "参数校验失败"),
+    SSCO001005("SSCO001005", "报文加解密失败"),
     SSCO001006("SSCO001006", "报文验签失败"),
+
+
+
 
     //会员相关(SSCO008)
     SSCO008001("SSCO008001", "会员登录失败,请重新输入"),

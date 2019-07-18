@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hualong.duolabao.dao.pos.PosMain">
 
+
+    <select id="GettDlbPosConfiguration" parameterType="java.lang.String" resultType="com.hualong.duolabao.domin.tDlbPosConfiguration" >
+        <![CDATA[
+        SELECT cartId,storeId,sn,posName,posid FROM tDlbPosConfiguration
+        WHERE cartId=#{cartId}
+        ]]>
+
+    </select>
+
     <!--连锁的获取商品-->
     <select id="GetcStoreGoods" resultType="com.hualong.duolabao.domin.cStoreGoods" >
 

@@ -1,0 +1,2 @@
+INSERT INTO tDlbPosConfiguration (cartld,storeId,sn,posName,posid) VALUES ('000281','0002','000201','posstation101','81')
+

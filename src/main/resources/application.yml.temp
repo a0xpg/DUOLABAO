@@ -1,3 +1,9 @@
+
+dlb:
+  merchantno: 12346
+  deskey: 6l7HDfs0bumRv6dF6SPf5XXpXkWwyP30
+  mdkey: D8C2313325E1E049FE19AFAC122B987F
+  isdandian: false
 spring:
   thymeleaf:
     cache: true
@@ -7,7 +13,7 @@ spring:
 cluster:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://;databaseName=Posmanagement_main
+    url: jdbc:sqlserver://:2468;databaseName=Posmanagement_main
     username: sa
     password: pcserver123.
   #连接池的配置信息
@@ -30,7 +36,7 @@ cluster:
 master:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://;databaseName=Posmanagement_main
+    url: jdbc:sqlserver://:2468;databaseName=Posmanagement_main
     username: sa
     password: pcserver123.
 server:

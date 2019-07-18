@@ -26,29 +26,29 @@ public class CartInfo extends DlbCommon{
      *合计总金额
      * 单位分
      */
-    private BigDecimal totalFee;
+    private long totalFee;
     /**
      *优惠总金额
      * 单位分
      */
-    private BigDecimal discountFee;
+    private long discountFee;
     /**
      *优惠后应付总金额
      * 单位分
      */
-    private BigDecimal actualFee;
+    private long actualFee;
     /**
      *  商品信息
      */
-    private List<GoodsInfo> items=new ArrayList<GoodsInfo>();
+    private List<BLBGoodsInfo> items=new ArrayList<BLBGoodsInfo>();
     /**
      *  会员信息
      */
-    private MemberInfo memberInfo;
+    private MemberInfo memberInfo=new MemberInfo();
 
-    private CartInfo(String storeId, String sn, String cartId, String merchantOrderId,
-                     BigDecimal totalFee, BigDecimal discountFee, BigDecimal actualFee,
-                     List<GoodsInfo> items, MemberInfo memberInfo) {
+    public CartInfo(String storeId, String sn, String cartId, String merchantOrderId,
+                    long totalFee, long discountFee, long actualFee,
+                     List<BLBGoodsInfo> items, MemberInfo memberInfo) {
         super(storeId, sn, cartId);
         this.merchantOrderId = merchantOrderId;
         this.totalFee = totalFee;
@@ -62,22 +62,14 @@ public class CartInfo extends DlbCommon{
 
     }
     public static CartInfo CartInfoResult(String storeId, String sn, String cartId, String merchantOrderId,
-                                          BigDecimal totalFee, BigDecimal discountFee, BigDecimal actualFee,
-                                          List<GoodsInfo> items, MemberInfo memberInfo){
+                                          long totalFee, long discountFee, long actualFee,
+                                          List<BLBGoodsInfo> items, MemberInfo memberInfo){
 
         return new CartInfo(storeId,  sn,  cartId,  merchantOrderId,
                  totalFee,  discountFee,  actualFee,  items, memberInfo);
     }
 
-    public static String CartInfoToJsonString(String storeId, String sn, String cartId, String merchantOrderId,
-                                          BigDecimal totalFee, BigDecimal discountFee, BigDecimal actualFee,
-                                          List<GoodsInfo> items, MemberInfo memberInfo){
 
-        return JSON.toJSONString(new CartInfo(storeId,  sn,  cartId,  merchantOrderId,
-                totalFee,  discountFee,  actualFee,  items, memberInfo));
-
-
-    }
 
 
     public static void main(String[] args) {
@@ -89,17 +81,17 @@ public class CartInfo extends DlbCommon{
         System.out.println(s);
         System.out.println(s2);
 
-        List<GoodsInfo> items=new ArrayList<GoodsInfo>();
+        List<BLBGoodsInfo> items=new ArrayList<BLBGoodsInfo>();
 
-        GoodsInfo goodsInfo=new GoodsInfo();
+        BLBGoodsInfo goodsInfo=new BLBGoodsInfo();
         goodsInfo.setBarcode("2036");
-        goodsInfo.setBasePrice(BigDecimal.valueOf(5.96));
+        goodsInfo.setBasePrice(456);
 
         items.add(goodsInfo);
 
-        goodsInfo=new GoodsInfo();
+        goodsInfo=new BLBGoodsInfo();
         goodsInfo.setBarcode("2036");
-        goodsInfo.setBasePrice(BigDecimal.valueOf(5.96));
+        goodsInfo.setBasePrice(456);
 
         items.add(goodsInfo);
 
@@ -119,7 +111,7 @@ public class CartInfo extends DlbCommon{
         // WriteNullBooleanAsFalse 将Boolean类型字段的空值输出为false
 
         CartInfo cartInfo=new CartInfo("123", "123", "123", "568",
-                BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), BigDecimal.valueOf(5.96), null, null);
+                456, 589, 100, items, null);
 
         s1=JSON.toJSONString(cartInfo,SerializerFeature.WriteNullListAsEmpty,
                 SerializerFeature.WriteNullStringAsEmpty,

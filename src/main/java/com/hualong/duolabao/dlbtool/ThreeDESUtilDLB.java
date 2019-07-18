@@ -1,4 +1,4 @@
-package com.hualong.duolabao.tool;
+package com.hualong.duolabao.dlbtool;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

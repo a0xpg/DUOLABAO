@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @ToString(callSuper = true)
 @Accessors(chain=true)
 @EqualsAndHashCode(callSuper = true)
-public class GoodsInfo extends DlbCommon{
+public class GoodsInfoBeifen extends DlbCommon{
 
     private String id;
     private String name;
@@ -28,13 +28,13 @@ public class GoodsInfo extends DlbCommon{
     private String barcode;
     private String unit;
 
-    public  GoodsInfo(){
+    public GoodsInfoBeifen(){
 
     }
 
-    public GoodsInfo(String id, String name, BigDecimal amount, BigDecimal discountAmount,
-                     BigDecimal basePrice, BigDecimal price, Integer qty, BigDecimal weight,
-                     boolean isWeight, String lineId, String barcode, String unit) {
+    public GoodsInfoBeifen(String id, String name, BigDecimal amount, BigDecimal discountAmount,
+                           BigDecimal basePrice, BigDecimal price, Integer qty, BigDecimal weight,
+                           boolean isWeight, String lineId, String barcode, String unit) {
         this.id = id;
         this.name = name;
         this.amount = amount;

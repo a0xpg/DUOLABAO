@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hualong.duolabao.dao.cluster.tDLBGoodsInfoMapper">
+    <resultMap id="BaseResultMap" type="com.hualong.duolabao.domin.BLBGoodsInfo">
+        <id column="cartId" jdbcType="VARCHAR" property="cartId" />
+        <id column="storeId" jdbcType="VARCHAR" property="storeId" />
+        <result column="cartFlowNo" jdbcType="VARCHAR" property="cartFlowNo" />
+        <result column="cashierNo" jdbcType="VARCHAR" property="cashierNo" />
+        <result column="sn" jdbcType="VARCHAR" property="sn" />
+        <result column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="amount" jdbcType="DECIMAL" property="amount" />
+        <result column="discountAmount" jdbcType="DECIMAL" property="discountAmount" />
+        <result column="discountName" jdbcType="VARCHAR" property="discountName" />
+        <result column="basePrice" jdbcType="DECIMAL" property="basePrice" />
+        <result column="price" jdbcType="DECIMAL" property="price" />
+        <result column="qty" jdbcType="INTEGER" property="qty" />
+        <result column="lineId" jdbcType="BIGINT" property="lineId" />
+        <result column="weight" jdbcType="DECIMAL" property="weight" />
+        <result column="isWeight" jdbcType="BIT" property="isWeight" />
+        <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+        <result column="unit" jdbcType="VARCHAR" property="unit" />
+    </resultMap>
+
+    <delete id="deleteBLBGoodsInfo" parameterType="java.lang.String">
+        delete from tDlbGoodsInfo
+        where cartId = #{cartId}
+        and storeId = #{storeId}
+        <if test="barcode != null">
+            AND barcode=#{barcode}
+        </if>
+        <if test="lineIdDelete != null">
+            AND lineId=#{lineIdDelete}
+        </if>
+    </delete>
+
+    <insert id="insert" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
+        insert into tDlbGoodsInfo (cartId, storeId, cartFlowNo,
+        cashierNo, sn, id,
+        name, amount, discountAmount,
+        discountName, basePrice, price,
+        qty, weight, isWeight,
+        barcode, unit)
+        values (#{cartId,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, #{cartFlowNo,jdbcType=VARCHAR},
+        #{cashierNo,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{discountAmount,jdbcType=DECIMAL},
+        #{discountName,jdbcType=VARCHAR}, #{basePrice,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL},
+        #{qty,jdbcType=INTEGER}, #{weight,jdbcType=DECIMAL}, #{isWeight,jdbcType=BIT},
+        #{barcode,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
+        update tDlbGoodsInfo
+        set cartFlowNo = #{cartFlowNo,jdbcType=VARCHAR},
+        cashierNo = #{cashierNo,jdbcType=VARCHAR},
+        sn = #{sn,jdbcType=VARCHAR},
+        id = #{id,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
+        amount = #{amount,jdbcType=DECIMAL},
+        discountAmount = #{discountAmount,jdbcType=DECIMAL},
+        discountName = #{discountName,jdbcType=VARCHAR},
+        basePrice = #{basePrice,jdbcType=DECIMAL},
+        price = #{price,jdbcType=DECIMAL},
+        qty = #{qty,jdbcType=INTEGER},
+        weight = #{weight,jdbcType=DECIMAL},
+        isWeight = #{isWeight,jdbcType=BIT},
+        barcode = #{barcode,jdbcType=VARCHAR},
+        unit = #{unit,jdbcType=VARCHAR}
+        where cartId = #{cartId,jdbcType=VARCHAR}
+        and storeId = #{storeId,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="updateByBLBGoodsInfo" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
+        update tDlbGoodsInfo
+        set  name = #{name,jdbcType=VARCHAR},
+        amount = #{amount,jdbcType=DECIMAL},
+        discountAmount = #{discountAmount,jdbcType=DECIMAL},
+        discountName = #{discountName,jdbcType=VARCHAR},
+        basePrice = #{basePrice,jdbcType=DECIMAL},
+        price = #{price,jdbcType=DECIMAL},
+        qty = #{qty,jdbcType=INTEGER},
+        weight = #{weight,jdbcType=DECIMAL}
+
+        where cartId = #{cartId,jdbcType=VARCHAR}
+        and storeId = #{storeId,jdbcType=VARCHAR}
+        and barcode = #{barcode,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+        select TOP 1 cartId, storeId, cartFlowNo, cashierNo, sn, id, name, amount, discountAmount,
+        discountName, basePrice, price, qty, weight, isWeight, barcode, unit
+        from tDlbGoodsInfo
+        where cartId = #{cartId,jdbcType=VARCHAR}
+        and storeId = #{storeId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getOneBLBGoodsInfo" parameterType="map" resultMap="BaseResultMap">
+        select  lineId,cartId, storeId, cartFlowNo, cashierNo, sn, id, name, amount, discountAmount,
+        discountName, basePrice, price, qty, weight, isWeight, barcode, unit
+        from tDlbGoodsInfo
+        where cartId = #{cartId,jdbcType=VARCHAR}
+        and storeId = #{storeId,jdbcType=VARCHAR}
+        and barcode = #{barcode,jdbcType=VARCHAR}
+    </select>
+
+    <!--
+
+     这几个这还不需要
+    cartId, storeId, cartFlowNo, cashierNo, sn,
+    -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select lineId, id, name, amount, discountAmount,
+        discountName, basePrice, price, qty, weight, isWeight, barcode, unit
+        from tDlbGoodsInfo
+        where cartId = #{cartId,jdbcType=VARCHAR}
+        and storeId = #{storeId,jdbcType=VARCHAR}
+    </select>
+</mapper>
