@@ -29,7 +29,7 @@
         <result column="posName" jdbcType="VARCHAR" property="posName" />
     </resultMap>
 
-    <select id="gettDlbPosConfiguration" parameterType="map" resultMap="BaseResultMap">
+    <select id="gettDlbPosConfiguration" parameterType="map" resultMap="tDlbPosConfigurationMap">
         select cartId, posid, storeId, sn, posName
         from tDlbPosConfiguration
         where cartId = #{cartId,jdbcType=VARCHAR}

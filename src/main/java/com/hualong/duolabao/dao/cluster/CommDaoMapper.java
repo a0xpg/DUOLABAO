@@ -6,7 +6,6 @@ import com.hualong.duolabao.domin.tDlbPosConfiguration;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
 
 /**
  * Created by Administrator on 2019-07-19.

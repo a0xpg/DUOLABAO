@@ -24,8 +24,13 @@
 
     <delete id="deleteBLBGoodsInfo" parameterType="java.lang.String">
         delete from tDlbGoodsInfo
-        where cartId = #{cartId}
-        and storeId = #{storeId}
+        where 1=1
+        <if test="cartId != null">
+            AND cartId = #{cartId}
+        </if>
+        <if test="storeId != null">
+            AND storeId = #{storeId}
+        </if>
         <if test="barcode != null">
             AND barcode=#{barcode}
         </if>
@@ -70,18 +75,15 @@
         and storeId = #{storeId,jdbcType=VARCHAR}
     </update>
 
-
+    <!--查询 或者 更改用的 -->
     <update id="updateByBLBGoodsInfo" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
         update tDlbGoodsInfo
-        set  name = #{name,jdbcType=VARCHAR},
+        set
         amount = #{amount,jdbcType=DECIMAL},
         discountAmount = #{discountAmount,jdbcType=DECIMAL},
-        discountName = #{discountName,jdbcType=VARCHAR},
         basePrice = #{basePrice,jdbcType=DECIMAL},
         price = #{price,jdbcType=DECIMAL},
-        qty = #{qty,jdbcType=INTEGER},
-        weight = #{weight,jdbcType=DECIMAL}
-
+        qty = #{qty,jdbcType=INTEGER}
         where cartId = #{cartId,jdbcType=VARCHAR}
         and storeId = #{storeId,jdbcType=VARCHAR}
         and barcode = #{barcode,jdbcType=VARCHAR}

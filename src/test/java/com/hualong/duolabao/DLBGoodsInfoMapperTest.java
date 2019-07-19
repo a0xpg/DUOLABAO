@@ -94,15 +94,9 @@ public class DLBGoodsInfoMapperTest {
 
     @Test
     public void insertDLBGoodsInfos(){
-//        BLBGoodsInfo(String storeId, String sn, String cartId, String cartFlowNo,
-//                String cashierNo, String lineId, Long lineIdDelete,
-//                String id, String name, Long amount, Long discountAmount,
-//                String discountName, Long basePrice, Long price,
-//                Integer qty, BigDecimal weight, Boolean isWeight,
-//                String barcode, String unit)
 
         BLBGoodsInfo blbGoodsInfo=new BLBGoodsInfo("002", "002", "002", "002",
-                "002", null, (long)0,
+                "002", null, null,
                 "00205", "测试商品5", 6000000, 0,
                 null,  6000000, 6000000,
                 1, 1.069, true,
@@ -119,46 +113,30 @@ public class DLBGoodsInfoMapperTest {
 
     @Test
     public void deleteDLBGoodsInfos(){
-        List<BLBGoodsInfo> blbGoodsInfo=dlbGoodsInfoMapper.selectAll("002","002");
-        if(blbGoodsInfo!=null){
-            log.info("获取到的结果是  {}", JSON.toJSON(blbGoodsInfo).toString());
+
+        Integer integer=dlbGoodsInfoMapper.deleteBLBGoodsInfo("002","002","00203","3");
+        if(integer!=null){
+            log.info("我是影响行数  {}", integer);
         }else{
             log.info("结果集为空");
         }
-
     }
 
     @Test
     public void updateDLBGoodsInfos(){
-        List<BLBGoodsInfo> blbGoodsInfo=dlbGoodsInfoMapper.selectAll("002","002");
 
-        CartInfo cartInfo=new CartInfo("123", "123", "123", "568",
-                589, 966, 985, blbGoodsInfo, null);
-
-        String s1=JSON.toJSONString(cartInfo, SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullNumberAsZero,
-                SerializerFeature.WriteNullBooleanAsFalse,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.PrettyFormat);
-
-        System.out.println(s1);
-
-        ResultMsg resultMsg=new ResultMsg(true, GlobalEumn.SUCCESS.getCode(),GlobalEumn.SUCCESS.getMesssage(),cartInfo);
-
-         s1=JSON.toJSONString(resultMsg, SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullBooleanAsFalse,
-                SerializerFeature.WriteMapNullValue);
-
-        System.out.println(s1);
-
-        if(blbGoodsInfo!=null){
-            log.info("获取到的结果是  {}", s1);
+        BLBGoodsInfo blbGoodsInfo=new BLBGoodsInfo("002", "002", "002", "002",
+                "002", null, null,
+                "00205", "测试商品5", 12000000, 0,
+                null,  6000000, 6000000,
+                2, 1.069, true,
+                "00205", "个");
+        Integer integer=dlbGoodsInfoMapper.updateByBLBGoodsInfo(blbGoodsInfo);
+        if(integer!=null){
+            log.info("我是影响行数  {}", integer);
         }else{
             log.info("结果集为空");
         }
-
     }
 
 }
