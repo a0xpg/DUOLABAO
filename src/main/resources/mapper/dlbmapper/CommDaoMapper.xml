@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hualong.duolabao.dao.cluster.CommDaoMapper">
+
+    <resultMap id="posConfigMap" type="com.hualong.duolabao.domin.posConfig">
+        <id column="cID" jdbcType="VARCHAR" property="cID" />
+        <result column="iGoodsNoStart" jdbcType="INTEGER" property="iGoodsNoStart" />
+        <result column="iGoodsNoEnd" jdbcType="INTEGER" property="iGoodsNoEnd" />
+        <result column="iMoneyStart" jdbcType="INTEGER" property="iMoneyStart" />
+        <result column="iMoneyEnd" jdbcType="INTEGER" property="iMoneyEnd" />
+        <result column="iRatio" jdbcType="DECIMAL" property="iRatio" />
+        <result column="bMlt" jdbcType="BIT" property="bMlt" />
+        <result column="bDazhe" jdbcType="BIT" property="bDazhe" />
+        <result column="cCharID" jdbcType="VARCHAR" property="cCharID" />
+        <result column="iMoneyStart18" jdbcType="INTEGER" property="iMoneyStart18" />
+        <result column="iMoneyEnd18" jdbcType="INTEGER" property="iMoneyEnd18" />
+        <result column="iWeightStart" jdbcType="INTEGER" property="iWeightStart" />
+        <result column="iWeightEnd" jdbcType="INTEGER" property="iWeightEnd" />
+        <result column="iWeightStart18" jdbcType="INTEGER" property="iWeightStart18" />
+        <result column="iWeightEnd18" jdbcType="INTEGER" property="iWeightEnd18" />
+    </resultMap>
+
+
+    <resultMap id="tDlbPosConfigurationMap" type="com.hualong.duolabao.domin.tDlbPosConfiguration">
+        <id column="cartId" jdbcType="VARCHAR" property="cartId" />
+        <id column="posid" jdbcType="VARCHAR" property="posid" />
+        <result column="storeId" jdbcType="VARCHAR" property="storeId" />
+        <result column="sn" jdbcType="VARCHAR" property="sn" />
+        <result column="posName" jdbcType="VARCHAR" property="posName" />
+    </resultMap>
+
+    <select id="gettDlbPosConfiguration" parameterType="map" resultMap="BaseResultMap">
+        select cartId, posid, storeId, sn, posName
+        from tDlbPosConfiguration
+        where cartId = #{cartId,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="getposConfig" parameterType="java.lang.String" resultMap="posConfigMap" statementType="STATEMENT">
+        select cID, iGoodsNoStart, iGoodsNoEnd, iMoneyStart, iMoneyEnd, iRatio, bMlt, bDazhe,
+        cCharID, iMoneyStart18, iMoneyEnd18, iWeightStart, iWeightEnd, iWeightStart18, iWeightEnd18
+        from ${tableName}
+        where cID = '${cID}'
+    </select>
+
+
+    <update id="p_saveSheetNo_Z_call"  >
+        <![CDATA[
+        		{call p_saveSheetNo_Z(
+        					#{cStoreNo,mode=IN,jdbcType=VARCHAR},
+        					#{cPosID,mode=IN,jdbcType=VARCHAR},
+        					#{Zdriqi,mode=IN,jdbcType=VARCHAR},
+        					#{SerNo,mode=IN,jdbcType=INTEGER},
+        					#{iSeed_Max,mode=IN,jdbcType=VARCHAR},
+        					#{callName,mode=IN,jdbcType=INTEGER}
+        					)
+        		}
+    	]]>
+    </update>
+
+    <select id="getCommSheetNo"  resultType="com.hualong.duolabao.domin.commSheetNo" parameterType="java.lang.String">
+        <![CDATA[
+        		{call p_getPos_SerialNoSheetNo_Z(
+        					#{cStoreNo,mode=IN,jdbcType=VARCHAR},
+        					#{cPosID,mode=IN,jdbcType=VARCHAR},
+        					#{Zdriqi,mode=IN,jdbcType=VARCHAR},
+        					#{callName,mode=IN,jdbcType=INTEGER}
+        					)
+        		}
+    	]]>
+    </select>
+
+
+</mapper>

@@ -17,7 +17,11 @@ public interface DlbDao {
     List<Store> get_cStroe(@Param("cStroreNo") String cStroreNo);
 
     Integer Exec(@Param("callJsonText")String callJsonText);
-
+    /**
+     * 不用了
+     * @param cartId
+     * @return
+     */
     List<GoodsInfoBeifen> GetGoodsCartInfo(@Param("cartId")String cartId);
 
 
