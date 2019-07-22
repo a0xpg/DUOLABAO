@@ -1,20 +1,57 @@
 package com.hualong.duolabao.dlbtool;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.exception.ApiSysException;
 import com.hualong.duolabao.exception.ErrorEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.UUID;
+
 import static com.hualong.duolabao.dlbtool.ThreeDESUtilDLB.verify;
 
 /**
  * Created by Administrator on 2019-07-15.
+ * <pre>
+ *     封装的方法类
+ *     不要随意改动  OK?
+ * </pre>
  */
 public class SignFacotry {
 
     private static final Logger log= LoggerFactory.getLogger(SignFacotry.class);
+
+    /**
+     *  <pre>
+     *      获取UUID
+     *  </pre>
+     * @throws ApiSysException
+     */
+    public static String getUUID()  throws ApiSysException {
+        try{
+            return UUID.randomUUID().toString().replaceAll("-", "");
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("获取UUID失败 {}",e.getMessage());
+            throw  new ApiSysException(ErrorEnum.SSCO001001);
+        }
+
+    }
+
+    /**
+     *  <pre>
+     *      检验商品是否为空
+     *  </pre>
+     * @param list
+     * @throws ApiSysException
+     */
+    public static void GoodListIsEmpty(List list)  throws ApiSysException {
+        if(list==null || list.size()==0){
+            throw  new ApiSysException(ErrorEnum.SSCO010004);
+        }
+    }
     /**
      * <pre>
      *     这个方法意义： 校验拿到的json数据是否是哆啦宝上传来的数据,商户号是否和我们的是保持一致的
@@ -69,6 +106,48 @@ public class SignFacotry {
             e.printStackTrace();
             log.error(Thread.currentThread().getStackTrace()[0].getMethodName()+" 签名校验失败或者不是本商户号的访问 ："+e.getMessage());
             throw new ApiSysException(ErrorEnum.SSCO001006);
+        }
+
+
+    }
+
+    /**
+     * <pre>
+     *     解密并返回实体类（通用封装）
+     * </pre>
+     * @param desKey
+     * @param jsonObject
+     * @param errorEnum
+     * @return
+     * @throws ApiSysException
+     */
+    public static Request decryptCipherJsonToRequest(String desKey, JSONObject jsonObject,ErrorEnum errorEnum ) throws ApiSysException {
+        try{
+            Request request=new Request();
+            JSONObject jsonObject1= JSONObject.parseObject(
+                    ThreeDESUtilDLB.decrypt(jsonObject.getString("cipherJson"),desKey,"UTF-8"));
+            request.setMerchantNo(jsonObject.getString("merchantNo"));
+            request.setSystemId(jsonObject.getString("systemId"));
+            request.setTenant(jsonObject.getString("tenant"));
+            //下面是解密出来的
+            request.setCartFlowNo(jsonObject1.getString("cartFlowNo"));
+            request.setCartId(jsonObject1.getString("cartId"));
+            request.setStoreId(jsonObject1.getString("storeId"));
+            request.setSn(jsonObject1.getString("sn"));
+            request.setCashierNo(jsonObject1.getString("cashierNo"));
+            request.setUserId(jsonObject1.getString("userId"));
+            request.setBarcode(jsonObject1.getString("barcode"));
+            request.setLineId(jsonObject1.getString("lineId"));
+            request.setQuantity(jsonObject1.getInteger("quantity"));
+            if(request!=null){
+                return request;
+            }else {
+                throw new ApiSysException(errorEnum);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error(Thread.currentThread().getStackTrace()[0].getMethodName()+" 签名校验失败或者不是本商户号的访问 ："+e.getMessage());
+            throw new ApiSysException(errorEnum);
         }
 
 

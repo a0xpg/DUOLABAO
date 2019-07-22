@@ -18,18 +18,7 @@ import java.util.List;
 public class CommonServiceImpl {
     private static final Logger log= LoggerFactory.getLogger(CommonServiceImpl.class);
 
-    /**
-     *  <pre>
-     *      检验商品是否存在的
-     *  </pre>
-     * @param list
-     * @throws ApiSysException
-     */
-    public static void GoodListIsEmpty(List list)  throws ApiSysException {
-        if(list==null || list.size()==0){
-            throw  new ApiSysException(ErrorEnum.SSCO010004);
-        }
-    }
+
 
     /**
      *    <pre>

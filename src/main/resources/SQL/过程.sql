@@ -52,9 +52,9 @@ GO
                   userId VARCHAR(30), --会员ID
                   userType VARCHAR(100), --会员类型默认传ISV:商家线下会员JDpin:京东会员
                   cardNum VARCHAR(60), --会员卡号
+                  score   VARCHAR(20), --会员当前积分
                   primary key(cartId)
           )
-
 
           --配置表
           IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tDlbPosConfiguration]')

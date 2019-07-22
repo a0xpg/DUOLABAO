@@ -54,6 +54,11 @@ public class DLBGoodsInfoMapperTest {
 
     }
 
+    /**
+     * <pre>
+     *     真是的地方  这里需要注意
+     * </pre>
+     */
     @Test
     public void getDLBGoodsInfos(){
         List<BLBGoodsInfo> blbGoodsInfo=dlbGoodsInfoMapper.selectAll("002","002");

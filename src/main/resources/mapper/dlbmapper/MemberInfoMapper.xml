@@ -8,6 +8,7 @@
     <result column="userId" jdbcType="VARCHAR" property="userId" />
     <result column="userType" jdbcType="VARCHAR" property="userType" />
     <result column="cardNum" jdbcType="VARCHAR" property="cardNum" />
+    <result column="score" jdbcType="VARCHAR" property="score" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="map">
     delete from tDlbVip
@@ -16,10 +17,10 @@
   </delete>
   <insert id="insert" parameterType="com.hualong.duolabao.domin.MemberInfo">
     insert into tDlbVip (cartId, storeId, sn, 
-      userId, userType, cardNum
+      userId, userType, cardNum,score
       )
     values (#{cartId,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, 
-      #{userId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{cardNum,jdbcType=VARCHAR}
+      #{userId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{cardNum,jdbcType=VARCHAR}, #{score,jdbcType=VARCHAR}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.MemberInfo">
@@ -27,18 +28,33 @@
     set sn = #{sn,jdbcType=VARCHAR},
       userId = #{userId,jdbcType=VARCHAR},
       userType = #{userType,jdbcType=VARCHAR},
-      cardNum = #{cardNum,jdbcType=VARCHAR}
+      cardNum = #{cardNum,jdbcType=VARCHAR},
+      score = #{score,jdbcType=VARCHAR}
     where cartId = #{cartId,jdbcType=VARCHAR}
       and storeId = #{storeId,jdbcType=VARCHAR}
   </update>
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select cartId, storeId, sn, userId, userType, cardNum
+    select cartId, storeId, sn, userId, userType, cardNum,score
     from tDlbVip
     where cartId = #{cartId,jdbcType=VARCHAR}
       and storeId = #{storeId,jdbcType=VARCHAR}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select cartId, storeId, sn, userId, userType, cardNum
+    select cartId, storeId, sn, userId, userType, cardNum,score
     from tDlbVip
+  </select>
+
+ <!--得到会员信息 -->
+  <select id="Get_VipOffine" resultType="com.hualong.duolabao.domin.VipOffine" parameterType="java.lang.String">
+    <![CDATA[
+		SELECT TOP 1 cVipNo, ISNULL(cVipName,'') AS cVipName,cTel,ISNULL(cSex,'') AS cSex,ISNULL(vip_rank,0)AS cVipRanck,
+		ISNULL(cStoreNo,'') AS  cStoreNo,
+		ISNULL(dBirthday,'') AS dBirthday,dValidStart,dValidEnd,
+		fPFrate=CONVERT(DECIMAL(18,2),fPFrate),
+		fCurValue=CONVERT(DECIMAL(18,2),fCurValue),
+		fCurValue_Pos=CONVERT(DECIMAL(18,2),fCurValue_Pos),bVipPrice
+		FROM T_VIP
+		WHERE  cVipNo=#{mobileNo} OR cTel=#{mobileNo}
+		]]>
   </select>
 </mapper>

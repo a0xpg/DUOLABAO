@@ -1,6 +1,7 @@
 package com.hualong.duolabao.service;
 
 import com.hualong.duolabao.domin.FrushGood;
+import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.domin.cStoreGoods;
 import com.hualong.duolabao.exception.ApiSysException;
 
@@ -39,4 +40,17 @@ public interface PosService {
     void SaveGoods(String storeId, String cashierNo,String sn,String cartId,String cartFlowNo,
               List<cStoreGoods> cStoreGoodsList,
               FrushGood frushGood) throws ApiSysException;
+
+    /**
+     * <pre>
+     *     上个方法的二次封装
+     * </pre>
+     * @param request
+     * @param cStoreGoodsList
+     * @param frushGood
+     * @throws ApiSysException
+     */
+    void SaveGoodsToCartInfo(Request request,
+                             List<cStoreGoods> cStoreGoodsList,
+                             FrushGood frushGood) throws ApiSysException;
 }

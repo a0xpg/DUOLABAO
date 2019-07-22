@@ -41,21 +41,16 @@ public class ResultMsgDlb implements Serializable {
                                         success, errCode, errCodeDes, systemId, uuid)).toString();
     }
 
+    public static String ResultMsgDlb(String merchantNo, String cipherJson, String sign,
+                                       String systemId, String uuid){
+        return JSONObject.toJSONString(new ResultMsgDlb(merchantNo, cipherJson, sign,
+                true, GlobalEumn.SUCCESS.getCode(), GlobalEumn.SUCCESS.getMesssage(), systemId, uuid)).toString();
+    }
+
     public static void main(String[] args) {
 
-        ResultMsg resultMsg = new ResultMsg(true,"1001","正确",(String)null);
-
-        resultMsg = new ResultMsg(true,"1001","正确",(ResultMsg)resultMsg);
-
-        String jsonString = JSON.toJSONString(resultMsg);
-        System.out.println(jsonString);
-        resultMsg = new ResultMsg(true,"1001","正确",(ResultMsg)null);
-
-        jsonString = JSONObject.toJSONString(resultMsg);
-        System.out.println(jsonString);
-
-        System.out.println(ResultMsgDlb("", jsonString, "",
-                true, "", "", null, ""));
+        System.out.println(ResultMsgDlb("0002", "cslcbybvetrbvogtrotrobtruhorb", "0006",
+                 "1.0.1", ""));
     }
 
 }

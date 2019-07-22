@@ -46,6 +46,11 @@ public class CartInfo extends DlbCommon{
      */
     private MemberInfo memberInfo=new MemberInfo();
 
+    /**
+     * 订单赠送的积分
+     */
+    private Double orderScore;
+
     public CartInfo(String storeId, String sn, String cartId, String merchantOrderId,
                     long totalFee, long discountFee, long actualFee,
                      List<BLBGoodsInfo> items, MemberInfo memberInfo) {

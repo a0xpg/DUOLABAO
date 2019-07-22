@@ -41,4 +41,6 @@ public class FrushGood {
         this.price = price;
         this.weight = weight;
     }
+
+
 }

@@ -15,11 +15,12 @@ public class testSgnFacotry {
 
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         System.out.println(uuid);
+        System.out.println(uuid.length());
 
-        for(int i=0;i<10;i++){
-            test2();
-        }
-        System.out.println("我到了最后");
+//        for(int i=0;i<10;i++){
+//            test2();
+//        }
+//        System.out.println("我到了最后");
 
     }
 
