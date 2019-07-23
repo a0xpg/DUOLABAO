@@ -3,6 +3,7 @@ package com.hualong.duolabao.conntroller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.service.DlbService;
+import com.hualong.duolabao.service.PosService;
 import org.apache.catalina.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,48 +23,21 @@ public class DlbConntroller {
     @Autowired
     private DlbService dlbService;
 
-    @ResponseBody
-    @RequestMapping(value = "/api/getGoods", method = {RequestMethod.POST,RequestMethod.GET}) //, produces = "application/json;charset=UTF-8"
-    public String getGoods(@RequestBody JSONObject jsonParam) {
-        log.info(this.getClass().getName()+" "+ Thread.currentThread().getStackTrace()[1].getMethodName()+"获取的参数: {}",jsonParam.toJSONString());
-        return "";
-    }
-
+    @Autowired
+    private PosService posService;
 
     /**
+     * <pre>
      *
-     * @param cStoreNo       门店编号
-     * @param cStoreName     门店名称
-     * @return                门店集合
+     * </pre>
+     * @param urlType    路径
+     * @param jsonParam  参数json数据
+     * @return
      */
-    @RequestMapping(value = "/api/getStore", method = RequestMethod.POST)
-    @ResponseBody
-    public  String findStore(@RequestParam(value = "cStoreNo",required = false) String cStoreNo,
-                             @RequestParam(value = "cStoreName",required = false) String cStoreName){
-        try{
-            List<Store> list =dlbService.get_cStroeS(cStoreNo);
-            String result="";
-            if(list!=null && !list.isEmpty()){
-                try{
-//                    result= listBean.getBeanJson(list);
-                    result= JSONObject.toJSONString(list);
-                    return result;
-                }catch (Exception e){
-                    e.printStackTrace();
-                    log.info(e.getMessage());
-                    return e.getMessage();
-                }
+    @RequestMapping(value = "/api/{urlType}", method = {RequestMethod.POST},produces = "application/json;charset=UTF-8") //, produces = "application/json;charset=UTF-8"
+    public String getGoods(@PathVariable String urlType,
+                           @RequestBody JSONObject jsonParam) {
+        return this.posService.CommUrlFun(urlType,jsonParam);
 
-            }else {
-                return "";
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log.error(e.getMessage());
-            return e.getMessage();
-        }
     }
-
-
-
 }

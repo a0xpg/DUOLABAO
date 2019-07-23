@@ -4,6 +4,7 @@ package com.hualong.duolabao.result;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hualong.duolabao.domin.Request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,16 +42,14 @@ public class ResultMsgDlb implements Serializable {
                                         success, errCode, errCodeDes, systemId, uuid)).toString();
     }
 
-    public static String ResultMsgDlb(String merchantNo, String cipherJson, String sign,
-                                       String systemId, String uuid){
-        return JSONObject.toJSONString(new ResultMsgDlb(merchantNo, cipherJson, sign,
-                true, GlobalEumn.SUCCESS.getCode(), GlobalEumn.SUCCESS.getMesssage(), systemId, uuid)).toString();
+    public static String ResultMsgDlb(Request request, String cipherJson, String sign, String uuid){
+        return JSONObject.toJSONString(new ResultMsgDlb(request.getMerchantNo(), cipherJson, sign,
+                true, GlobalEumn.SUCCESS.getCode(), GlobalEumn.SUCCESS.getMesssage(), request.getSystemId(), uuid)).toString();
     }
 
     public static void main(String[] args) {
 
-        System.out.println(ResultMsgDlb("0002", "cslcbybvetrbvogtrotrobtruhorb", "0006",
-                 "1.0.1", ""));
+
     }
 
 }

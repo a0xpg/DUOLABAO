@@ -117,12 +117,16 @@ public class SignFacotry {
      * </pre>
      * @param desKey
      * @param jsonObject
-     * @param errorEnum
+     * @param errorEnum    不可以写null
      * @return
      * @throws ApiSysException
      */
-    public static Request decryptCipherJsonToRequest(String desKey, JSONObject jsonObject,ErrorEnum errorEnum ) throws ApiSysException {
+    public static Request decryptCipherJsonToRequest(String desKey, JSONObject jsonObject,ErrorEnum errorEnum) throws ApiSysException {
         try{
+            if(errorEnum==null){
+                //throw new ApiSysException("方法的错误类型不可以写null,请填写错误类型");
+                throw new ApiSysException("方法的错误类型不可以写null,请填写错误类型",new Throwable("方法的错误类型不可以写null,请填写错误类型"));
+            }
             Request request=new Request();
             JSONObject jsonObject1= JSONObject.parseObject(
                     ThreeDESUtilDLB.decrypt(jsonObject.getString("cipherJson"),desKey,"UTF-8"));

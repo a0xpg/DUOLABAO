@@ -1,9 +1,11 @@
 package com.hualong.duolabao.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.domin.FrushGood;
 import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.domin.cStoreGoods;
 import com.hualong.duolabao.exception.ApiSysException;
+import com.hualong.duolabao.exception.ErrorEnum;
 
 import java.util.List;
 
@@ -53,4 +55,32 @@ public interface PosService {
     void SaveGoodsToCartInfo(Request request,
                              List<cStoreGoods> cStoreGoodsList,
                              FrushGood frushGood) throws ApiSysException;
+
+    /**
+     * <pre>
+     *     查询购物车商品
+     * </pre>
+     * @param request  请求参数封装类
+     * @param errorEnum 可能出错的错误码  自定义返回
+     * @return
+     * @throws ApiSysException
+     */
+    String SelectCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException;
+
+    /**
+     *
+     * @param urlType
+     * @param jsonParam
+     * @return
+     * @throws ApiSysException
+     */
+    String CommUrlFun(String urlType,JSONObject jsonParam);
+
+    /**
+     *
+     * @param request
+     * @param errorEnum
+     * @return
+     */
+    String ResponseDlb(Request request,ErrorEnum errorEnum);
 }

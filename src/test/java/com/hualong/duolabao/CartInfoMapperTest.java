@@ -38,6 +38,10 @@ public class CartInfoMapperTest {
             "\"sign\":\"e67ca965f200495b0c545d7a679ee4bd\",\"systemId\":\"jdpay-offlinepay-isvaccess\"," +
             "\"uuid\":\"79e6f115-fbe5-4f28-8c0a-6a0facbeee41\",\"tenant\":\"1519833291\",\"storeId\":\"1001\"}";
 
+    private static final String data2 ="{\"merchantNo\":\"XILIAN\",\"cipherJson\":\"ae8bb26153c2db4f4cb16f51e4df3852f0fccb4d9475b03309569a7e8aa5729efb7cbae8228e6d178cc2dcbb0e82712e7840108dc5f3c4706c06bee060810d10211c56965a69ad4deda60fcf890cdbdddf0f67dc09d15d26a4fcf1b291713666dbf8b3db77151fc35d966754675e31df\"," +
+            "\"sign\":\"e67ca965f200495b0c545d7a679ee4bd\",\"systemId\":\"jdpay-offlinepay-isvaccess\"," +
+            "\"uuid\":\"79e6f115-fbe5-4f28-8c0a-6a0facbeee41\",\"tenant\":\"1519833291\",\"storeId\":\"1001\"}";
+
     @Autowired
     private DlbDao dlbDao;
 
@@ -88,7 +92,6 @@ public class CartInfoMapperTest {
        }
     }
 
-
     /**
      * <pre>
      *     调用二次封装实体
@@ -110,6 +113,56 @@ public class CartInfoMapperTest {
             posService.SaveGoodsToCartInfo(
                     request,
                     storeGoodsList,new FrushGood(false));
+        }catch (ApiSysException e){
+            e.printStackTrace();
+            log.error("出错了 ",e.getExceptionEnum().toString());
+            log.error("出错了 ",e.getMessage());
+
+        }
+    }
+
+    /**
+     * <pre>
+     *     查询购物车商品
+     * </pre>
+     */
+    @Test
+    public void selectGoodByCartInfo(){
+        try{
+            JSONObject json=JSON.parseObject(data);
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),json,dlbConnfig.getMerchantno());
+            JSONObject jsonObject=SignFacotry.decryptCipherJson(dlbConnfig.getDeskey(),json);
+            log.info("解析出来的数据 {}",jsonObject);
+            Request request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),json, ErrorEnum.SSCO010015);
+            List<String> list=new ArrayList<>();
+            list.add("6956553400443");
+            List<cStoreGoods> storeGoodsList=posService.GetcStoreGoodsS("0002",list);
+            SignFacotry.GoodListIsEmpty(storeGoodsList);
+            log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
+            String str= posService.SelectCartInfo(request,null);
+            log.info("获取到的购物车json: {}",str);
+        }catch (ApiSysException e){
+            e.printStackTrace();
+            log.error("出错了 ",e.getExceptionEnum().toString());
+            log.error("出错了 ",e.getMessage());
+
+        }
+    }
+    @Test
+    public  void TestCommUrlFun(){
+        try{
+            JSONObject json=JSON.parseObject(data);
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),json,dlbConnfig.getMerchantno());
+            JSONObject jsonObject=SignFacotry.decryptCipherJson(dlbConnfig.getDeskey(),json);
+            log.info("解析出来的数据 {}",jsonObject);
+            Request request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),json, ErrorEnum.SSCO010015);
+            List<String> list=new ArrayList<>();
+            list.add("6956553400443");
+            List<cStoreGoods> storeGoodsList=posService.GetcStoreGoodsS("0002",list);
+            SignFacotry.GoodListIsEmpty(storeGoodsList);
+            log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
+            String str= posService.SelectCartInfo(request,null);
+            log.info("获取到的购物车json: {}",str);
         }catch (ApiSysException e){
             e.printStackTrace();
             log.error("出错了 ",e.getExceptionEnum().toString());
