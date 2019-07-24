@@ -20,6 +20,7 @@ import com.hualong.duolabao.result.GlobalEumn;
 import com.hualong.duolabao.result.ResultMsg;
 import com.hualong.duolabao.result.ResultMsgDlb;
 import com.hualong.duolabao.service.PosService;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,8 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
 
         return list;
     }
+
+
 
     @Override
     public void SaveGoods(String storeId, String cashierNo,String sn,String cartId,String cartFlowNo,
@@ -130,7 +133,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }
     }
 
-
     @Override
     public void SaveGoodsToCartInfo(Request request,
                           List<cStoreGoods> cStoreGoodsList,
@@ -186,7 +188,76 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             throw  new ApiSysException(ErrorEnum.SSCO001001);
         }
     }
+    @Override
+    public void updateGoodsS(Request request,
+                             List<cStoreGoods> cStoreGoodsList,
+                             FrushGood frushGood) throws ApiSysException {
+        try{
+            //得到商品信息
+            cStoreGoods storeGoods=cStoreGoodsList.get(0);
+            log.info("查询到的商品信息  {}", JSON.toJSON(storeGoods).toString());
+            //检测购物车是否存在改商品
+            BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper.getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
+            Long NomalPrice=new Double(storeGoods.getFNormalPrice()).longValue()*100;
+            //如果没有改商品保存的购物车   如果存在就更新该购物车
+            if(blbGoodsInfo!=null){
+                int num=request.getQuantity();
+                //删除购物车的该商品
+                if(num==0){
+                    CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,null,null,null,request.getLineId());
+                }else{
+                    Long amount=NomalPrice*num;
+                    CommonServiceImpl.updateBlbGoodsInfo(dlbGoodsInfoMapper,
+                            new BLBGoodsInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getCartFlowNo(),
+                                    request.getCashierNo(), null, null,
+                                    storeGoods.getCGoodsNo(), storeGoods.getCGoodsName(),
+                                    amount,
+                                    0, null,
+                                    NomalPrice,NomalPrice,
+                                    num, 0, false,
+                                    storeGoods.getCBarcode(), "个"));
+                }
+            }else{
+                throw  new ApiSysException(ErrorEnum.SSCO010004);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("修改商品数量的时间出错了:  {}",e.getMessage());
+            throw  new ApiSysException(ErrorEnum.SSCO001001);
+        }
+    }
+    @Override
+    public void deleteGood(Request request,
+                               List<cStoreGoods> cStoreGoodsList,
+                               FrushGood frushGood) throws ApiSysException {
+        try{
+            int info=CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,null,null,null,request.getLineId());
+            if(info==0){
+                throw  new ApiSysException(ErrorEnum.SSCO010004);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("删除商品的时间出错了:  {}",e.getMessage());
+            throw  new ApiSysException(ErrorEnum.SSCO001002);
+        }
 
+    }
+    @Override
+    public void deleteCartInfo(Request request,
+                             List<cStoreGoods> cStoreGoodsList,
+                             FrushGood frushGood) throws ApiSysException {
+        try{
+            int info=CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,request.getCartId(),request.getStoreId(),null,null);
+            if(info==0){
+                throw  new ApiSysException(ErrorEnum.SSCO010008);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("删除整个购物车的时间出错了:  {}",e.getMessage());
+            throw  new ApiSysException(ErrorEnum.SSCO001002);
+        }
+
+    }
 
     @Override
     public String SelectCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException {
@@ -202,16 +273,12 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 }
                 actualFee=totalFee-discountFee;
             }
-            /**
-             * 会员这里先预留一个方法
-             */
+            //TODO 会员这里先预留一个方法
             MemberInfo memberInfo=new MemberInfo();
             CartInfo cartInfo=new CartInfo(request.getStoreId(), request.getSn(), request.getCartId(), null,
                     totalFee, discountFee, actualFee, blbGoodsInfo, memberInfo);
-            /**
-             * 计算积分  可以在这里进行
-             * cartInfo.setOrderScore(20.68);
-             */
+
+            //TODO 计算积分  可以在这里进行  cartInfo.setOrderScore(20.68);
             ResultMsg resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
             String s1=JSON.toJSONString(resultMsg, SerializerFeature.WriteNullListAsEmpty,
                     SerializerFeature.WriteNullNumberAsZero,
@@ -271,12 +338,12 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 break;
             case selectGoods:
                 try{
-                    //这里有一个方法  判断是否会生鲜商品的  默认不是生鲜商品 给这个SaveGoodsToCartInfo方法用的
+                    //TODO 判断是否会生鲜商品的  默认不是生鲜商品 给这个SaveGoodsToCartInfo方法用的
                     FrushGood frushGood=new FrushGood(false);
                     List<String> list=new ArrayList<>();
                     list.add(request.getBarcode());
                     List<cStoreGoods> storeGoodsList=this.GetcStoreGoodsS(request.getStoreId(),list);
-                    SignFacotry.GoodListIsEmpty(storeGoodsList);//如果为空  这里会触发异常  中断程序
+                    SignFacotry.GoodListIsEmpty(storeGoodsList);
                     log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
                     this.SaveGoodsToCartInfo(
                             request,
@@ -286,21 +353,66 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     e.printStackTrace();
                     log.error("获取商品出错了 ",e.getExceptionEnum().toString());
                     log.error("获取商品出错了 ",e.getMessage());
-                    return this.ResponseDlb(request,ErrorEnum.SSCO010004);
+                    return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
                 }
                 break;
             case updateGoods:
-
+                try{
+                    List<String> list=new ArrayList<>();
+                    list.add(request.getBarcode());
+                    List<cStoreGoods> storeGoodsList=this.GetcStoreGoodsS(request.getStoreId(),list);
+                    SignFacotry.GoodListIsEmpty(storeGoodsList);
+                    log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
+                    this.updateGoodsS(
+                            request,
+                            storeGoodsList,null);
+                    response=this.ResponseDlb(request,ErrorEnum.SUCCESS);
+                }catch (ApiSysException e){
+                    e.printStackTrace();
+                    log.error("更改商品数量出错了 ",e.getExceptionEnum().toString());
+                    log.error("更改商品数量出错了 ",e.getMessage());
+                    return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
+                }
                 break;
             case deleteGoods:
-
+                try{
+                    this.deleteGood(
+                            request,
+                            null,null);
+                    response=this.ResponseDlb(request,ErrorEnum.SUCCESS);
+                }catch (ApiSysException e){
+                    e.printStackTrace();
+                    log.error("删除商品出错了 ",e.getExceptionEnum().toString());
+                    log.error("删除商品出错了 ",e.getMessage());
+                    return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
+                }
                 break;
             case clearCartInfo:
-
+                try{
+                    this.deleteCartInfo(
+                            request,
+                            null,null);
+                    response=this.ResponseDlb(request,ErrorEnum.SUCCESS);
+                }catch (ApiSysException e){
+                    e.printStackTrace();
+                    log.error("删除购物车出错了 ",e.getExceptionEnum().toString());
+                    log.error("删除购物车出错了 ",e.getMessage());
+                    return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
+                }
                 break;
 
             case commitCartInfo:
-
+                try{
+                    this.commitCartInfo(
+                            request,
+                            ErrorEnum.SUCCESS);
+                    response=this.ResponseDlb(request,ErrorEnum.SUCCESS);
+                }catch (ApiSysException e){
+                    e.printStackTrace();
+                    log.error("提交购物车出错了 ",e.getExceptionEnum().toString());
+                    log.error("提交购物车出错了 ",e.getMessage());
+                    return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
+                }
                 break;
             case cancleOrder:
 
@@ -315,6 +427,11 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         return response;
     }
 
+
+    @Override
+    public void commitCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException{
+            //TODO 这个是对整个购物车的操作
+    }
 
 
 

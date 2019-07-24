@@ -1,5 +1,6 @@
 package com.hualong.duolabao.dlbtool;
 
+import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.exception.ApiSysException;
@@ -22,6 +23,16 @@ import static com.hualong.duolabao.dlbtool.ThreeDESUtilDLB.verify;
 public class SignFacotry {
 
     private static final Logger log= LoggerFactory.getLogger(SignFacotry.class);
+
+    public static ErrorEnum getErrorEnumByCode(String code){
+        for(ErrorEnum sexEnum : ErrorEnum.values()){
+            if(StringUtils.equals(code, sexEnum.getCode())){
+                return sexEnum;
+            }
+        }
+        return ErrorEnum.SSCO001002;
+    }
+
 
     /**
      *  <pre>

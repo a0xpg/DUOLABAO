@@ -31,8 +31,8 @@ public class ApiSysException extends Exception {
         super(msg);
     }
 
-//    public String toString() {
-//        return super.toString() + " " + this.exceptionEnum.toString();
-//    }
+    public String toString() {
+        return super.toString() + " " + this.exceptionEnum.toString();
+    }
 }
 

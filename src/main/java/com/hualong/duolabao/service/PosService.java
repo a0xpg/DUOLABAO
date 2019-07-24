@@ -39,6 +39,7 @@ public interface PosService {
      * @param frushGood         生鲜商品重量 单价 金额 对象类
      * @throws ApiSysException
      */
+    @Deprecated
     void SaveGoods(String storeId, String cashierNo,String sn,String cartId,String cartFlowNo,
               List<cStoreGoods> cStoreGoodsList,
               FrushGood frushGood) throws ApiSysException;
@@ -57,6 +58,44 @@ public interface PosService {
                              FrushGood frushGood) throws ApiSysException;
 
     /**
+     *<pre>
+     *     更新购物车商品数量和单价和金额信息（总部单价更改 这里及时同步）
+     *</pre>
+     * @param request
+     * @param cStoreGoodsList
+     * @param frushGood
+     * @throws ApiSysException
+     */
+    void updateGoodsS(Request request,
+                      List<cStoreGoods> cStoreGoodsList,
+                      FrushGood frushGood) throws ApiSysException;
+
+    /**
+     *<pre>
+     *     删除商品（根据商品id删除该商品）
+     *</pre>
+     * @param request
+     * @param cStoreGoodsList
+     * @param frushGood
+     * @throws ApiSysException
+     */
+    void deleteGood(Request request,
+                    List<cStoreGoods> cStoreGoodsList,
+                    FrushGood frushGood) throws ApiSysException;
+
+    /**
+     *<pre>
+     *     根据提交上来的
+     *</pre>
+     * @param request
+     * @param cStoreGoodsList
+     * @param frushGood
+     * @throws ApiSysException
+     */
+    void deleteCartInfo(Request request,
+                        List<cStoreGoods> cStoreGoodsList,
+                        FrushGood frushGood) throws ApiSysException;
+    /**
      * <pre>
      *     查询购物车商品
      * </pre>
@@ -68,7 +107,19 @@ public interface PosService {
     String SelectCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException;
 
     /**
-     *
+     * <pre>
+     *     提交购物车之前的操作
+     * </pre>
+     * @param request
+     * @param errorEnum
+     * @throws ApiSysException
+     */
+    void commitCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException;
+
+    /**
+     *<pre>
+     *     请求统一处理
+     *</pre>
      * @param urlType
      * @param jsonParam
      * @return
@@ -77,10 +128,14 @@ public interface PosService {
     String CommUrlFun(String urlType,JSONObject jsonParam);
 
     /**
-     *
+     *<pre>
+     *     返回结果统一封装处理后再返回到客户端
+     *</pre>
      * @param request
      * @param errorEnum
      * @return
      */
     String ResponseDlb(Request request,ErrorEnum errorEnum);
+
+
 }

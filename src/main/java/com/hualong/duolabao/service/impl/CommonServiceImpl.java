@@ -66,27 +66,30 @@ public class CommonServiceImpl {
 
     /**
      * <pre>
-     *     根据商品 行号 删除该条记录
+     *     1.dlbGoodsInfoMapper lineIdDelete 其他值为空  根据行号删除该单个商品
+     *     2.dlbGoodsInfoMapper cartId       其他值为空  根据购物车id删除整个购物车（该cartId购物车下的商品）
+     *     3.dlbGoodsInfoMapper              其他值为空   清除整个购物车表数据
      * </pre>
-     * @param dlbGoodsInfoMapper
-     * @param cartId
-     * @param storeId
-     * @param barcode
-     * @param lineIdDelete        只用这一个值就可以了
+     * @param dlbGoodsInfoMapper   daoMapper
+     * @param cartId                购物车id
+     * @param storeId               门店id
+     * @param barcode               商品编码
+     * @param lineIdDelete         商品所在行号
      * @throws ApiSysException
      */
-    public static void deleteBlbGoodsInfo(tDLBGoodsInfoMapper dlbGoodsInfoMapper,String cartId, String storeId,
+    public static Integer deleteBlbGoodsInfo(tDLBGoodsInfoMapper dlbGoodsInfoMapper,String cartId, String storeId,
                                           String barcode, String lineIdDelete) throws ApiSysException {
         try{
             Integer integer=dlbGoodsInfoMapper.deleteBLBGoodsInfo(cartId, storeId, barcode, lineIdDelete);
-            if(integer==0){
-                throw  new ApiSysException(ErrorEnum.SSCO001002);
-            }
+
+            return integer;
         }catch (Exception e){
             e.printStackTrace();
-            log.error("更新数据到购物车失败 ：{}",e.getMessage());
+            log.error("删除数据到购物车失败 ：{}",e.getMessage());
             throw  new ApiSysException(ErrorEnum.SSCO001002);
         }
 
     }
+
+
 }

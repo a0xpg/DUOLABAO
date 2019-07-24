@@ -3,10 +3,12 @@ package com.hualong.duolabao;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.config.DlbConnfig;
+import com.hualong.duolabao.config.DlbUrlConfig;
 import com.hualong.duolabao.dao.cluster.DlbDao;
 import com.hualong.duolabao.dao.cluster.tDLBGoodsInfoMapper;
 import com.hualong.duolabao.dao.pos.PosMain;
 import com.hualong.duolabao.dlbtool.SignFacotry;
+import com.hualong.duolabao.dlbtool.ThreeDESUtilDLB;
 import com.hualong.duolabao.domin.FrushGood;
 import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.domin.cStoreGoods;
@@ -23,7 +25,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2019-07-22.
@@ -38,7 +42,7 @@ public class CartInfoMapperTest {
             "\"sign\":\"e67ca965f200495b0c545d7a679ee4bd\",\"systemId\":\"jdpay-offlinepay-isvaccess\"," +
             "\"uuid\":\"79e6f115-fbe5-4f28-8c0a-6a0facbeee41\",\"tenant\":\"1519833291\",\"storeId\":\"1001\"}";
 
-    private static final String data2 ="{\"merchantNo\":\"XILIAN\",\"cipherJson\":\"ae8bb26153c2db4f4cb16f51e4df3852f0fccb4d9475b03309569a7e8aa5729efb7cbae8228e6d178cc2dcbb0e82712e7840108dc5f3c4706c06bee060810d10211c56965a69ad4deda60fcf890cdbdddf0f67dc09d15d26a4fcf1b291713666dbf8b3db77151fc35d966754675e31df\"," +
+    private static  String data2 ="{\"merchantNo\":\"XILIAN\",\"cipherJson\":\"ae8bb26153c2db4f4cb16f51e4df3852f0fccb4d9475b03309569a7e8aa5729efb7cbae8228e6d178cc2dcbb0e82712e7840108dc5f3c4706c06bee060810d10211c56965a69ad4deda60fcf890cdbdddf0f67dc09d15d26a4fcf1b291713666dbf8b3db77151fc35d966754675e31df\"," +
             "\"sign\":\"e67ca965f200495b0c545d7a679ee4bd\",\"systemId\":\"jdpay-offlinepay-isvaccess\"," +
             "\"uuid\":\"79e6f115-fbe5-4f28-8c0a-6a0facbeee41\",\"tenant\":\"1519833291\",\"storeId\":\"1001\"}";
 
@@ -145,7 +149,6 @@ public class CartInfoMapperTest {
             e.printStackTrace();
             log.error("出错了 ",e.getExceptionEnum().toString());
             log.error("出错了 ",e.getMessage());
-
         }
     }
     @Test
@@ -169,6 +172,63 @@ public class CartInfoMapperTest {
             log.error("出错了 ",e.getMessage());
 
         }
+    }
+
+    @Test
+    public  void TestCommUrlFunSelectGoods(){
+        try{
+
+            data2=getRequest(dlbConnfig);
+
+            JSONObject json=JSON.parseObject(data2);
+            String str=this.posService.CommUrlFun(DlbUrlConfig.selectGoods,json);
+            log.info("我是获取到的返回数据 {}",str);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("出错了 ",e.getMessage());
+
+        }
+    }
+
+
+    @Test
+    public  void TestCreateRequest(){
+        try{
+            data2=getRequest(dlbConnfig);
+            log.info("得到的 request: {}",data2);
+            JSONObject json=JSON.parseObject(data2);
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),json,dlbConnfig.getMerchantno());
+            JSONObject jsonObject=SignFacotry.decryptCipherJson(dlbConnfig.getDeskey(),json);
+            log.info("解析出来的数据 {}",jsonObject);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("出错了 ",e.getMessage());
+
+        }
+    }
+
+    private static String getRequest(DlbConnfig dlbConnfig) throws Exception {
+        Map<String,String> map=new HashMap<>();
+        map.put("cartId","0002");
+        map.put("cartFlowNo","0002");
+        map.put("storeId","0002");
+        map.put("cashierNo","0002");
+        map.put("sn","0002");
+        map.put("barcode","6956553400443");
+
+        String cipherJson= ThreeDESUtilDLB.encrypt(JSONObject.toJSONString(map),dlbConnfig.getDeskey(),"utf-8");
+        String uuid= SignFacotry.getUUID();
+        String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
+        Map<String,String> mapdata=new HashMap<>();
+        mapdata.put("merchantNo","XILIAN");
+        mapdata.put("tenant","0002");
+        mapdata.put("storeId","0002");
+        mapdata.put("cipherJson", cipherJson);
+        mapdata.put("sign",sign);
+        mapdata.put("systemId","jdpay-offlinepay-isvaccess");
+        mapdata.put("uuid",uuid);
+
+        return JSONObject.toJSONString(mapdata);
     }
 
 }
