@@ -9,6 +9,8 @@
     <result column="userType" jdbcType="VARCHAR" property="userType" />
     <result column="cardNum" jdbcType="VARCHAR" property="cardNum" />
     <result column="score" jdbcType="VARCHAR" property="score" />
+    <result column="fPFrate" jdbcType="VARCHAR" property="fPFrate" />
+    <result column="bDiscount" jdbcType="VARCHAR" property="bDiscount" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="map">
     delete from tDlbVip
@@ -17,12 +19,21 @@
   </delete>
   <insert id="insert" parameterType="com.hualong.duolabao.domin.MemberInfo">
     insert into tDlbVip (cartId, storeId, sn, 
-      userId, userType, cardNum,score
+      userId, userType, cardNum,score,fPFrate,bDiscount
       )
     values (#{cartId,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, 
-      #{userId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{cardNum,jdbcType=VARCHAR}, #{score,jdbcType=VARCHAR}
+      #{userId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{cardNum,jdbcType=VARCHAR}, #{score,jdbcType=VARCHAR},
+      #{fPFrate,jdbcType=VARCHAR}, #{bDiscount,jdbcType=VARCHAR}
       )
   </insert>
+
+  <update id="updateAddScore" parameterType="com.hualong.duolabao.domin.MemberInfo">
+    update tDlbVip
+    set addScore = #{addScore,jdbcType=DECIMAL}
+    where cartId = #{cartId,jdbcType=VARCHAR}
+    and storeId = #{storeId,jdbcType=VARCHAR}
+  </update>
+
   <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.MemberInfo">
     update tDlbVip
     set sn = #{sn,jdbcType=VARCHAR},
@@ -34,7 +45,7 @@
       and storeId = #{storeId,jdbcType=VARCHAR}
   </update>
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select cartId, storeId, sn, userId, userType, cardNum,score
+    select  userId, userType, cardNum,score,fPFrate,bDiscount,addScore
     from tDlbVip
     where cartId = #{cartId,jdbcType=VARCHAR}
       and storeId = #{storeId,jdbcType=VARCHAR}
@@ -52,7 +63,7 @@
 		ISNULL(dBirthday,'') AS dBirthday,dValidStart,dValidEnd,
 		fPFrate=CONVERT(DECIMAL(18,2),fPFrate),
 		fCurValue=CONVERT(DECIMAL(18,2),fCurValue),
-		fCurValue_Pos=CONVERT(DECIMAL(18,2),fCurValue_Pos),bVipPrice
+		fCurValue_Pos=CONVERT(DECIMAL(18,2),fCurValue_Pos),bVipPrice,ISNULL(bDiscount,0) AS bDiscount
 		FROM T_VIP
 		WHERE  cVipNo=#{mobileNo} OR cTel=#{mobileNo}
 		]]>

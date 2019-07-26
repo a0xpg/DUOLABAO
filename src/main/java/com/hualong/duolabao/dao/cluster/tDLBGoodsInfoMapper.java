@@ -18,6 +18,8 @@ public interface tDLBGoodsInfoMapper {
 
     Integer updateByBLBGoodsInfo(BLBGoodsInfo record);
 
+    Integer updateBLBGoodsInfoOderId(BLBGoodsInfo record);
+
     BLBGoodsInfo getOneBLBGoodsInfo(@Param("cartId") String cartId, @Param("storeId") String storeId,@Param("barcode") String barcode);
     /*
     * 查询整个购物车商品

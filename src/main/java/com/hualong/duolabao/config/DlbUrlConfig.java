@@ -57,5 +57,10 @@ public interface DlbUrlConfig {
      * </pre>
      */
     String payOrder="payOrder";
-
+    /**
+     * <pre>
+     *     订单同步
+     * </pre>
+     */
+    String orderSysn="orderSysn";
 }

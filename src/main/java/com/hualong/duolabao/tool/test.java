@@ -5,12 +5,8 @@ package com.hualong.duolabao.tool;
  */
 public class test {
     public static void main(String[] args) {
-        Integer[] data={1,2,3,4,5,6,7,8};
-        System.out.println(data[2]);
-        data[2]+=(data[2]+6);
-
-        data[2]=data[2]+data[2]+6;
-        System.out.println(data[2]);
+        String str="123456789";
+        System.out.println(str.substring(3,7));
 
     }
 }

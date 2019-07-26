@@ -23,8 +23,9 @@ public class VipOffine {
     private String dBirthday;
     private String dValidStart;
     private String dValidEnd;
-    private String fPFrate;
     private String fCurValue;
     private String fCurValue_Pos;
     private String bVipPrice;
+    private String bDiscount;
+    private String fPFrate;
 }

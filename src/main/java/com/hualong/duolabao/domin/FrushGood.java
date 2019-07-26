@@ -29,7 +29,12 @@ public class FrushGood {
     /**
      *重量
      */
-    private double weight;
+    private double weightwight;
+
+    /**
+     *生鲜码
+     */
+    private String barcode;
 
     public FrushGood(boolean isWeight) {
         this.isWeight = isWeight;
@@ -39,7 +44,7 @@ public class FrushGood {
         this.isWeight = isWeight;
         this.allMoney = allMoney;
         this.price = price;
-        this.weight = weight;
+        this.weightwight = weight;
     }
 
 

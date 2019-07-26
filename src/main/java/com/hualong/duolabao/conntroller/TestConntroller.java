@@ -25,6 +25,12 @@ public class TestConntroller {
     @Autowired
     private PosService posService;
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public  String test(){
+       return "你好啊";
+    }
+
     /**
      *<pre>
      *     搭建项目测试用的

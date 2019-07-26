@@ -1,6 +1,8 @@
 package com.hualong.duolabao.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hualong.duolabao.dao.cluster.CommDaoMapper;
+import com.hualong.duolabao.dao.pos.PosMain;
 import com.hualong.duolabao.domin.FrushGood;
 import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.domin.cStoreGoods;
@@ -84,6 +86,15 @@ public interface PosService {
                     FrushGood frushGood) throws ApiSysException;
 
     /**
+     * <pre>
+     *     会员查询
+     * </pre>
+     * @param request
+     * @throws ApiSysException
+     */
+    void InsertOrUpdateMemberInfo(Request request) throws ApiSysException;
+
+    /**
      *<pre>
      *     根据提交上来的
      *</pre>
@@ -136,6 +147,18 @@ public interface PosService {
      * @return
      */
     String ResponseDlb(Request request,ErrorEnum errorEnum);
+
+    /**
+     * <pre>
+     *     判断是否是生鲜 并对做些初始化工作 在保存商品到购物车事做判断并且再次对其做相应值更改
+     * </pre>
+     * @param request
+     * @param posMain
+     * @param commDaoMapper
+     * @return
+     * @throws ApiSysException
+     */
+    FrushGood getIsFrushGood(Request request, PosMain posMain, CommDaoMapper commDaoMapper) throws ApiSysException;
 
 
 }

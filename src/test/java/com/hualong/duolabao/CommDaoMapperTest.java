@@ -1,5 +1,6 @@
 package com.hualong.duolabao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.dao.cluster.CommDaoMapper;
 import com.hualong.duolabao.domin.commSheetNo;
 import com.hualong.duolabao.domin.posConfig;
@@ -57,7 +58,7 @@ public class CommDaoMapperTest {
     @Test
     public void testposConfig(){
         posConfig posConfig=this.commDaoMapper.getposConfig("posstation101.dbo.Pos_Config","条码秤");
-        log.info("我是获取到的结果集 "+ posConfig.toString());
+        log.info("我是获取到的结果集 "+ JSONObject.toJSONString(posConfig));
     }
 
 
@@ -72,6 +73,7 @@ public class CommDaoMapperTest {
         tDlbPosConfiguration dlbPosConfiguration=this.commDaoMapper.gettDlbPosConfiguration("0002");
         log.info("我是获取到的结果集 "+ dlbPosConfiguration.toString());
         log.info("我是获取到的结果集 "+ dlbPosConfiguration.getCartId());
+        log.info("我是获取到的结果集 "+ JSONObject.toJSONString(dlbPosConfiguration));
     }
 
 }

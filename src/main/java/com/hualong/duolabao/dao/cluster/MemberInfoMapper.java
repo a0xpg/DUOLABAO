@@ -12,6 +12,8 @@ import java.util.List;
 public interface MemberInfoMapper {
     int deleteByPrimaryKey(@Param("cartId") String cartId, @Param("storeId") String storeId);
 
+    int updateAddScore(MemberInfo record);
+
     int insert(MemberInfo record);
 
     MemberInfo selectByPrimaryKey(@Param("cartId") String cartId, @Param("storeId") String storeId);

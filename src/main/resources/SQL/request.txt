@@ -1,0 +1,18 @@
+
+
+{
+	"systemId": "jdpay-offlinepay-isvaccess",
+	"cipherJson": "ba3e75cd5ba01788c0a49363edb065bbeae5c991694ff13753b20ed6f8b9ad7deae5c991694ff137a8d9ad452c2a47ed6764aad5a4bf27464d8be19885b634e91994c97dad2b07649a6e5dad7f92edfec5ac05066d33c7ab4e613de8161f47465816c3242eae187641c66acc2bffd50c",
+	"sign": "0b9ea33eed6aef7e7adc639f7f4b6c33",
+	"storeId": "0002",
+	"uuid": "dbee1af68b7241a089fa28c4e6c0cb49",
+	"tenant": "0002",
+	"merchantNo": "XILIAN"
+}
+解析出来的数据 {"cashierNo":"0002","cartId":"0002","cartFlowNo":"0002","sn":"0002","storeId":"0002","barcode":"6928804015386"}
+
+
+2481001001236  东瓜 称重商品 金额1.23元 条形码81001
+248100100123000128  东瓜  称重商品   金额0.12元 重量0.123公斤
+2481002003336  吸瓜 称重商品 金额3.33元 条形码81002
+248100200045000668 吸瓜  称重商品   金额0.66元 重量0.045公斤

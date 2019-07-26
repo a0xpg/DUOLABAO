@@ -7,6 +7,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.config.DlbUrlConfig;
 import com.hualong.duolabao.conntroller.DlbConntroller;
+import com.hualong.duolabao.dao.cluster.CommDaoMapper;
 import com.hualong.duolabao.dao.cluster.DlbDao;
 import com.hualong.duolabao.dao.cluster.MemberInfoMapper;
 import com.hualong.duolabao.dao.cluster.tDLBGoodsInfoMapper;
@@ -20,6 +21,7 @@ import com.hualong.duolabao.result.GlobalEumn;
 import com.hualong.duolabao.result.ResultMsg;
 import com.hualong.duolabao.result.ResultMsgDlb;
 import com.hualong.duolabao.service.PosService;
+import com.hualong.duolabao.tool.String_Tool;
 import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -27,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +56,9 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
 
     @Autowired
     private MemberInfoMapper memberInfoMapper;
+
+    @Autowired
+    private CommDaoMapper commDaoMapper;
 
 
     @Override
@@ -93,7 +100,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                                                     storeGoods.getCGoodsNo(), storeGoods.getCGoodsName(),
                                                     frushGood.getAllMoney(), 0, null,
                                                     frushGood.getPrice(),frushGood.getPrice(),
-                                                    0, frushGood.getWeight(), true,
+                                                    0, frushGood.getWeightwight(), true,
                                                     storeGoods.getCBarcode(), "kg"));
             }else {
                 //检测购物车是否存在改商品
@@ -140,22 +147,34 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         try{
             //得到商品信息
             cStoreGoods storeGoods=cStoreGoodsList.get(0);
+            Long NomalPrice=new Double(storeGoods.getFNormalPrice()).longValue()*100;
             log.info("查询到的商品信息  {}", JSON.toJSON(storeGoods).toString());
             //如果是生鲜 直接保存到购物车
             if(frushGood.isWeight()){
+                //如果是13码  计算出来重量
+                if(request.getBarcode().length()==13){
+                    if(NomalPrice==0){
+                        log.error("查询商品的时间出错了: 查询出来的单价是 0");
+                        throw  new ApiSysException(ErrorEnum.SSCO001001);
+                    }
+                   double wight=(double)frushGood.getAllMoney()/(double)NomalPrice;
+                    wight=new Double(String_Tool.String_IS_Two(wight)) ;
+                    //重新赋值
+                    frushGood.setWeightwight(wight);
+                }
                 CommonServiceImpl.insertBlbGoodsInfo(dlbGoodsInfoMapper,
                         new BLBGoodsInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getCartFlowNo(),
                                 request.getCashierNo(), null, null,
                                 storeGoods.getCGoodsNo(), storeGoods.getCGoodsName(),
                                 frushGood.getAllMoney(), 0, null,
-                                frushGood.getPrice(),frushGood.getPrice(),
-                                0, frushGood.getWeight(), true,
+                                NomalPrice,NomalPrice,
+                                0, frushGood.getWeightwight(), true,
                                 storeGoods.getCBarcode(), "kg"));
             }else {
                 //检测购物车是否存在改商品
                 BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper.getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
 
-                Long NomalPrice=new Double(storeGoods.getFNormalPrice()).longValue()*100;
+
 
                 //如果没有改商品保存的购物车   如果存在就更新该购物车
                 if(blbGoodsInfo!=null){
@@ -247,6 +266,8 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                              List<cStoreGoods> cStoreGoodsList,
                              FrushGood frushGood) throws ApiSysException {
         try{
+            //删除会员
+            memberInfoMapper.deleteByPrimaryKey(request.getCartId(),request.getStoreId());
             int info=CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,request.getCartId(),request.getStoreId(),null,null);
             if(info==0){
                 throw  new ApiSysException(ErrorEnum.SSCO010008);
@@ -256,7 +277,30 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             log.error("删除整个购物车的时间出错了:  {}",e.getMessage());
             throw  new ApiSysException(ErrorEnum.SSCO001002);
         }
-
+    }
+    @Override
+    public void InsertOrUpdateMemberInfo(Request request) throws ApiSysException {
+        try{
+            VipOffine vipOffine=memberInfoMapper.Get_VipOffine(request.getUserId());
+            if(vipOffine==null){
+                log.info("该会员卡号不存在 {}",request.getUserId());
+                throw  new ApiSysException(ErrorEnum.SSCO008004);
+            }
+            MemberInfo memberInfo2=new MemberInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getUserId(),
+                    "ISV", null, vipOffine.getCVipNo(),
+                    null, vipOffine.getFCurValue(), vipOffine.getBDiscount(), vipOffine.getFPFrate());
+            MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
+            if(memberInfo!=null){
+                memberInfoMapper.deleteByPrimaryKey(request.getCartId(),request.getStoreId());
+                memberInfoMapper.insert(memberInfo2);
+            }else{
+                memberInfoMapper.insert(memberInfo2);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("添加会员的时间出错了:  {}",e.getMessage());
+            throw  new ApiSysException(ErrorEnum.SSCO001002);
+        }
     }
 
     @Override
@@ -266,18 +310,24 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             long totalFee=0;
             long discountFee=0;
             long actualFee=0;
+            String merchantOrderId=null;
             if(blbGoodsInfo!=null && blbGoodsInfo.size()>0){
                 for(BLBGoodsInfo t:blbGoodsInfo){
                     totalFee=totalFee+t.getAmount();
                     discountFee=discountFee+t.getDiscountAmount();
+                    merchantOrderId=t.getMerchantOrderId()==null ? merchantOrderId:t.getMerchantOrderId();
                 }
                 actualFee=totalFee-discountFee;
             }
-            //TODO 会员这里先预留一个方法
-            MemberInfo memberInfo=new MemberInfo();
-            CartInfo cartInfo=new CartInfo(request.getStoreId(), request.getSn(), request.getCartId(), null,
+            MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
+            if(memberInfo!=null){
+                log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
+                memberInfo.setBDiscount(null);
+                memberInfo.setFPFrate(null);
+                memberInfo.setAddScore(null);
+            }
+            CartInfo cartInfo=new CartInfo(request.getStoreId(), request.getSn(), request.getCartId(), merchantOrderId,
                     totalFee, discountFee, actualFee, blbGoodsInfo, memberInfo);
-
             //TODO 计算积分  可以在这里进行  cartInfo.setOrderScore(20.68);
             ResultMsg resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
             String s1=JSON.toJSONString(resultMsg, SerializerFeature.WriteNullListAsEmpty,
@@ -304,15 +354,13 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("最终返回值封装这里出错了 {}",e.getMessage());
-            //如果这里出错了  基本就KO  不用往下写了
+            //TODO 如果这里都出错了  基本就KO  不用往下写了
             return JSONObject.toJSONString(new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
         }
-
     }
 
     @Override
     public  String CommUrlFun(String urlType,JSONObject jsonParam){
-
         String response="";
         log.info(urlType+" "+" 获取的参数: {}",jsonParam.toJSONString());
         Request request=null;
@@ -334,14 +382,21 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
 
         switch (urlType){
             case selectMemberInfo://会员查询
-
+                try{
+                    this.InsertOrUpdateMemberInfo(request);
+                    response=this.ResponseDlb(request,ErrorEnum.SUCCESS);
+                }catch (ApiSysException e){
+                    e.printStackTrace();
+                    log.error("查询会员出错了 ",e.getExceptionEnum().toString());
+                    log.error("查询会员出错了 ",e.getMessage());
+                    return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
+                }
                 break;
             case selectGoods:
                 try{
-                    //TODO 判断是否会生鲜商品的  默认不是生鲜商品 给这个SaveGoodsToCartInfo方法用的
-                    FrushGood frushGood=new FrushGood(false);
+                    FrushGood frushGood= getIsFrushGood(request, this.posMain, this.commDaoMapper);
                     List<String> list=new ArrayList<>();
-                    list.add(request.getBarcode());
+                    list.add(frushGood.getBarcode());
                     List<cStoreGoods> storeGoodsList=this.GetcStoreGoodsS(request.getStoreId(),list);
                     SignFacotry.GoodListIsEmpty(storeGoodsList);
                     log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
@@ -420,6 +475,9 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             case payOrder:
 
                 break;
+            case orderSysn:
+                //订单同步走这里
+                break;
             default:
 
                 break;
@@ -427,10 +485,63 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         return response;
     }
 
+    @Override
+    public FrushGood getIsFrushGood(Request request,PosMain posMain,CommDaoMapper commDaoMapper) throws ApiSysException {
+        FrushGood frushGood=new FrushGood(false);
+        frushGood.setBarcode(request.getBarcode());
+        tDlbPosConfiguration tDlbPosConfiguration = CommonServiceImpl.gettDlbPosConfiguration(request, commDaoMapper);
+        posConfig posConfig=this.commDaoMapper.getposConfig(tDlbPosConfiguration.getPosName()+".dbo.Pos_Config","条码秤");
+        if(posConfig==null){
+            log.info("读取配置信息失败,请先配置");
+            log.error("读取配置信息失败,请先配置");
+            throw  new ApiSysException(ErrorEnum.SSCO001002);
+        }else {
+            log.info("我是获取到的posConfig结果集 {}", JSONObject.toJSONString(posConfig));
+        }
 
+        if(!request.getBarcode().startsWith(posConfig.getCCharID()) || request.getBarcode().length()<13){
+            //不是生鲜直接返回
+            return frushGood;
+        }else {
+            if(request.getBarcode().startsWith(posConfig.getCCharID()) && request.getBarcode().length()==13){
+                String barcode=request.getBarcode().substring(posConfig.getIGoodsNoStart()-1,posConfig.getIGoodsNoEnd());
+                String money=request.getBarcode().substring(posConfig.getIMoneyStart()-1,posConfig.getIMoneyEnd());
+                //单位  分
+                double money2 = (Double.valueOf(money) * 100) / posConfig.getIRatio();
+                //重新赋值
+                frushGood.setWeight(true);
+                frushGood.setAllMoney((new Double(money2)).longValue());
+                frushGood.setBarcode(barcode);
+            }else
+            if(request.getBarcode().startsWith(posConfig.getCCharID()) && request.getBarcode().length()==18){
+                String barcode=request.getBarcode().substring(posConfig.getIGoodsNoStart()-1,posConfig.getIGoodsNoEnd());
+                String money=request.getBarcode().substring(posConfig.getIMoneyStart18()-1,posConfig.getIMoneyEnd18());
+                String wight=request.getBarcode().substring(posConfig.getIWeightStart18()-1,posConfig.getIWeightEnd18());
+                //重量 kg
+
+                double wight2 = new Double(wight) / posConfig.getIRatio();
+                //单位  分
+                double money2 = ((new Double(money) ) * 100) / posConfig.getIRatio();
+                //重新赋值
+                frushGood.setBarcode(barcode);
+                frushGood.setWeight(true);
+                frushGood.setWeightwight(wight2);
+                frushGood.setAllMoney((new Double(money2)).longValue());
+
+            }else {
+                frushGood.setWeight(false);
+                return frushGood;
+            }
+        }
+        return frushGood;
+    }
     @Override
     public void commitCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException{
-            //TODO 这个是对整个购物车的操作
+        //TODO 这个是对整个购物车的操作
+        tDlbPosConfiguration tDlbPosConfiguration = CommonServiceImpl.gettDlbPosConfiguration(request, commDaoMapper);
+        String sheetNo=CommonServiceImpl.getSheetNo(request, tDlbPosConfiguration,commDaoMapper);
+        CommonServiceImpl.updateCartInfoMerchantOrderId(request, sheetNo, dlbGoodsInfoMapper);
+
     }
 
 

@@ -1,2 +1,55 @@
 INSERT INTO tDlbPosConfiguration (cartld,storeId,sn,posName,posid) VALUES ('000281','0002','000201','posstation101','81')
 
+
+
+SELECT * FROM tDlbPosConfiguration
+
+
+SELECT * FROM tDlbVip
+
+
+ALTER TABLE tDlbVip add addScore Money default 0
+
+
+SELECT TOP 10 * FROM posstation101.dbo.pos_SaleSheetDetailTemp
+
+SELECT * FROM tDlbGoodsInfo
+
+
+INSERT INTO posstation101.dbo.pos_SaleSheetDetailTemp  (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
+             fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
+             cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
+              SELECT bWeight,cStoreNo,machineIp,cSheetNo,iSeed,cGoodsNo,cGoodsName,cBarcode,appId,appId,bAuditing,
+				  fNormalPrice,fNormalPrice,fQuantity,discountMoney AS fLastSettle,discountMoney AS fLastSettle0,convert(varchar(10),getdate(),23),
+				  cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),cVipNo,
+				  fNormalPrice,bSettle=0,bVipPrice=0,100  FROM tPublicSaleDetail_JingDong_z WHERE cSheetNo=''
+
+
+INSERT INTO posstation101.dbo.pos_SaleSheetDetailTemp
+           (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
+             fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
+             cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
+
+              SELECT bWeight,'cStoreNo','cPosID',cSheetNo,iSeed,cGoodsNo,cGoodsName,cBarcode,'dlb','dlb',bAuditing=0,
+				  fNormalPrice,fNormalPrice,fQuantity,discountMoney AS fLastSettle,discountMoney AS fLastSettle0,
+				  convert(varchar(10),getdate(),23),
+				  cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'cVipNo',
+				  fNormalPrice,bSettle=0,bVipPrice=0,100  FROM tPublicSaleDetail_JingDong_z WHERE cSheetNo=''
+
+
+				  SELECT * FROM tPublicSaleDetail_JingDong_z
+
+			SELECT * FROM tDlbGoodsInfo
+
+INSERT INTO posstation101.dbo.pos_SaleSheetDetailTemp
+           (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
+             fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
+             cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
+
+              SELECT isWeight,storeId,'cPosID',merchantOrderId,lineId,id,name,barcode,sn,sn,bAuditing=0,
+				  basePrice,basePrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
+				  (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
+				  convert(varchar(10),getdate(),23),
+				  cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'cVipNo',
+				  basePrice,bSettle=0,bVipPrice=0,100  FROM tDlbGoodsInfo WHERE cartId='0002' AND storeId='0002'
+

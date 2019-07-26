@@ -117,6 +117,20 @@ public class DLBGoodsInfoMapperTest {
     }
 
     @Test
+    public void updatetDLBGoodsInfosOrderId(){
+
+        BLBGoodsInfo blbGoodsInfo=new BLBGoodsInfo("0002", "0002", "0002", "0002");
+
+        Integer integer=dlbGoodsInfoMapper.updateBLBGoodsInfoOderId(blbGoodsInfo);
+        if(integer!=null){
+            log.info("我是影响行数  {}", integer);
+        }else{
+            log.info("结果集为空");
+        }
+
+    }
+
+    @Test
     public void deleteDLBGoodsInfos(){
 
         Integer integer=dlbGoodsInfoMapper.deleteBLBGoodsInfo("002","002","00203","3");

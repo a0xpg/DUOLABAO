@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.config.DlbUrlConfig;
+import com.hualong.duolabao.dao.cluster.CommDaoMapper;
 import com.hualong.duolabao.dao.cluster.DlbDao;
 import com.hualong.duolabao.dao.cluster.tDLBGoodsInfoMapper;
 import com.hualong.duolabao.dao.pos.PosMain;
@@ -46,6 +47,8 @@ public class CartInfoMapperTest {
             "\"sign\":\"e67ca965f200495b0c545d7a679ee4bd\",\"systemId\":\"jdpay-offlinepay-isvaccess\"," +
             "\"uuid\":\"79e6f115-fbe5-4f28-8c0a-6a0facbeee41\",\"tenant\":\"1519833291\",\"storeId\":\"1001\"}";
 
+
+
     @Autowired
     private DlbDao dlbDao;
 
@@ -60,6 +63,9 @@ public class CartInfoMapperTest {
 
     @Autowired
     private PosService posService;
+
+    @Autowired
+    private CommDaoMapper commDaoMapper;
     /**
      * <pre>
      *     查询商品并且插入到购物车  然后从购物车再读取出来进行签名
@@ -174,6 +180,40 @@ public class CartInfoMapperTest {
         }
     }
 
+    /**
+     * 生鲜正常商品都可以走这里
+     *
+     */
+    @Test
+    public  void TestCommUrlFunTrue(){
+        try{
+            data2=getRequest(dlbConnfig);
+            JSONObject json=JSON.parseObject(data2);
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),json,dlbConnfig.getMerchantno());
+            JSONObject jsonObject=SignFacotry.decryptCipherJson(dlbConnfig.getDeskey(),json);
+            log.info("解析出来的数据 {}",jsonObject);
+            Request request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),json, ErrorEnum.SSCO010015);
+            FrushGood frushGood= posService.getIsFrushGood(request, this.posMain, this.commDaoMapper);
+            List<String> list=new ArrayList<>();
+            list.add(frushGood.getBarcode());
+            List<cStoreGoods> storeGoodsList=posService.GetcStoreGoodsS(request.getStoreId(),list);
+            SignFacotry.GoodListIsEmpty(storeGoodsList);
+            log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
+            SignFacotry.GoodListIsEmpty(storeGoodsList);
+            log.info("获取出来的商品是 {}",JSONObject.toJSON(storeGoodsList).toString());
+            posService.SaveGoodsToCartInfo(
+                    request,
+                    storeGoodsList,frushGood);
+        }catch (ApiSysException e){
+            e.printStackTrace();
+            log.error("出错了 ",e.getExceptionEnum().toString());
+            log.error("出错了 ",e.getMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public  void TestCommUrlFunSelectGoods(){
         try{
@@ -189,6 +229,24 @@ public class CartInfoMapperTest {
 
         }
     }
+
+    @Test
+    public  void TestGetFrushGood(){
+        try{
+            data2=getRequest(dlbConnfig);
+            log.info("得到的 request: {}",data2);
+            JSONObject json=JSON.parseObject(data2);
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),json,dlbConnfig.getMerchantno());
+            Request request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),json, ErrorEnum.SSCO010015);
+            log.info("解析出来的数据 {}",JSONObject.toJSONString(request));
+            FrushGood frushGood=this.posService.getIsFrushGood(request,null,this.commDaoMapper);
+            log.info("解析出来的数据 {}",JSONObject.toJSONString(frushGood));
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("出错了 ",e.getMessage());
+        }
+    }
+
 
 
     @Test
@@ -214,7 +272,7 @@ public class CartInfoMapperTest {
         map.put("storeId","0002");
         map.put("cashierNo","0002");
         map.put("sn","0002");
-        map.put("barcode","6956553400443");
+        map.put("barcode","2481002003336");
 
         String cipherJson= ThreeDESUtilDLB.encrypt(JSONObject.toJSONString(map),dlbConnfig.getDeskey(),"utf-8");
         String uuid= SignFacotry.getUUID();

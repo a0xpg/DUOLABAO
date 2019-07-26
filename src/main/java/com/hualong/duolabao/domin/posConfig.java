@@ -27,7 +27,7 @@ public class posConfig {
 
     private Integer iMoneyEnd;
 
-    private BigDecimal iRatio;
+    private Double iRatio;
 
     private Boolean bMlt;
 

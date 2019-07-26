@@ -38,7 +38,19 @@ public class BLBGoodsInfo  extends DlbCommon {
     private String barcode;
     private String unit;
 
+    /**
+     *商户订单号
+     */
+    @JSONField(serialize=false)
+    private String merchantOrderId;
+
     public BLBGoodsInfo() {
+    }
+
+
+    public BLBGoodsInfo(String storeId, String sn, String cartId, String merchantOrderId) {
+        super(storeId, sn, cartId);
+        this.merchantOrderId = merchantOrderId;
     }
 
     public BLBGoodsInfo(String cartFlowNo, String cashierNo, String lineId, Long lineIdDelete,

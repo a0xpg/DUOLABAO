@@ -21,23 +21,19 @@ public class DlbConntroller {
     private static final Logger log= LoggerFactory.getLogger(DlbConntroller.class);
 
     @Autowired
-    private DlbService dlbService;
-
-    @Autowired
     private PosService posService;
 
     /**
      * <pre>
-     *
+     *      请求统一处理配置
      * </pre>
      * @param urlType    路径
      * @param jsonParam  参数json数据
      * @return
      */
     @RequestMapping(value = "/api/{urlType}", method = {RequestMethod.POST},produces = "application/json;charset=UTF-8") //, produces = "application/json;charset=UTF-8"
-    public String getGoods(@PathVariable String urlType,
+    public String getUrlType(@PathVariable String urlType,
                            @RequestBody JSONObject jsonParam) {
         return this.posService.CommUrlFun(urlType,jsonParam);
-
     }
 }

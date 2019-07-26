@@ -20,6 +20,7 @@
         <result column="isWeight" jdbcType="BIT" property="isWeight" />
         <result column="barcode" jdbcType="VARCHAR" property="barcode" />
         <result column="unit" jdbcType="VARCHAR" property="unit" />
+        <result column="merchantOrderId" jdbcType="VARCHAR" property="merchantOrderId" />
     </resultMap>
 
     <delete id="deleteBLBGoodsInfo" parameterType="java.lang.String">
@@ -75,7 +76,7 @@
         and storeId = #{storeId,jdbcType=VARCHAR}
     </update>
 
-    <!--查询 或者 更改用的 -->
+
     <update id="updateByBLBGoodsInfo" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
         update tDlbGoodsInfo
         set
@@ -87,6 +88,15 @@
         where cartId = #{cartId,jdbcType=VARCHAR}
         and storeId = #{storeId,jdbcType=VARCHAR}
         and barcode = #{barcode,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="updateBLBGoodsInfoOderId" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
+        update tDlbGoodsInfo
+        set
+        merchantOrderId = #{merchantOrderId,jdbcType=VARCHAR}
+        where cartId = #{cartId,jdbcType=VARCHAR}
+        and storeId = #{storeId,jdbcType=VARCHAR}
     </update>
 
     <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
@@ -113,7 +123,7 @@
     -->
     <select id="selectAll" resultMap="BaseResultMap">
         select lineId, id, name, amount, discountAmount,
-        discountName, basePrice, price, qty, weight, isWeight, barcode, unit
+        discountName, basePrice, price, qty, weight, isWeight, barcode, unit,merchantOrderId
         from tDlbGoodsInfo
         where cartId = #{cartId,jdbcType=VARCHAR}
         and storeId = #{storeId,jdbcType=VARCHAR}
