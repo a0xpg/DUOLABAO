@@ -1,13 +1,12 @@
 package com.hualong.duolabao.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hualong.duolabao.dao.cluster.CommDaoMapper;
 import com.hualong.duolabao.dao.cluster.DlbDao;
+import com.hualong.duolabao.dao.cluster.MemberInfoMapper;
 import com.hualong.duolabao.dao.cluster.tDLBGoodsInfoMapper;
-import com.hualong.duolabao.domin.BLBGoodsInfo;
-import com.hualong.duolabao.domin.Request;
-import com.hualong.duolabao.domin.commSheetNo;
-import com.hualong.duolabao.domin.tDlbPosConfiguration;
+import com.hualong.duolabao.domin.*;
 import com.hualong.duolabao.exception.ApiSysException;
 import com.hualong.duolabao.exception.ErrorEnum;
 import org.apache.ibatis.annotations.Param;
@@ -158,6 +157,58 @@ public class CommonServiceImpl {
             log.info("我是提交订单 但是此时车是空的  {}", integer);
             throw  new ApiSysException(ErrorEnum.SSCO010008);
         }
+    }
+
+    /**
+     *
+     * @param request
+     * @param tDlbPosConfiguration
+     * @param sheetNo
+     * @param vipNo
+     * @param bDiscount
+     * @param fPFrate
+     * @param commDaoMapper
+     * @throws ApiSysException
+     */
+    public static void SubmitShoppingCartCalculation(Request request, tDlbPosConfiguration tDlbPosConfiguration, String sheetNo, String vipNo, String bDiscount, String fPFrate,CommDaoMapper commDaoMapper) throws ApiSysException {
+        try{
+            //TODO 把数据插入到临时表计算整单优惠信息
+            commDaoMapper.p_Dataconversion_z(request.getCartId(),request.getStoreId(),
+                    vipNo,tDlbPosConfiguration.getPosid(),tDlbPosConfiguration.getPosName());
+            //TODO 计算并且赋值
+            List<preferentialGoods> list =commDaoMapper.get_preferentialGoods(
+                    request.getStoreId(),tDlbPosConfiguration.getPosid(),sheetNo,vipNo,fPFrate,bDiscount,
+                    (tDlbPosConfiguration.getPosName()+".dbo.p_ProcessPosSheetDLB").trim());
+            if(list!=null){
+                log.info("得到的优惠信息 p_ProcessPosSheetDLB ：",
+                        JSONObject.toJSONString(list, SerializerFeature.WriteMapNullValue,SerializerFeature.PrettyFormat));
+            }else {
+                log.error("提交购物车失败了  p_ProcessPosSheetDLB ：");
+                throw  new ApiSysException(ErrorEnum.SSCO010008);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("提交购物车失败了 异常 p_ProcessPosSheetDLB ：");
+            throw  new ApiSysException(ErrorEnum.SSCO001001);
+        }
+    }
+
+    public static void CalVipAddScore(Request request, tDlbPosConfiguration tDlbPosConfiguration, String sheetNo, String vipNo, CommDaoMapper commDaoMapper, MemberInfoMapper memberInfoMapper) throws ApiSysException {
+        try{
+            if(!vipNo.equals("")){
+                VipAddScore vipAddScore=commDaoMapper.getVipScoreAdd(sheetNo,
+                        "100",tDlbPosConfiguration.getPosName()+".dbo.p_CountVipScore_Online");
+                if(!vipAddScore.getVipAddScore().equals("0")){
+                    MemberInfo memberInfo1=new MemberInfo(request.getStoreId(),request.getSn(),request.getCartId(),new Double(vipAddScore.getVipAddScore()));
+                    memberInfoMapper.updateAddScore(memberInfo1);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("计算会员积分的时间出错了");
+            throw new ApiSysException(ErrorEnum.SSCO001001);
+        }
+
     }
 
 

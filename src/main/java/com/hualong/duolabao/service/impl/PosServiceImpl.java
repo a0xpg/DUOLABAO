@@ -541,9 +541,16 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         tDlbPosConfiguration tDlbPosConfiguration = CommonServiceImpl.gettDlbPosConfiguration(request, commDaoMapper);
         String sheetNo=CommonServiceImpl.getSheetNo(request, tDlbPosConfiguration,commDaoMapper);
         CommonServiceImpl.updateCartInfoMerchantOrderId(request, sheetNo, dlbGoodsInfoMapper);
-
+        //TODO 得到会员信息
+        MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
+        String vipNo=memberInfo.getCardNum()==null ? "":memberInfo.getCardNum();
+        String bDiscount=memberInfo.getBDiscount()==null ? "0":memberInfo.getBDiscount();
+        String fPFrate=memberInfo.getFPFrate()==null ? "100":memberInfo.getFPFrate();
+        //TODO 计算获取购物车的信息
+        CommonServiceImpl.SubmitShoppingCartCalculation(request, tDlbPosConfiguration, sheetNo, vipNo, bDiscount, fPFrate,commDaoMapper);
+        //TODO  计算应该增加的积分并且更改积分值
+        CommonServiceImpl.CalVipAddScore(request, tDlbPosConfiguration, sheetNo, vipNo, commDaoMapper, memberInfoMapper);
     }
-
 
 
 }

@@ -58,6 +58,60 @@
     	]]>
     </update>
 
+    <!--把数据插入到临时表  计算整单优惠信息的 （前一步）-->
+    <update id="p_Dataconversion_z"  >
+        <![CDATA[
+        		{call p_saveSheetNo_Z(
+        					#{cartId,mode=IN,jdbcType=VARCHAR},
+        					#{storeId,mode=IN,jdbcType=VARCHAR},
+        					#{cVipNo,mode=IN,jdbcType=VARCHAR},
+        					#{cPosID,mode=IN,jdbcType=INTEGER},
+        					#{tableName,mode=IN,jdbcType=INTEGER}
+        					)
+        		}
+    	]]>
+    </update>
+
+    <!--得到整单积分的-->
+    <select id="getVipScoreAdd"  resultType="com.hualong.duolabao.domin.VipAddScore" parameterType="java.lang.String">
+        <![CDATA[
+						{call p_getVipScoreAdd(
+									#{cSheetNo,mode=IN,jdbcType=VARCHAR},
+									#{fVipScoreRatio,mode=IN,jdbcType=VARCHAR},
+									#{callName,mode=IN,jdbcType=VARCHAR}
+									)
+						}
+				]]>
+    </select>
+
+    <!--获取整单优惠信息的 这里只做打印功能 -->
+    <select id="get_preferentialGoods" resultType="com.hualong.duolabao.domin.preferentialGoods" parameterType="java.lang.String">
+        <![CDATA[
+						{call p_ProcessPosSheet_Z(
+									#{cStoreNo,mode=IN,jdbcType=VARCHAR},
+									#{machineId,mode=IN,jdbcType=VARCHAR},
+									#{cSheetNo,mode=IN,jdbcType=VARCHAR},
+									#{vipNo,mode=IN,jdbcType=VARCHAR},
+									#{fVipScoreRatio,mode=IN,jdbcType=VARCHAR},
+									#{bDiscount,mode=IN,jdbcType=VARCHAR},
+									#{callName,mode=IN,jdbcType=VARCHAR}
+									)
+						}
+				]]>
+    </select>
+
+    <update id="update_Vip"  >
+        <![CDATA[
+        		{call p_updateVipOther_z(
+        					#{appId,mode=IN,jdbcType=VARCHAR},
+        					#{machineId,mode=IN,jdbcType=VARCHAR},
+        					#{vipNo,mode=IN,jdbcType=VARCHAR},
+        					#{addScore,mode=IN,jdbcType=INTEGER}
+        					)
+        		}
+    	]]>
+    </update>
+
     <select id="getCommSheetNo"  resultType="com.hualong.duolabao.domin.commSheetNo" parameterType="java.lang.String">
         <![CDATA[
         		{call p_getPos_SerialNoSheetNo_Z(

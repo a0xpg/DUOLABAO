@@ -8,7 +8,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableTransactionManagement  //开启事务处理
+
 @SpringBootApplication
 @EnableScheduling
 @ServletComponentScan

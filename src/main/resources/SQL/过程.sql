@@ -79,15 +79,15 @@ GO
 
 /*
 	 才把数据插入到领导需要的表中
-    exec p_calAmountOrder_z
+    exec p_Dataconversion_z '','','','','posstation101.dbo.pos_SaleSheetDetailTemp'
 */
-IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_calAmountOrder_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_Dataconversion_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 BEGIN
-	DROP PROCEDURE [dbo].[p_calAmountOrder_z]
+	DROP PROCEDURE [dbo].[p_Dataconversion_z]
 
 END
 GO
-CREATE PROC [dbo].[p_calAmountOrder_z]
+CREATE PROC [dbo].[p_Dataconversion_z]
  @cartId varchar(80),
  @storeId varchar(80),
  @cVipNo varchar(80),
@@ -95,30 +95,19 @@ CREATE PROC [dbo].[p_calAmountOrder_z]
  @tableName VARCHAR(80)
  AS
 BEGIN
-  SET @iFlag =1
 
   DECLARE @SQL VARCHAR(8000)
-  SET @SQL ='INSERT INTO '+@tableName+'  (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
-                         fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
-                         cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate ) '
-                         +' SELECT bWeight,cStoreNo,machineIp,cSheetNo,iSeed,cGoodsNo,cGoodsName,cBarcode,appId,appId,bAuditing,
-            				  fNormalPrice,fNormalPrice,fQuantity,discountMoney AS fLastSettle,discountMoney AS fLastSettle0,convert(varchar(10),getdate(),23),
-            				  cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),cVipNo,
-            				  fNormalPrice,bSettle=0,bVipPrice=0,100  FROM tPublicSaleDetail_JingDong_z WHERE cSheetNo='+''''+@cSheetNo+''''
+  SET @SQL =  ' INSERT INTO '+@tableName+'
+      (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
+       fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
+       cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
 
-
-       SET @SQL =  'INSERT INTO '+@tableName+'
-            (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
-             fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
-             cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
-
-              SELECT isWeight,storeId,''cPosID'',merchantOrderId,lineId,id,name,barcode,sn,sn,bAuditing=0,
-				  basePrice,basePrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
-				  (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
-				  convert(varchar(10),getdate(),23),
-				  cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),''cVipNo'',
-				  basePrice,bSettle=0,bVipPrice=0,100  FROM tDlbGoodsInfo WHERE cartId='''''+@cSheetNo+''''' AND storeId=''0002'' 	'
-
+        SELECT isWeight,storeId,'''+@cPosID+''',merchantOrderId,lineId,id,name,barcode,sn,sn,bAuditing=0,
+    basePrice,basePrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
+    (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
+    convert(varchar(10),getdate(),23),
+    cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'''+@cVipNo+''',
+    basePrice,bSettle=0,bVipPrice=0,100  FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
 
   PRINT(@SQL)
   EXEC(@SQL)
