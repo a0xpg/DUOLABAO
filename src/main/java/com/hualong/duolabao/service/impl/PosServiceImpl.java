@@ -518,7 +518,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 String money=request.getBarcode().substring(posConfig.getIMoneyStart18()-1,posConfig.getIMoneyEnd18());
                 String wight=request.getBarcode().substring(posConfig.getIWeightStart18()-1,posConfig.getIWeightEnd18());
                 //重量 kg
-
                 double wight2 = new Double(wight) / posConfig.getIRatio();
                 //单位  分
                 double money2 = ((new Double(money) ) * 100) / posConfig.getIRatio();

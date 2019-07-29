@@ -144,7 +144,9 @@ public class CommonServiceImpl {
     }
 
     /**
-     *
+     *<pre>
+     *     此处是修改购物车
+     *</pre>
      * @param request
      * @param sheetNo
      * @param dlbGoodsInfoMapper
@@ -160,7 +162,10 @@ public class CommonServiceImpl {
     }
 
     /**
-     *
+     *<pre>
+     *     这里很关键  这个过程不是用来查询的  查询只是打印出日志而已
+     *     真正的目的在于更改购物车商品表 tDlbGoodsInfo
+     *</pre>
      * @param request
      * @param tDlbPosConfiguration
      * @param sheetNo
@@ -193,6 +198,18 @@ public class CommonServiceImpl {
         }
     }
 
+    /**
+     * <pre>
+     *     如果有会员卡  这里是增加积分的
+     * </pre>
+     * @param request
+     * @param tDlbPosConfiguration
+     * @param sheetNo
+     * @param vipNo
+     * @param commDaoMapper
+     * @param memberInfoMapper
+     * @throws ApiSysException
+     */
     public static void CalVipAddScore(Request request, tDlbPosConfiguration tDlbPosConfiguration, String sheetNo, String vipNo, CommDaoMapper commDaoMapper, MemberInfoMapper memberInfoMapper) throws ApiSysException {
         try{
             if(!vipNo.equals("")){

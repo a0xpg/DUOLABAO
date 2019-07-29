@@ -5,7 +5,7 @@ BEGIN
 END
 GO
     CREATE procedure [dbo].[p_createBLBGoodsInfo]
-    @extend varchar(32) --没用
+    @extend varchar(32) --没用 （后期可以随意扩展 json xml 均可）
     AS
     BEGIN
           --临时商品表
@@ -34,7 +34,7 @@ GO
                   weight MONEY DEFAULT 0,
                   isWeight bit DEFAULT 0,
                   barcode VARCHAR(30),
-                  unit VARCHAR(20),
+                  unit VARCHAR(20)
 
                   primary key(lineId)
               )
@@ -79,7 +79,7 @@ GO
 
 /*
 	 才把数据插入到领导需要的表中
-    exec p_Dataconversion_z '','','','','posstation101.dbo.pos_SaleSheetDetailTemp'
+    exec p_Dataconversion_z '0002','0002','123','81','posstation101.dbo.pos_SaleSheetDetailTemp'
 */
 IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_Dataconversion_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 BEGIN
@@ -103,11 +103,10 @@ BEGIN
        cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
 
         SELECT isWeight,storeId,'''+@cPosID+''',merchantOrderId,lineId,id,name,barcode,sn,sn,bAuditing=0,
-    basePrice,basePrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
+    (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice,(CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fVipPrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
     (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
-    convert(varchar(10),getdate(),23),
-    cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'''+@cVipNo+''',
-    basePrice,bSettle=0,bVipPrice=0,100  FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
+    convert(varchar(10),getdate(),23), cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'''+@cVipNo+''',
+   (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice_exe,bSettle=0,bVipPrice=0,100  FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
 
   PRINT(@SQL)
   EXEC(@SQL)

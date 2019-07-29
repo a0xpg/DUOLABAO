@@ -7,6 +7,10 @@ import lombok.experimental.Accessors;
 
 /**
  * Created by Administrator on 2019-07-22.
+ * <pre>
+ *     解密上传的参数
+ *     统一接收类
+ * </pre>
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor
@@ -25,10 +29,21 @@ public class Request {
     private Integer quantity;
 
     private String merchantNo;
-
     private String systemId;
-
     private String tenant;
+
+
+    /**
+     * 一下试订单回传推过来的信息
+     */
+    private String merchantOrderId;
+    private String payTypeId;
+    private String payNo;
+    private Long payAmount;
+    private String items;
+    private String storId;
+    private String cardNum;
+
 
 
     public Request(String storeId, String cashierNo, String sn, String cartId, String cartFlowNo) {

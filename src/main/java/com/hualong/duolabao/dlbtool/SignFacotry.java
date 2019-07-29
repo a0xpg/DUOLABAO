@@ -154,6 +154,15 @@ public class SignFacotry {
             request.setBarcode(jsonObject1.getString("barcode"));
             request.setLineId(jsonObject1.getString("lineId"));
             request.setQuantity(jsonObject1.getInteger("quantity"));
+            //订单回传的接收
+            request.setMerchantOrderId(jsonObject1.getString("merchantOrderId"));
+            request.setPayNo(jsonObject1.getString("payTypeId"));
+            request.setPayNo(jsonObject1.getString("payNo"));
+            request.setPayAmount(jsonObject1.getLong("payAmount"));
+            request.setItems(jsonObject1.getString("items"));
+            request.setStorId(jsonObject1.getString("storId"));
+            request.setCardNum(jsonObject1.getString("cardNum"));
+
             if(request!=null){
                 return request;
             }else {
