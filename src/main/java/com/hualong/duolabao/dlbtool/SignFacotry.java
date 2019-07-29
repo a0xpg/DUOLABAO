@@ -160,7 +160,6 @@ public class SignFacotry {
             request.setPayNo(jsonObject1.getString("payNo"));
             request.setPayAmount(jsonObject1.getLong("payAmount"));
             request.setItems(jsonObject1.getString("items"));
-            request.setStorId(jsonObject1.getString("storId"));
             request.setCardNum(jsonObject1.getString("cardNum"));
             if(request!=null){
                 return request;

@@ -1,14 +1,106 @@
-USE [posstation101]
+/*
+分库的过程  订单回传  直接提取数据的
+返回说明
+1 成功
+2 异常 并携带异常错误码输出
+3 此单子在该门店不存在
+SELECT TOP 1 sheetno  FROM dbo.pos_jiesuan WHERE sheetno='0002'
+exec p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z '0002','0002'
+*/
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z
+
+END
 GO
-/****** Object:  StoredProcedure [dbo].[p_ProcessPosSheetDLB]    Script Date: 07/29/2019 09:54:43 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+CREATE PROC [dbo].[p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z]
+ @storeId varchar(16),
+ @sheetno varchar(80)
+ AS
+BEGIN
+
+  IF exists(SELECT TOP 1 sheetno  FROM dbo.pos_jiesuan WHERE sheetno=@sheetno)
+  BEGIN
+		SELECT 1 AS resultCode;
+  END
+  ELSE
+  BEGIN
+
+			BEGIN TRY
+				BEGIN TRAN
+							--插入结束表
+							INSERT INTO  dbo.pos_jiesuan
+							(   sheetno, jstype, mianzhi,zhekou,
+									zhaoling, shishou,jstime, zdriqi,
+									jiaozhang,shouyinyuanno,shouyinyuanmc, netjiecun,
+									orientmoney,leftmoney, storevalue, detail,
+									bPost, cWHno,cBanci_ID, iLineNo_Banci,
+									cBanci)
+							SELECT cSaleSheetno_time AS sheetno,'哆啦宝支付' AS jstype,
+								SUM(fLastSettle) AS mianzhi,100 AS zhekou,0 AS zhaoling,SUM(fLastSettle) AS shishou,
+										CONVERT(VARCHAR(100),GETDATE(),20) AS jstime,CONVERT(VARCHAR(100),GETDATE(),23) AS zdriqi,
+										0 AS jiaozhang,cOperatorno AS shouyinyuanno,cOperatorName AS shouyinyuanmc,
+										COUNT(cGoodsName) AS netjiecun,0,0,0,'哆啦宝支付',0,cStoreNo AS cWHno,(CONVERT(VARCHAR(100),GETDATE(),23)+'_1' ) AS cBanci_ID,1,'早班'
+							FROM dbo.pos_SaleSheetDetailTemp
+							WHERE cStoreNo=@storeId AND cSaleSheetno_time=@sheetno
+							GROUP BY cSaleSheetno_time,cOperatorno,cOperatorName,cStoreNo
+
+							--插入结算详情表
+							INSERT INTO 	dbo.POS_SaleSheetDetail (
+									cSaleSheetno, iSeed, cGoodsNo, cGoodsName, cBarCode,
+									cOperatorno, cOperatorName, cVipCardno,bAuditing, bSettle,
+									fVipScore, fPrice,fNormalSettle, bVipPrice, fVipPrice, bVipRate,
+									fVipRate, fQuantity,fAgio, fLastSettle0, fLastSettle,
+									dSaleDate, cSaleTime, dFinanceDate, cWorkerno,bPost, bChecked,
+									cVipNo, bHidePrice,bHideQty, bWeight, fNormalVipScore,
+									cWHno,  fVipScore_cur, cBanci_ID,iLineNo_Banci,  cBanci
+							)
+							SELECT cSaleSheetno_time AS cSaleSheetno, iSeed, cGoodsNo, cGoodsName, cBarCode,
+									cOperatorno, cOperatorName,'' AS cVipCardno,bAuditing, bSettle,
+									fVipScore, fPrice,fNormalSettle, bVipPrice, fVipPrice, bVipRate,
+									fVipRate, fQuantity,fAgio, fLastSettle0, fLastSettle,
+									dSaleDate, cSaleTime, dFinanceDate, 1 AS cWorkerno,bPost, bChecked,
+									cVipNo,0 AS bHidePrice,0 AS bHideQty, bWeight, 0 AS fNormalVipScore,
+									cStoreNo AS cWHno, 0 as  fVipScore_cur,(CONVERT(VARCHAR(100),GETDATE(),23)+'_1' ) AS cBanci_ID,
+									1 AS iLineNo_Banci, '早班' AS cBanci FROM dbo.pos_SaleSheetDetailTemp
+							WHERE cStoreNo=@storeId AND cSaleSheetno_time=@sheetno
+
+							IF @@rowcount>0
+							BEGIN
+								SELECT 1 AS resultCode; --单子存在并插入结算表成功
+							END
+							ELSE
+							BEGIN
+							  SELECT 3 AS resultCode; --单子不存在
+							END
 
 
+				COMMIT TRAN
+			END TRY
 
-ALTER procedure [dbo].[p_ProcessPosSheetDLB]
+			--异常回滚
+			BEGIN CATCH
+				ROLLBACK TRAN
+				SELECT 2 AS resultCode,@@ERROR AS errorCode;
+				RETURN
+			END CATCH
+
+  END
+
+END
+
+GO
+
+/**
+ 这是丰总写的过程
+ */
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_ProcessPosSheetDLB]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].p_ProcessPosSheetDLB
+
+END
+GO
+CREATE procedure [dbo].[p_ProcessPosSheetDLB]
 @cStoreNo varchar(32),
 @cPosID varchar(32),
 @cSaleSheetNo varchar(32),

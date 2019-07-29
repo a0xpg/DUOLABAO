@@ -73,6 +73,28 @@ GO
                   posid  VARCHAR(20), --对应我们的posid  前台收银编号
                   primary key(cartId,posid)
           )
+
+          --tDlbOrderSysnLog 记录回传的订单表
+          IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tDlbOrderSysnLog]')
+                      AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+          DROP TABLE [dbo].[tDlbOrderSysnLog]
+           CREATE TABLE tDlbOrderSysnLog(
+
+                  lineId   BIGINT IDENTITY(1,1),  --行号
+                  merchantOrderId VARCHAR(64),
+                  payTypeId VARCHAR(100),
+                  payNo VARCHAR(100),
+                  payAmount Money,
+                  cartFlowNo VARCHAR(64),
+                  items VARCHAR(8000), --商品信息
+                  storeId VARCHAR(64),  --门店号
+                  sn VARCHAR(64),
+                  cardNum VARCHAR(32),
+                  cashierNo VARCHAR(64),
+                  createTime DATETIME DEFAULT (GETDATE())  --接收的时间
+                  primary key(lineId)
+          )
+
 END
 
 GO
@@ -102,7 +124,7 @@ BEGIN
        fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
        cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
 
-        SELECT isWeight,storeId,'''+@cPosID+''',merchantOrderId,lineId,id,name,barcode,sn,sn,bAuditing=0,
+        SELECT isWeight,storeId,'''+@cPosID+''',merchantOrderId,lineId,id,name,barcode,'''+@cPosID+''','''+@cPosID+''',bAuditing=0,
     (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice,(CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fVipPrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
     (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
     convert(varchar(10),getdate(),23), cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'''+@cVipNo+''',
@@ -113,3 +135,35 @@ BEGIN
 END
 
 GO
+
+/*
+	 把数据插入到分库的结算表
+    exec p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z '@sheeetno','@storeId','abc'
+*/
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].[p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z]
+
+END
+GO
+CREATE PROC [dbo].[p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z]
+ @sheeetno varchar(80),
+ @storeId varchar(16),
+ @tableName VARCHAR(50)
+ AS
+BEGIN
+
+  DECLARE @SQLWHERE VARCHAR(800)
+
+  SET  @SQLWHERE = 'EXEC '+@tableName+' '
+                          +''''+@storeId+''','
+                          +''''+@sheeetno+''''
+
+  PRINT(@SQLWHERE)
+
+ EXEC (@SQLWHERE)
+END
+
+GO
+
+

@@ -41,7 +41,6 @@ public class Request {
     private String payNo;
     private Long payAmount;
     private String items;
-    private String storId;
     private String cardNum;
 
 

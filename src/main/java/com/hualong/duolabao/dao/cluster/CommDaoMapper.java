@@ -75,4 +75,6 @@ public interface CommDaoMapper {
      */
     Integer update_Vip(@Param("appId")String appId,@Param("machineId")String machineId,
                        @Param("vipNo")String vipNo,@Param("addScore")Double addScore);
+
+    int insert(List list);
 }
