@@ -45,7 +45,17 @@ public class Request {
     private String cardNum;
 
 
-
+    /**
+     * <pre>
+     *     这个构造方法有用  不要删除了
+     *     SB
+     * </pre>
+     * @param storeId
+     * @param cashierNo
+     * @param sn
+     * @param cartId
+     * @param cartFlowNo
+     */
     public Request(String storeId, String cashierNo, String sn, String cartId, String cartFlowNo) {
         this.storeId = storeId;
         this.cashierNo = cashierNo;

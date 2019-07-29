@@ -24,6 +24,11 @@ public class SignFacotry {
 
     private static final Logger log= LoggerFactory.getLogger(SignFacotry.class);
 
+    /**
+     *
+     * @param code
+     * @return
+     */
     public static ErrorEnum getErrorEnumByCode(String code){
         for(ErrorEnum sexEnum : ErrorEnum.values()){
             if(StringUtils.equals(code, sexEnum.getCode())){
@@ -48,9 +53,7 @@ public class SignFacotry {
             log.error("获取UUID失败 {}",e.getMessage());
             throw  new ApiSysException(ErrorEnum.SSCO001001);
         }
-
     }
-
     /**
      *  <pre>
      *      检验商品是否为空
@@ -100,7 +103,6 @@ public class SignFacotry {
             throw new ApiSysException(ErrorEnum.SSCO001004);
         }
     }
-
     /**
      * <pre>
      *     解密
@@ -118,8 +120,6 @@ public class SignFacotry {
             log.error(Thread.currentThread().getStackTrace()[0].getMethodName()+" 签名校验失败或者不是本商户号的访问 ："+e.getMessage());
             throw new ApiSysException(ErrorEnum.SSCO001006);
         }
-
-
     }
 
     /**
@@ -162,7 +162,6 @@ public class SignFacotry {
             request.setItems(jsonObject1.getString("items"));
             request.setStorId(jsonObject1.getString("storId"));
             request.setCardNum(jsonObject1.getString("cardNum"));
-
             if(request!=null){
                 return request;
             }else {
@@ -173,7 +172,6 @@ public class SignFacotry {
             log.error(Thread.currentThread().getStackTrace()[0].getMethodName()+" 签名校验失败或者不是本商户号的访问 ："+e.getMessage());
             throw new ApiSysException(errorEnum);
         }
-
 
     }
 
