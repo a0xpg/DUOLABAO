@@ -130,7 +130,8 @@ public class CommonServiceImpl {
     public static String getSheetNo(Request request, tDlbPosConfiguration tDlbPosConfiguration,CommDaoMapper commDaoMapper) throws ApiSysException {
         try{
             commSheetNo commSheetNo=commDaoMapper.getCommSheetNo(request.getStoreId(),tDlbPosConfiguration.getPosid(),
-                    new SimpleDateFormat("yyyy-MM-dd").format(new Date()),tDlbPosConfiguration.getPosName()+".dbo.p_getPos_SerialNoSheetNo");
+                    new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
+                    tDlbPosConfiguration.getPosName()+".dbo.p_getPos_SerialNoSheetNo");
             Integer integer=commDaoMapper.p_saveSheetNo_Z_call(
                     request.getStoreId(),tDlbPosConfiguration.getPosid(),
                     new SimpleDateFormat("yyyy-MM-dd").format(new Date()),commSheetNo.getcSheetNo(),
@@ -179,13 +180,13 @@ public class CommonServiceImpl {
         try{
             //TODO 把数据插入到临时表计算整单优惠信息
             commDaoMapper.p_Dataconversion_z(request.getCartId(),request.getStoreId(),
-                    vipNo,tDlbPosConfiguration.getPosid(),tDlbPosConfiguration.getPosName());
+                    vipNo,tDlbPosConfiguration.getPosid(),tDlbPosConfiguration.getPosName()+".dbo.pos_SaleSheetDetailTemp");
             //TODO 计算并且赋值
             List<preferentialGoods> list =commDaoMapper.get_preferentialGoods(
                     request.getStoreId(),tDlbPosConfiguration.getPosid(),sheetNo,vipNo,fPFrate,bDiscount,
                     (tDlbPosConfiguration.getPosName()+".dbo.p_ProcessPosSheetDLB").trim());
             if(list!=null){
-                log.info("得到的优惠信息 p_ProcessPosSheetDLB ：",
+                log.info("得到的优惠信息 p_ProcessPosSheetDLB ：{} ",
                         JSONObject.toJSONString(list, SerializerFeature.WriteMapNullValue,SerializerFeature.PrettyFormat));
             }else {
                 log.error("提交购物车失败了  p_ProcessPosSheetDLB ：");

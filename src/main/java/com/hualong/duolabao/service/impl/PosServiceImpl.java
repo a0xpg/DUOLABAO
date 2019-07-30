@@ -78,11 +78,8 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName()+"获取本地商品数据出错了 {}",e.getMessage());
             throw  new ApiSysException(ErrorEnum.SSCO001001);
         }
-
         return list;
     }
-
-
 
     @Override
     public void SaveGoods(String storeId, String cashierNo,String sn,String cartId,String cartFlowNo,
@@ -221,8 +218,8 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             //如果没有改商品保存的购物车   如果存在就更新该购物车
             if(blbGoodsInfo!=null){
                 int num=request.getQuantity();
-                //删除购物车的该商品
                 if(num==0){
+                    //TODO 删除购物车的商品
                     CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,null,null,null,request.getLineId());
                 }else{
                     Long amount=NomalPrice*num;
@@ -250,14 +247,15 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                                List<cStoreGoods> cStoreGoodsList,
                                FrushGood frushGood) throws ApiSysException {
         try{
+            //TODO 删除购物车的商品
             int info=CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,null,null,null,request.getLineId());
             if(info==0){
                 throw  new ApiSysException(ErrorEnum.SSCO010004);
             }
-        }catch (Exception e){
+        }catch (ApiSysException e){
             e.printStackTrace();
             log.error("删除商品的时间出错了:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001002);
+            throw  new ApiSysException(ErrorEnum.SSCO010004);
         }
 
     }
@@ -268,6 +266,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         try{
             //删除会员
             memberInfoMapper.deleteByPrimaryKey(request.getCartId(),request.getStoreId());
+            //TODO 删除购物车的商品
             int info=CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,request.getCartId(),request.getStoreId(),null,null);
             if(info==0){
                 throw  new ApiSysException(ErrorEnum.SSCO010008);
@@ -275,7 +274,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("删除整个购物车的时间出错了:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001002);
+            throw  new ApiSysException(ErrorEnum.SSCO010008);
         }
     }
     @Override

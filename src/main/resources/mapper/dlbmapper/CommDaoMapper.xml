@@ -59,9 +59,10 @@
     </update>
 
     <!--把数据插入到临时表  计算整单优惠信息的 （前一步）-->
+
     <update id="p_Dataconversion_z"  >
         <![CDATA[
-        		{call p_saveSheetNo_Z(
+        		{call p_Dataconversion_z(
         					#{cartId,mode=IN,jdbcType=VARCHAR},
         					#{storeId,mode=IN,jdbcType=VARCHAR},
         					#{cVipNo,mode=IN,jdbcType=VARCHAR},

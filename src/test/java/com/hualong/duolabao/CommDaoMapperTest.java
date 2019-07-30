@@ -94,5 +94,12 @@ public class CommDaoMapperTest {
         log.info("我是影响行数  {} ", integer);
     }
 
+    @Test
+    public void testInsert(){
+
+        commDaoMapper.p_Dataconversion_z("0002","0002",
+                "13628672210","81","posstation101"+".dbo.pos_SaleSheetDetailTemp");
+    }
+
 
 }
