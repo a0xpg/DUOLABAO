@@ -24,7 +24,7 @@ public interface MemberInfoMapper {
 
     /**
      * <pre>
-     *     Í¨¹ıÊÖ»úºÅ µÃµ½ÏßÏÂ»áÔ±ĞÅÏ¢
+     *     é€šè¿‡æ‰‹æœºå· å¾—åˆ°çº¿ä¸‹ä¼šå‘˜ä¿¡æ¯
      * </pre>
      * @param mobileNo
      * @return
