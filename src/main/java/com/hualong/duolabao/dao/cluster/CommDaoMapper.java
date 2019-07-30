@@ -76,5 +76,7 @@ public interface CommDaoMapper {
     Integer update_Vip(@Param("appId")String appId,@Param("machineId")String machineId,
                        @Param("vipNo")String vipNo,@Param("addScore")Double addScore);
 
-    int insert(List list);
+    int insert(OrderSysnLog orderSysnLog);
+
+    ResultProc GetResultProc(@Param("sheeetno")String sheeetno, @Param("storeId")String storeId, @Param("tableName")String tableName);
 }

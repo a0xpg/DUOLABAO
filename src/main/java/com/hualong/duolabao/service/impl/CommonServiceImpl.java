@@ -200,7 +200,7 @@ public class CommonServiceImpl {
 
     /**
      * <pre>
-     *     如果有会员卡  这里是增加积分的
+     *     如果有会员卡  这里是增加积分用的
      * </pre>
      * @param request
      * @param tDlbPosConfiguration

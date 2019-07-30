@@ -161,4 +161,9 @@ public interface PosService {
     FrushGood getIsFrushGood(Request request, PosMain posMain, CommDaoMapper commDaoMapper) throws ApiSysException;
 
 
+    String CommitOrderSysn(Request request,ErrorEnum errorEnum) throws ApiSysException;
+
+    String ResponseDlbOrder(Request request,ErrorEnum errorEnum);
+
+
 }

@@ -125,22 +125,34 @@
     </select>
 
     <!--记录推送的数据-->
-    <insert id="insert">
+    <insert id="insert" parameterType="com.hualong.duolabao.domin.OrderSysnLog">
         insert into tDlbOrderSysnLog ( merchantOrderId, payTypeId,
         payNo, payAmount, cartFlowNo,
         items, storeId, sn,
         cardNum, cashierNo
         )
         values
-        <foreach collection ="list" item="item" separator =",">
-            (#{merchantOrderId,jdbcType=VARCHAR}, #{payTypeId,jdbcType=VARCHAR},
+
+         (#{merchantOrderId,jdbcType=VARCHAR}, #{payTypeId,jdbcType=VARCHAR},
             #{payNo,jdbcType=VARCHAR}, #{payAmount,jdbcType=DECIMAL}, #{cartFlowNo,jdbcType=VARCHAR},
             #{items,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR},
-            #{cardNum,jdbcType=VARCHAR}, #{cashierNo,jdbcType=VARCHAR}}
+            #{cardNum,jdbcType=VARCHAR}, #{cashierNo,jdbcType=VARCHAR}
             )
-        </foreach >
+
 
     </insert>
+
+
+    <select id="GetResultProc" resultType="com.hualong.duolabao.domin.ResultProc" parameterType="java.lang.String">
+        <![CDATA[
+						{call p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z(
+									#{sheeetno,mode=IN,jdbcType=VARCHAR},
+									#{storeId,mode=IN,jdbcType=VARCHAR},
+									#{tableName,mode=IN,jdbcType=VARCHAR}
+									)
+						}
+				]]>
+    </select>
 
 
 </mapper>

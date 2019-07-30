@@ -304,6 +304,70 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
     }
 
     @Override
+    public String CommitOrderSysn(Request request,ErrorEnum errorEnum) throws ApiSysException {
+        ResultMsg resultMsg=null;
+        try{
+            //TODO 第一步 记录单据到数据库
+            String orderLog=JSON.toJSONString(request);
+            log.info("记录单据到数据库 CommitOrderSysn Log {}",orderLog);
+            commDaoMapper.insert(new OrderSysnLog(request.getCartId(),request.getMerchantOrderId(),request.getPayTypeId(),request.getPayNo(),
+                    request.getPayAmount(),request.getCartFlowNo(),request.getItems(),request.getStoreId(),
+                    null,null,request.getSn(),request.getCardNum(),request.getCashierNo()));
+            //TODO 第二步 查询分库库名
+            tDlbPosConfiguration tDlbPosConfiguration = CommonServiceImpl.gettDlbPosConfiguration(request, commDaoMapper);
+            //TODO 第三步 同步数据到分库
+            ResultProc resultProc=commDaoMapper.GetResultProc(request.getMerchantOrderId(),request.getStoreId(),
+                    tDlbPosConfiguration.getPosName()+".dbo.p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z");
+            if(!resultProc.getResultCode().equals("1")){
+                log.info("同步数据到分库失败 {} ",JSON.toJSONString(resultProc));
+                errorEnum=ErrorEnum.SSCO001001;
+                resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),null);
+                return JSON.toJSONString(resultMsg);
+            }
+            //TODO 第四步 如果存在会员卡 增加积分
+            if(request.getCardNum()!=null && !request.getCardNum().equals("")){
+                MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
+                if(memberInfo!=null){
+                    log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
+                    try{
+                        commDaoMapper.update_Vip(request.getCartId(),request.getSn(),memberInfo.getCardNum(),memberInfo.getAddScore());
+                        log.info("会员卡{} 增加了 {} 积分 成功", memberInfo.getCardNum(),memberInfo.getAddScore());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        log.error("会员卡{} 增加了 {} 积分 失败", memberInfo.getCardNum(),memberInfo.getAddScore());
+                    }
+                }
+            }
+            resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),null);
+        }catch (ApiSysException e){
+            e.printStackTrace();
+            log.error("订单完成同步失败:  {}",e.getMessage());
+            new ResultMsg(true, ErrorEnum.SSCO001001.getCode(),ErrorEnum.SSCO001001.getMesssage(),null);
+        }
+
+        String s1=JSON.toJSONString(resultMsg);
+        return s1;
+    }
+
+    @Override
+    public String ResponseDlbOrder(Request request,ErrorEnum errorEnum){
+        try{
+            String content=this.CommitOrderSysn(request,errorEnum);
+            log.info("查询出来的订单同步信息 : {}",content);
+            String cipherJson= ThreeDESUtilDLB.encrypt(content,dlbConnfig.getDeskey(),"UTF-8");
+            log.info("查询出来的订单同步加密信息 : {}",cipherJson);
+            String uuid=SignFacotry.getUUID();
+            String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
+            return ResultMsgDlb.ResultMsgDlb(request,cipherJson,sign,uuid);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("最终返回值封装这里出错了 {}",e.getMessage());
+            //TODO 如果这里都出错了  基本就KO  不用往下写了
+            return JSONObject.toJSONString(new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
+        }
+    }
+
+    @Override
     public String SelectCartInfo(Request request,ErrorEnum errorEnum) throws ApiSysException {
         try{
             List<BLBGoodsInfo> blbGoodsInfo=dlbGoodsInfoMapper.selectAll(request.getCartId(),request.getStoreId());
@@ -320,15 +384,22 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 actualFee=totalFee-discountFee;
             }
             MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
+
+            Double AddScore=(double) 0;
             if(memberInfo!=null){
                 log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
                 memberInfo.setBDiscount(null);
                 memberInfo.setFPFrate(null);
+                AddScore=memberInfo.getAddScore();
                 memberInfo.setAddScore(null);
             }
             CartInfo cartInfo=new CartInfo(request.getStoreId(), request.getSn(), request.getCartId(), merchantOrderId,
                     totalFee, discountFee, actualFee, blbGoodsInfo, memberInfo);
-            //TODO 计算积分  可以在这里进行  cartInfo.setOrderScore(20.68);
+            //TODO 计算积分  可以在这里进行
+            if(memberInfo!=null){
+                cartInfo.setOrderScore(AddScore);
+            }
+
             ResultMsg resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
             String s1=JSON.toJSONString(resultMsg, SerializerFeature.WriteNullListAsEmpty,
                     SerializerFeature.WriteNullNumberAsZero,
@@ -340,7 +411,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             throw  new ApiSysException(ErrorEnum.SSCO001001);
         }
     }
-
     @Override
     public String ResponseDlb(Request request,ErrorEnum errorEnum){
         try{
@@ -455,7 +525,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
                 }
                 break;
-
             case commitCartInfo:
                 try{
                     this.commitCartInfo(
@@ -470,13 +539,17 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 }
                 break;
             case cancleOrder:
-
                 break;
             case payOrder:
-
                 break;
             case orderSysn:
-                //订单同步走这里
+                try{
+                    response=this.ResponseDlbOrder(request,ErrorEnum.SUCCESS);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    log.error("同步订单完成出错了 {}",e.getMessage());
+                }
+
                 break;
             default:
 

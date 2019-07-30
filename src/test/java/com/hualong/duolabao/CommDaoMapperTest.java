@@ -2,9 +2,7 @@ package com.hualong.duolabao;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.dao.cluster.CommDaoMapper;
-import com.hualong.duolabao.domin.commSheetNo;
-import com.hualong.duolabao.domin.posConfig;
-import com.hualong.duolabao.domin.tDlbPosConfiguration;
+import com.hualong.duolabao.domin.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -12,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2019-07-19.
@@ -61,7 +62,6 @@ public class CommDaoMapperTest {
         log.info("我是获取到的结果集 "+ JSONObject.toJSONString(posConfig));
     }
 
-
     /**
      * <pre>
      *     从主库得到哆啦宝的配置信息
@@ -75,5 +75,24 @@ public class CommDaoMapperTest {
         log.info("我是获取到的结果集 "+ dlbPosConfiguration.getCartId());
         log.info("我是获取到的结果集 "+ JSONObject.toJSONString(dlbPosConfiguration));
     }
+
+    @Test
+    public void testGetResultProc(){
+        ResultProc resultProc=commDaoMapper.GetResultProc("812019072900024","0002",
+                "posstation101.dbo.p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z");
+        log.info("我是获取到的结果集 "+ JSONObject.toJSONString(resultProc));
+    }
+
+    @Test
+    public void testInsertOrderSysnLog(){
+
+        OrderSysnLog orderSysnLog=new OrderSysnLog("0002", "0002", "0002", "0002",
+                new Long(123), "0002", "0002", "0002",
+                "0002", "0002", "0002", "0002","0002");
+
+        Integer integer=commDaoMapper.insert(orderSysnLog);
+        log.info("我是影响行数  {} ", integer);
+    }
+
 
 }
