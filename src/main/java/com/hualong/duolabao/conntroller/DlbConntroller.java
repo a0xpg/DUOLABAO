@@ -31,9 +31,12 @@ public class DlbConntroller {
      * @param jsonParam  参数json数据
      * @return
      */
-    @RequestMapping(value = "/api/{urlType}", method = {RequestMethod.POST},produces = "application/json;charset=UTF-8") //, produces = "application/json;charset=UTF-8"
+    @RequestMapping(value = "/api/{urlType}", method = {RequestMethod.POST}) //, produces = "application/json;charset=UTF-8"
     public String getUrlType(@PathVariable String urlType,
                            @RequestBody JSONObject jsonParam) {
+        log.info("我是请求路径 getUrlType urlType{}",urlType);
+        log.info("我是请求路径 jsonParam urlType{}",JSONObject.toJSONString(jsonParam));
+
         return this.posService.CommUrlFun(urlType,jsonParam);
     }
 }

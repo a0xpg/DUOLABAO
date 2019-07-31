@@ -43,6 +43,20 @@ public class Request {
     private String items;
     private String cardNum;
 
+    /**
+     * 接收必须返回的字段
+     * 支付下单接口(收银机扫用户)
+     */
+    private String bizType;
+    private String orderId;
+    private String tradeNo;
+    //private String tenant;
+    private int amount;
+    private String currency;
+    private String authcode;
+    private String appType;
+    private String orderIp;
+
 
     /**
      * <pre>

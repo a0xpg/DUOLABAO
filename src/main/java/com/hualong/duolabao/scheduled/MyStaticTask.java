@@ -3,6 +3,7 @@ package com.hualong.duolabao.scheduled;
 
 
 
+import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.service.DlbService;
 
 import org.slf4j.Logger;
@@ -26,10 +27,11 @@ public class MyStaticTask {
 
     private static final Logger logger = LoggerFactory.getLogger(MyStaticTask.class);
 
-
-
     @Autowired
     private DlbService dlbService;
+
+    @Autowired
+    private DlbConnfig dlbConnfig;
 
 
     /**
@@ -44,16 +46,15 @@ public class MyStaticTask {
     //每天凌晨执行
     @Scheduled(cron = "0 0 0 1/1 * ? ")
     public void updateLeftNumerUser(){
-        try{
-            dlbService.ExecS("delete");
-            logger.info("删除临时购物车成功");
-        }catch (Exception e){
-            logger.error("删除临时购物车失败 : {}",e.getMessage());
+        if(dlbConnfig.getTimerenabled()){
+            try{
+                dlbService.ExecS("delete");
+                logger.info("删除临时购物车成功");
+            }catch (Exception e){
+                logger.error("删除临时购物车失败 : {}",e.getMessage());
+            }
         }
-    }
-
-
-    public static void main(String[] args) {
 
     }
+
 }

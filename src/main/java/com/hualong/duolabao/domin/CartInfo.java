@@ -51,6 +51,11 @@ public class CartInfo extends DlbCommon{
      */
     private Double orderScore;
 
+    /**
+     * 主要是用于打印订单上面的当前积分的
+     */
+    private ScoreInfo scoreInfo;
+
     public CartInfo(String storeId, String sn, String cartId, String merchantOrderId,
                     long totalFee, long discountFee, long actualFee,
                      List<BLBGoodsInfo> items, MemberInfo memberInfo) {

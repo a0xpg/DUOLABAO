@@ -165,5 +165,7 @@ public interface PosService {
 
     String ResponseDlbOrder(Request request,ErrorEnum errorEnum);
 
+    String ResponseDlbCancelOrder(Request request,ErrorEnum errorEnum);
+
 
 }

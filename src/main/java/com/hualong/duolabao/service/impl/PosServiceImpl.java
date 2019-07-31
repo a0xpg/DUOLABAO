@@ -283,7 +283,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             VipOffine vipOffine=memberInfoMapper.Get_VipOffine(request.getUserId());
             if(vipOffine==null){
                 log.info("该会员卡号不存在 {}",request.getUserId());
-                throw  new ApiSysException(ErrorEnum.SSCO008004);
+                throw  new ApiSysException(ErrorEnum.SSCO008001);
             }
             MemberInfo memberInfo2=new MemberInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getUserId(),
                     "ISV", null, vipOffine.getCVipNo(),
@@ -298,7 +298,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("添加会员的时间出错了:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001002);
+            throw  new ApiSysException(ErrorEnum.SSCO008001);
         }
     }
 
@@ -397,6 +397,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             //TODO 计算积分  可以在这里进行
             if(memberInfo!=null){
                 cartInfo.setOrderScore(AddScore);
+                cartInfo.setScoreInfo(new ScoreInfo(new Double(memberInfo.getScore())));
             }
 
             ResultMsg resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
@@ -417,6 +418,24 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             log.info("查询出来的购物车信息 : {}",content);
             String cipherJson= ThreeDESUtilDLB.encrypt(content,dlbConnfig.getDeskey(),"UTF-8");
             log.info("查询出来的购物车加密信息 : {}",cipherJson);
+            String uuid=SignFacotry.getUUID();
+            String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
+            return ResultMsgDlb.ResultMsgDlb(request,cipherJson,sign,uuid);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("最终返回值封装这里出错了 {}",e.getMessage());
+            //TODO 如果这里都出错了  基本就KO  不用往下写了
+            return JSONObject.toJSONString(new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
+        }
+    }
+
+
+    @Override
+    public String ResponseDlbCancelOrder(Request request,ErrorEnum errorEnum){
+        try{
+            ResultMsg resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),null);
+            String content=JSON.toJSONString(resultMsg);
+            String cipherJson= ThreeDESUtilDLB.encrypt(content,dlbConnfig.getDeskey(),"UTF-8");
             String uuid=SignFacotry.getUUID();
             String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
             return ResultMsgDlb.ResultMsgDlb(request,cipherJson,sign,uuid);
@@ -538,12 +557,16 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 }
                 break;
             case cancleOrder:
+                response=this.ResponseDlbCancelOrder(request,ErrorEnum.SUCCESS);
                 break;
             case payOrder:
                 break;
             case orderSysn:
                 try{
                     response=this.ResponseDlbOrder(request,ErrorEnum.SUCCESS);
+                    this.deleteCartInfo(
+                            request,
+                            null,null);
                 }catch (Exception e){
                     e.printStackTrace();
                     log.error("同步订单完成出错了 {}",e.getMessage());
@@ -551,7 +574,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
 
                 break;
             default:
-
+                response="地址错误";
                 break;
         }
         return response;
@@ -614,9 +637,14 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         CommonServiceImpl.updateCartInfoMerchantOrderId(request, sheetNo, dlbGoodsInfoMapper);
         //TODO 得到会员信息
         MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
-        String vipNo=memberInfo.getCardNum()==null ? "":memberInfo.getCardNum();
-        String bDiscount=memberInfo.getBDiscount()==null ? "0":memberInfo.getBDiscount();
-        String fPFrate=memberInfo.getFPFrate()==null ? "100":memberInfo.getFPFrate();
+        String vipNo="";
+        String bDiscount="0";
+        String fPFrate="100";
+        if(memberInfo!=null){
+            vipNo=memberInfo.getCardNum();
+            bDiscount=memberInfo.getBDiscount();
+            fPFrate=memberInfo.getFPFrate();
+        }
         //TODO 计算获取购物车的信息
         CommonServiceImpl.SubmitShoppingCartCalculation(request, tDlbPosConfiguration, sheetNo, vipNo, bDiscount, fPFrate,commDaoMapper);
         //TODO  计算应该增加的积分并且更改积分值

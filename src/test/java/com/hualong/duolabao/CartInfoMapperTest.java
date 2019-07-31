@@ -290,7 +290,7 @@ public class CartInfoMapperTest {
         String uuid= SignFacotry.getUUID();
         String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
         Map<String,String> mapdata=new HashMap<>();
-        mapdata.put("merchantNo","XILIAN");
+        mapdata.put("merchantNo","hualong");
         mapdata.put("tenant","0002");
         mapdata.put("storeId","0002");
         mapdata.put("cipherJson", cipherJson);

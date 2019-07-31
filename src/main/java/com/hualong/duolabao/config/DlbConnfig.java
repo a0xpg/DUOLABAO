@@ -24,5 +24,9 @@ public class DlbConnfig {
     @Value("${dlb.isdandian}")
     private Boolean isdandian;
 
+    @Value("${dlb.timerenabled}")
+    private Boolean timerenabled;
+
+
 
 }
