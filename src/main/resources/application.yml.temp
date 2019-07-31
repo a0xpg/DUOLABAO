@@ -1,9 +1,24 @@
 
 dlb:
-  merchantno: 12346
-  deskey: 6l7HDfs0bumRv6dF6SPf5XXpXkWwyP30
+  merchantno: hualong
+  deskey:
   mdkey: D8C2313325E1E049FE19AFAC122B987F
   isdandian: false
+  timerenabled: true
+
+dlbpay:
+  #公钥
+  accesskey:
+  #公钥
+  secretkey:
+  #代理商编号
+  agentnum:
+  #商户编号
+  customernum:
+  #机具编号
+  machinenum:
+  #店铺编号
+  shopnum:
 spring:
   thymeleaf:
     cache: true
