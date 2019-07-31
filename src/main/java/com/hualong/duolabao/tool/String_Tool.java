@@ -12,6 +12,16 @@ import java.util.regex.Pattern;
 
 public class String_Tool {
 
+	/**
+	 * <pre>
+	 *     得到当前时间的时间戳
+	 * </pre>
+	 * @return
+	 */
+	public static String getTimeUnix() {
+		return String.valueOf((new Date()).getTime()).substring(0,10);
+	}
+
 	public static String String_IS_Four(double d) { // 精确到四位小说
 		DecimalFormat df = new DecimalFormat("0.0000");
 		return df.format(d);

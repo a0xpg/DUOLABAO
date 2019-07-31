@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hualong.duolabao.dao.cluster.OrderMoneyLogMapper">
+  <resultMap id="BaseResultMap" type="com.hualong.duolabao.domin.OrderMoneyLog">
+
+    <result column="bizType" jdbcType="VARCHAR" property="bizType" />
+    <result column="orderId" jdbcType="VARCHAR" property="orderId" />
+    <result column="tradeNo" jdbcType="VARCHAR" property="tradeNo" />
+    <result column="tenant" jdbcType="VARCHAR" property="tenant" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="authcode" jdbcType="VARCHAR" property="authcode" />
+    <result column="orderIp" jdbcType="VARCHAR" property="orderIp" />
+
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tDlbOrderMoneyLog
+    where lineId = #{lineId,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.hualong.duolabao.domin.OrderMoneyLog">
+    insert into tDlbOrderMoneyLog ( bizType, orderId,
+      tradeNo, tenant, amount, 
+      currency, authcode, orderIp)
+    values (#{bizType,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR},
+      #{tradeNo,jdbcType=VARCHAR}, #{tenant,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
+      #{currency,jdbcType=VARCHAR}, #{authcode,jdbcType=VARCHAR}, #{orderIp,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.OrderMoneyLog">
+    update tDlbOrderMoneyLog
+    set paycomplited = #{paycomplited,jdbcType=BIT}
+    where tradeNo = #{tradeNo,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select  bizType, orderId, tradeNo, tenant, amount, currency, authcode, orderIp
+    from tDlbOrderMoneyLog
+    where lineId = #{lineId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select bizType, orderId, tradeNo, tenant, amount, currency, authcode, orderIp
+    from tDlbOrderMoneyLog
+  </select>
+</mapper>

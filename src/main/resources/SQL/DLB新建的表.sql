@@ -97,3 +97,23 @@
         oddMoney   MONEY DEFAULT 0.0,
         newMoney   MONEY DEFAULT 0.0
         )
+
+
+          --tDlbOrderMoneyLog  支付记录表
+          IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tDlbOrderMoneyLog]')
+                      AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+          DROP TABLE [dbo].[tDlbOrderMoneyLog]
+           CREATE TABLE tDlbOrderMoneyLog(
+                  lineId   BIGINT IDENTITY(1,1),  --行号
+                  bizType VARCHAR(30),
+                  orderId VARCHAR(64),
+                  tradeNo VARCHAR(64),
+                  tenant VARCHAR(20),
+                  amount Money DEFAULT 0 ,
+                  currency VARCHAR(10),
+                  authcode VARCHAR(64),
+                  orderIp VARCHAR(32),
+                  createTime DATETIME DEFAULT (GETDATE()),  --接收的时间
+                  paycomplited bit DEFAULT 0               --是否支付成功
+                  primary key(lineId)
+          )
