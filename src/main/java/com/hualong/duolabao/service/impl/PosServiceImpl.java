@@ -428,8 +428,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             return JSONObject.toJSONString(new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
         }
     }
-
-
     @Override
     public String ResponseDlbCancelOrder(Request request,ErrorEnum errorEnum){
         try{
@@ -558,8 +556,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 break;
             case cancleOrder:
                 response=this.ResponseDlbCancelOrder(request,ErrorEnum.SUCCESS);
-                break;
-            case payOrder:
                 break;
             case orderSysn:
                 try{

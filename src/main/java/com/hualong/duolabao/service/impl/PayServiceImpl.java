@@ -228,7 +228,6 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
 
     @Override
     public String ResponseDlb(Request request, ErrorEnum errorEnum,String status) {
-        //TODO 解密失败的返回
         try{
             status=status==null ? "FAIL":status;
             PayOrderResult payOrderResult=null;
@@ -255,7 +254,6 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                     break;
 
             }
-
             String content=JSON.toJSONString(payOrderResult);
             String cipherJson= ThreeDESUtilDLB.encrypt(content,dlbConnfig.getDeskey(),"UTF-8");
             String uuid=SignFacotry.getUUID();
