@@ -1,8 +1,8 @@
 
 dlb:
-  merchantno: hualong
+  merchantno:
   deskey:
-  mdkey: D8C2313325E1E049FE19AFAC122B987F
+  mdkey:
   isdandian: false
   timerenabled: true
 
