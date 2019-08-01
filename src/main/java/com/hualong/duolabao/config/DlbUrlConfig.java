@@ -67,6 +67,13 @@ public interface DlbUrlConfig {
 
     /**
      * <pre>
+     *     支付下单
+     * </pre>
+     */
+    String canclePayOrder="canclePayOrder";
+
+    /**
+     * <pre>
      *     订单同步
      * </pre>
      */

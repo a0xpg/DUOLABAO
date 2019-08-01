@@ -35,6 +35,14 @@ public class OrderMoneyLog {
 
     private Boolean paycomplited;
 
+    private Integer actualAmount;
+
+    public OrderMoneyLog(String tradeNo, Integer actualAmount, Boolean paycomplited) {
+        this.tradeNo = tradeNo;
+        this.actualAmount = actualAmount;
+        this.paycomplited = paycomplited;
+    }
+
     public OrderMoneyLog(String tradeNo, Boolean paycomplited) {
         this.tradeNo = tradeNo;
         this.paycomplited = paycomplited;

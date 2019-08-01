@@ -57,7 +57,7 @@ public class OrderMoneyLogMapperTest {
 //        (String bizType, String orderId, String tradeNo,
 //                String tenant, int amount, String currency,
 //                String authcode, String orderIp)
-        OrderMoneyLog orderMoneyLog=new OrderMoneyLog("002",true);
+        OrderMoneyLog orderMoneyLog=new OrderMoneyLog("002",20,true);
         Integer integer=orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
         log.info("我是影响行数 {}",integer);
     }
@@ -66,8 +66,8 @@ public class OrderMoneyLogMapperTest {
     public void testPay(){
 
         String timeUnix=getTimeUnix();
-        String authCode="287205674552871370";
-        String requestNum="3";
+        String authCode="134607250875044726";
+        String requestNum="6";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,
@@ -79,7 +79,6 @@ public class OrderMoneyLogMapperTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("accessKey",dlbPayConnfig.getAccesskey());
         headers.set("timestamp",timeUnix);
-
         String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
                 "&path=/v1/agent/passive/create&body="+body;
         log.info("带签名的字符串 {}",sign);
@@ -136,6 +135,40 @@ public class OrderMoneyLogMapperTest {
                 requestEntity);
 
         String result = responseEntity.getBody();
+        log.info("我是拿到的返回结果 {}",result);
+
+    }
+
+
+    @Test
+    public void testReturnPay(){
+
+        String timeUnix=getTimeUnix();
+        String authCode=null;
+        String requestNum="4";
+//        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
+//                String requestNum, String amount, String source, String tableNum)
+        SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,
+                null,dlbPayConnfig.getShopnum(),requestNum,null,null,null);
+        String body=JSONObject.toJSONString(sweepOrder);
+        log.info("我是请求体携带的数据 {}",body);
+        String url = "https://openapi.duolabao.com/v1/agent/order/refund";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("accessKey",dlbPayConnfig.getAccesskey());
+        headers.set("timestamp",timeUnix);
+
+        String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
+                "&path=/v1/agent/order/refund&body="+body;
+        log.info("带签名的字符串 {}",sign);
+        sign= SHA1.encode(sign).toUpperCase();
+        log.info("签名后的字符串 {}",sign);
+        headers.set("token",sign);
+
+        HttpEntity<String> entity = new HttpEntity<String>(body, headers);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
+        String result = responseEntity.getBody();
+
         log.info("我是拿到的返回结果 {}",result);
 
     }

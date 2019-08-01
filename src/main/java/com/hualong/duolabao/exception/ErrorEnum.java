@@ -41,6 +41,11 @@ public enum  ErrorEnum implements ExceptionEnum {
     SSCO010015("SSCO010015", "未定位到门店相关信息"),
     SSCO010016("SSCO010016", "商品已过保不可销售"),
 
+    //订单相关(SSCO003)
+    SSCO003000("SSCO003000", "订单创建失败"),
+    SSCO005009("SSCO005009", "交易不存在"),
+
+
     //下面是我自定义 这里用不到的
     JSON_ANALYZING_FAIL("1002", "服务端json返回时解析失败");
 

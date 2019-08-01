@@ -57,6 +57,7 @@ public class Request {
     private String appType;
     private String orderIp;
 
+    private String serialNo;
 
     /**
      * <pre>

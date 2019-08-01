@@ -12,6 +12,8 @@
     <result column="authcode" jdbcType="VARCHAR" property="authcode" />
     <result column="orderIp" jdbcType="VARCHAR" property="orderIp" />
 
+    <result column="actualAmount" jdbcType="DECIMAL" property="actualAmount" />
+
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from tDlbOrderMoneyLog
@@ -30,6 +32,9 @@
   <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.OrderMoneyLog">
     update tDlbOrderMoneyLog
     set paycomplited = #{paycomplited,jdbcType=BIT}
+      <if test="actualAmount != null">
+        ,actualAmount = #{actualAmount,jdbcType=DECIMAL}
+      </if>
     where tradeNo = #{tradeNo,jdbcType=VARCHAR}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

@@ -575,6 +575,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 break;
             default:
                 response="地址错误";
+                log.info("请求地址出错了");
                 break;
         }
         return response;

@@ -174,6 +174,9 @@ public class SignFacotry {
             request.setAuthcode(jsonObject1.getString("authcode"));
             request.setAppType(jsonObject1.getString("appType"));
             request.setOrderIp(jsonObject1.getString("orderIp"));
+
+            request.setSerialNo(jsonObject1.getString("serialNo"));
+
             if(request!=null){
                 return request;
             }else {

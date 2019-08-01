@@ -3,6 +3,7 @@ package com.hualong.duolabao.conntroller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.service.DlbService;
+import com.hualong.duolabao.service.PayService;
 import com.hualong.duolabao.service.PosService;
 import org.apache.catalina.Store;
 import org.slf4j.Logger;
@@ -23,6 +24,9 @@ public class DlbConntroller {
     @Autowired
     private PosService posService;
 
+    @Autowired
+    private PayService payService;
+
     /**
      * <pre>
      *      请求统一处理配置
@@ -39,4 +43,23 @@ public class DlbConntroller {
 
         return this.posService.CommUrlFun(urlType,jsonParam);
     }
+
+
+    /**
+     * <pre>
+     *      pay 扣款接口 查询接口 退款接口  统一封装
+     * </pre>
+     * @param urlType    路径
+     * @param jsonParam  参数json数据
+     * @return
+     */
+    @RequestMapping(value = "/api/pay/{urlType}", method = {RequestMethod.POST})
+    public String getPayUrlType(@PathVariable String urlType,
+                             @RequestBody JSONObject jsonParam) {
+        log.info("我是请求路径 pay getPayUrlType urlType{}",urlType);
+        log.info("我是请求路径 pay jsonParam urlType{}",JSONObject.toJSONString(jsonParam));
+
+        return this.payService.CommUrlFun(urlType,jsonParam);
+    }
+
 }

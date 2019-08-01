@@ -114,6 +114,7 @@
                   authcode VARCHAR(64),
                   orderIp VARCHAR(32),
                   createTime DATETIME DEFAULT (GETDATE()),  --接收的时间
-                  paycomplited bit DEFAULT 0               --是否支付成功
+                  paycomplited bit DEFAULT 0,               --是否支付成功
+                  actualAmount Money DEFAULT 0              --实际付款金额
                   primary key(lineId)
           )
