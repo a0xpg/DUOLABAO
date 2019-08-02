@@ -173,6 +173,8 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"SUCCESS");
                         }else if(jsonObject.getString("status").equals("CANCEL")){
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"CLOSE");
+                        }else{
+                            response=ResponseDlb(request,ErrorEnum.SUCCESS,"CLOSE");
                         }
 
                     }else {
