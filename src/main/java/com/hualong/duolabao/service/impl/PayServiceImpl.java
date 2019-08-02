@@ -52,10 +52,8 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
     @Autowired
     private RestTemplate restTemplate;
 
-
     @Autowired
     private DlbConnfig dlbConnfig;
-
 
 
     @Override
@@ -88,7 +86,6 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
         switch (urlType){
             case payOrder:
                 //TODO 支付订单
-                //记录
                 try{
                     orderMoneyLog=new OrderMoneyLog(request.getBizType(),request.getOrderId(),
                             request.getTradeNo(),request.getTenant(),request.getAmount(),
