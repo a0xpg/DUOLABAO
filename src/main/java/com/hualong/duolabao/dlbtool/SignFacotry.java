@@ -79,10 +79,11 @@ public class SignFacotry {
      */
     public static void verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo) throws ApiSysException {
         try{
+            // || !jsonObject.getString("merchantNo").equals(merchantNo)
             if(!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("cipherJson") ||
                     !jsonObject.containsKey("sign") || !jsonObject.containsKey("systemId") ||
                     !jsonObject.containsKey("uuid") || !jsonObject.containsKey("tenant") ||
-                    !jsonObject.containsKey("storeId") || !jsonObject.getString("merchantNo").equals(merchantNo)){
+                    !jsonObject.containsKey("storeId")){
                 log.error(" 上传的参数没有包含所需要的值 ");
                 throw new ApiSysException(ErrorEnum.SSCO001004);
             }
@@ -141,13 +142,14 @@ public class SignFacotry {
             Request request=new Request();
             JSONObject jsonObject1= JSONObject.parseObject(
                     ThreeDESUtilDLB.decrypt(jsonObject.getString("cipherJson"),desKey,"UTF-8"));
+            //
             request.setMerchantNo(jsonObject.getString("merchantNo"));
             request.setSystemId(jsonObject.getString("systemId"));
             request.setTenant(jsonObject.getString("tenant"));
+            request.setStoreId(jsonObject.getString("storeId"));
             //下面是解密出来的
             request.setCartFlowNo(jsonObject1.getString("cartFlowNo"));
             request.setCartId(jsonObject1.getString("cartId"));
-            request.setStoreId(jsonObject1.getString("storeId"));
             request.setSn(jsonObject1.getString("sn"));
             request.setCashierNo(jsonObject1.getString("cashierNo"));
             request.setUserId(jsonObject1.getString("userId"));
@@ -158,10 +160,11 @@ public class SignFacotry {
             request.setMerchantOrderId(jsonObject1.getString("merchantOrderId"));
             request.setPayTypeId(jsonObject1.getString("payTypeId"));
             request.setPayNo(jsonObject1.getString("payNo"));
-            request.setPayAmount(jsonObject1.getLong("payAmount"));
+            if(jsonObject1.containsKey("payAmount")){
+                request.setPayAmount(jsonObject1.getLong("payAmount"));
+            }
             request.setItems(jsonObject1.getString("items"));
             request.setCardNum(jsonObject1.getString("cardNum"));
-
             /**
              * 接收必须返回的字段
              * 支付下单接口(收银机扫用户)
@@ -169,7 +172,10 @@ public class SignFacotry {
             request.setBizType(jsonObject1.getString("bizType"));
             request.setOrderId(jsonObject1.getString("orderId"));
             request.setTradeNo(jsonObject1.getString("tradeNo"));
-            request.setAmount(jsonObject1.getInteger("amount"));
+
+            if(jsonObject1.containsKey("amount")){
+                request.setAmount(jsonObject1.getInteger("amount"));
+            }
             request.setCurrency(jsonObject1.getString("currency"));
             request.setAuthcode(jsonObject1.getString("authcode"));
             request.setAppType(jsonObject1.getString("appType"));

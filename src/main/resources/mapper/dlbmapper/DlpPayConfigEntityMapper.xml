@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hualong.duolabao.dao.cluster.DlpPayConfigEntityMapper">
+  <resultMap id="BaseResultMap" type="com.hualong.duolabao.domin.payentity.DlpPayConfigEntity">
+    <result column="tenant" jdbcType="VARCHAR" property="tenant" />
+    <result column="accesskey" jdbcType="VARCHAR" property="accesskey" />
+    <result column="secretkey" jdbcType="VARCHAR" property="secretkey" />
+    <result column="agentnum" jdbcType="VARCHAR" property="agentnum" />
+    <result column="customernum" jdbcType="VARCHAR" property="customernum" />
+    <result column="machinenum" jdbcType="VARCHAR" property="machinenum" />
+    <result column="shopnum" jdbcType="VARCHAR" property="shopnum" />
+    <result column="storeId" jdbcType="VARCHAR" property="storeId" />
+
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tDlpPayConfig
+    where tenant = #{tenant,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.hualong.duolabao.domin.payentity.DlpPayConfigEntity">
+    insert into tDlpPayConfig (tenant, lineId, accesskey, 
+      secretkey, agentnum, customernum, 
+      machinenum, shopnum, createTime
+      )
+    values (#{tenant,jdbcType=VARCHAR}, #{lineId,jdbcType=BIGINT}, #{accesskey,jdbcType=VARCHAR}, 
+      #{secretkey,jdbcType=VARCHAR}, #{agentnum,jdbcType=VARCHAR}, #{customernum,jdbcType=VARCHAR}, 
+      #{machinenum,jdbcType=VARCHAR}, #{shopnum,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.payentity.DlpPayConfigEntity">
+    update tDlpPayConfig
+    set lineId = #{lineId,jdbcType=BIGINT},
+      accesskey = #{accesskey,jdbcType=VARCHAR},
+      secretkey = #{secretkey,jdbcType=VARCHAR},
+      agentnum = #{agentnum,jdbcType=VARCHAR},
+      customernum = #{customernum,jdbcType=VARCHAR},
+      machinenum = #{machinenum,jdbcType=VARCHAR},
+      shopnum = #{shopnum,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where tenant = #{tenant,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select tenant, lineId, accesskey, secretkey, agentnum, customernum, machinenum, shopnum, storeId
+    createTime
+    from tDlpPayConfig
+    where tenant = #{tenant}
+          <if test="storeId != null">
+            AND storeId = #{storeId}
+          </if>
+          <if test="sn != null">
+            AND sn = #{sn}
+          </if>
+
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select tenant, lineId, accesskey, secretkey, agentnum, customernum, machinenum, shopnum,storeId
+    createTime
+    from tDlpPayConfig
+  </select>
+</mapper>

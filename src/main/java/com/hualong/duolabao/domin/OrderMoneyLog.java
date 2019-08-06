@@ -37,10 +37,32 @@ public class OrderMoneyLog {
 
     private Integer actualAmount;
 
+    private Integer isReturn;
+
+    private Integer returnAmount;
+
+    public OrderMoneyLog(String tradeNo, Integer returnAmount) {
+        this.tradeNo = tradeNo;
+        this.isReturn = 1;
+        this.returnAmount = returnAmount;
+    }
+
+    public OrderMoneyLog(String tradeNo, Integer actualAmount, Boolean paycomplited, String tenant) {
+        this.tradeNo = tradeNo;
+        this.actualAmount = actualAmount;
+        this.paycomplited = paycomplited;
+        this.tenant = tenant;
+    }
+
     public OrderMoneyLog(String tradeNo, Integer actualAmount, Boolean paycomplited) {
         this.tradeNo = tradeNo;
         this.actualAmount = actualAmount;
         this.paycomplited = paycomplited;
+    }
+    public OrderMoneyLog(String tradeNo, Boolean paycomplited,String tenant) {
+        this.tradeNo = tradeNo;
+        this.paycomplited = paycomplited;
+        this.tenant = tenant;
     }
 
     public OrderMoneyLog(String tradeNo, Boolean paycomplited) {

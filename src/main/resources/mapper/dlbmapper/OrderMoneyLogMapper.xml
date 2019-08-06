@@ -11,9 +11,9 @@
     <result column="currency" jdbcType="VARCHAR" property="currency" />
     <result column="authcode" jdbcType="VARCHAR" property="authcode" />
     <result column="orderIp" jdbcType="VARCHAR" property="orderIp" />
-
     <result column="actualAmount" jdbcType="DECIMAL" property="actualAmount" />
-
+    <result column="isReturn" jdbcType="INTEGER" property="isReturn" />
+    <result column="returnAmount" jdbcType="DECIMAL" property="returnAmount" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from tDlbOrderMoneyLog
@@ -31,11 +31,23 @@
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.OrderMoneyLog">
     update tDlbOrderMoneyLog
-    set paycomplited = #{paycomplited,jdbcType=BIT}
-      <if test="actualAmount != null">
-        ,actualAmount = #{actualAmount,jdbcType=DECIMAL}
-      </if>
+    set   updateKey=1
+          <if test="paycomplited != null">
+            ,paycomplited = #{paycomplited,jdbcType=BIT}
+          </if>
+          <if test="actualAmount != null">
+            ,actualAmount = #{actualAmount,jdbcType=DECIMAL}
+          </if>
+          <if test="isReturn != null">
+            ,isReturn = #{isReturn,jdbcType=INTEGER}
+          </if>
+          <if test="returnAmount != null">
+            ,returnAmount = #{returnAmount,jdbcType=DECIMAL}
+          </if>
     where tradeNo = #{tradeNo,jdbcType=VARCHAR}
+          <if test="tenant != null">
+            AND tenant = #{tenant,jdbcType=DECIMAL}
+          </if>
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select  bizType, orderId, tradeNo, tenant, amount, currency, authcode, orderIp

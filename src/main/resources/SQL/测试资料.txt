@@ -25,11 +25,11 @@
    http://148.70.87.251:81/DLB/hlyf/api/orderSysn
 
 9 支付下单接口地址(收银机扫用户)
-   http://148.70.87.251:81/DLB/hlyf/api/pay/payOrder
+   http://39.100.115.202:7788/DLB/hlyf/api/pay/payOrder
 10 交易订单查询接口地址
-   http://148.70.87.251:81/DLB/hlyf/api/pay/queryPayOrder
+   http://39.100.115.202:7788/DLB/hlyf/api/pay/queryPayOrder
 11 交易撤销接口地址
-   http://148.70.87.251:81/DLB/hlyf/api/pay/canclePayOrder
+   http://39.100.115.202:7788/DLB/hlyf/api/pay/canclePayOrder
 
 
 称重商品

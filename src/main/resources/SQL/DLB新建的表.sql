@@ -115,6 +115,30 @@
                   orderIp VARCHAR(32),
                   createTime DATETIME DEFAULT (GETDATE()),  --接收的时间
                   paycomplited bit DEFAULT 0,               --是否支付成功
-                  actualAmount Money DEFAULT 0              --实际付款金额
+                  actualAmount Money DEFAULT 0,              --实际付款金额
+                  isReturn int DEFAULT 0,                    --是否退款 0 没有 1 退款成功了
+                  returnAmount Money DEFAULT 0,               --退款金额
+                  updateKey int DEFAULT 0                     --万能更改语句的中转站
                   primary key(lineId)
+          )
+
+
+          --tDlpPayConfig  支付配置表
+          IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tDlpPayConfig]')
+                      AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+          DROP TABLE [dbo].[tDlpPayConfig]
+           CREATE TABLE tDlpPayConfig(
+                  lineId   BIGINT IDENTITY(1,1),  --行号
+                  tenant VARCHAR(64),
+                  tenantName VARCHAR(64),        --商户名称
+                  accesskey VARCHAR(100),
+                  secretkey VARCHAR(100),
+                  agentnum VARCHAR(64),
+                  customernum VARCHAR(64),
+                  sn VARCHAR(64),                  --哆啦宝的机器号
+                  machinenum VARCHAR(64),
+                  shopnum VARCHAR(64),
+                  storeId VARCHAR(64),
+                  createTime DATETIME DEFAULT (GETDATE())
+                  primary key(tenant,storeId)
           )

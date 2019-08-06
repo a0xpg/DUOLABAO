@@ -2,11 +2,14 @@ package com.hualong.duolabao;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hualong.duolabao.config.DlbPayConnfig;
+import com.hualong.duolabao.dao.cluster.DlpPayConfigEntityMapper;
 import com.hualong.duolabao.dao.cluster.MemberInfoMapper;
 import com.hualong.duolabao.dao.cluster.OrderMoneyLogMapper;
 import com.hualong.duolabao.domin.OrderMoneyLog;
 import com.hualong.duolabao.domin.VipOffine;
+import com.hualong.duolabao.domin.payentity.DlpPayConfigEntity;
 import com.hualong.duolabao.domin.payentity.SweepOrder;
+import com.hualong.duolabao.exception.ErrorEnum;
 import com.hualong.duolabao.tool.SHA1;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,9 @@ public class OrderMoneyLogMapperTest {
     private OrderMoneyLogMapper orderMoneyLogMapper;
 
     @Autowired
+    private DlpPayConfigEntityMapper dlpPayConfigEntityMapper;
+
+    @Autowired
     private DlbPayConnfig dlbPayConnfig;
 
     @Autowired
@@ -57,7 +63,9 @@ public class OrderMoneyLogMapperTest {
 //        (String bizType, String orderId, String tradeNo,
 //                String tenant, int amount, String currency,
 //                String authcode, String orderIp)
-        OrderMoneyLog orderMoneyLog=new OrderMoneyLog("002",20,true);
+        OrderMoneyLog orderMoneyLog=new OrderMoneyLog("002",60,false);
+
+        //orderMoneyLog=new OrderMoneyLog("002",60);
         Integer integer=orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
         log.info("我是影响行数 {}",integer);
     }
@@ -65,9 +73,23 @@ public class OrderMoneyLogMapperTest {
     @Test
     public void testPay(){
 
+        DlpPayConfigEntity dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey("0002",null,null);
+        if(dlpPayConfigEntity==null){
+            log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+            log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+            return;
+        }
+        //重新赋值
+        dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
+        dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
+        dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
+        dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
+        dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
+        dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
         String timeUnix=getTimeUnix();
-        String authCode="134607250875044726";
-        String requestNum="7";
+
+        String authCode="134644544715709674";
+        String requestNum="13";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,
@@ -96,9 +118,21 @@ public class OrderMoneyLogMapperTest {
 
     @Test
     public void testqueryPay(){
-
+        DlpPayConfigEntity dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey("0002",null,null);
+        if(dlpPayConfigEntity==null){
+            log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+            log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+            return;
+        }
+        //重新赋值
+        dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
+        dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
+        dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
+        dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
+        dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
+        dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
         String timeUnix=getTimeUnix();
-        String requestNum="2";
+        String requestNum="13";
         String urlAfter="/v1/agent/order/payresult/"
                 +dlbPayConnfig.getAgentnum()+"/"
                 +dlbPayConnfig.getCustomernum()+"/"
@@ -145,7 +179,7 @@ public class OrderMoneyLogMapperTest {
 
         String timeUnix=getTimeUnix();
         String authCode=null;
-        String requestNum="4";
+        String requestNum="13";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,
@@ -157,7 +191,6 @@ public class OrderMoneyLogMapperTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("accessKey",dlbPayConnfig.getAccesskey());
         headers.set("timestamp",timeUnix);
-
         String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
                 "&path=/v1/agent/order/refund&body="+body;
         log.info("带签名的字符串 {}",sign);

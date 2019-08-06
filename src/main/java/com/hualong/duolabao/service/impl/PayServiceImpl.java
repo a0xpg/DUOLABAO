@@ -11,6 +11,7 @@ import com.hualong.duolabao.dao.pos.PosMain;
 import com.hualong.duolabao.dlbtool.SignFacotry;
 import com.hualong.duolabao.dlbtool.ThreeDESUtilDLB;
 import com.hualong.duolabao.domin.*;
+import com.hualong.duolabao.domin.payentity.DlpPayConfigEntity;
 import com.hualong.duolabao.domin.payentity.PayOrderResult;
 import com.hualong.duolabao.domin.payentity.SweepOrder;
 import com.hualong.duolabao.exception.ApiSysException;
@@ -55,12 +56,16 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
     @Autowired
     private DlbConnfig dlbConnfig;
 
+    @Autowired
+    private DlpPayConfigEntityMapper dlpPayConfigEntityMapper;
+
 
     @Override
     public  String CommUrlFun(String urlType,JSONObject jsonParam){
         String response="";
         log.info(urlType+" "+" 获取的参数: {}",jsonParam.toJSONString());
         Request request=null;
+        DlpPayConfigEntity dlpPayConfigEntity=null;
         try{
             SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),jsonParam,dlbConnfig.getMerchantno());
             request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),jsonParam, ErrorEnum.SSCO010015);
@@ -71,6 +76,21 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
             }else {
                 log.info("pay 解密出来的 数据 {}",JSONObject.toJSONString(request,SerializerFeature.WriteMapNullValue));
             }
+            //查询商户dlb支付的配置
+            dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey(request.getTenant(),request.getStoreId(),null);
+            if(dlpPayConfigEntity==null){
+                log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+                log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+                return ResponseDlb(request,ErrorEnum.SSCO001006,null);
+            }
+            //重新赋值
+            dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
+            dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
+            dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
+            dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
+            dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
+            dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
+
         }catch (ApiSysException e){
             e.printStackTrace();
             log.error("pay 出错了 ",e.getExceptionEnum().toString());
@@ -91,8 +111,8 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                             request.getTradeNo(),request.getTenant(),request.getAmount(),
                             request.getCurrency(),request.getAuthcode(),request.getOrderIp());
                     orderMoneyLogMapper.insert(orderMoneyLog);
-                    String amount=String.valueOf(request.getAmount()/100);
-                     sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),
+                    String amount=String.valueOf((double)request.getAmount()/100);
+                    sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),
                             authCode,
                             null,dlbPayConnfig.getShopnum(),
                             requestNum,amount,
@@ -111,7 +131,7 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                     HttpEntity<String> entity = new HttpEntity<String>(body, headers);
                     ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
                     String result = responseEntity.getBody();
-                    log.info("payOrder 单号 {} 消费金额 {}元  拿到的结果 {}",payOrder,amount,result);
+                    log.info("payOrder 单号 {} 消费金额 {}元  拿到的结果 {}",requestNum,amount,result);
                     JSONObject jsonObject=JSON.parseObject(result);
                     if(jsonObject.containsKey("data") && jsonObject.containsKey("result")
                             && jsonObject.getString("result").equals("success")){
@@ -164,11 +184,15 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                     if(jsonObject.containsKey("data") && jsonObject.containsKey("result")
                             && jsonObject.getString("result").equals("success")){
                         //TODO 查询支付状态
+                        jsonObject=JSON.parseObject(jsonObject.getString("data"));
                         if(jsonObject.getString("status").equals("INIT")){
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"DOING");
                         }else if(jsonObject.getString("status").equals("SUCCESS")){
+                            Double orderAmount = new Double(jsonObject.getString("orderAmount"));
+                            orderAmount=orderAmount*100;
+
                              orderMoneyLog=new OrderMoneyLog(request.getTradeNo(),
-                                    Integer.valueOf(jsonObject.getString("orderAmount"))*100,true);
+                                     orderAmount.intValue(),true,request.getTenant());
                             orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"SUCCESS");
                         }else if(jsonObject.getString("status").equals("CANCEL")){
@@ -209,6 +233,19 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                     ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
                     String result = responseEntity.getBody();
                     log.info("canclePayOrder 拿到的结果 {}",result);
+                    log.info("queryPayOrder 拿到的结果 {}",result);
+                    JSONObject jsonObject=JSON.parseObject(result);
+                    if(jsonObject.containsKey("data") && jsonObject.containsKey("result")
+                            && jsonObject.getString("result").equals("success")) {
+                        //TODO 退款成功记录一下
+                        jsonObject = JSON.parseObject(jsonObject.getString("data"));
+                        Double orderAmount = new Double(jsonObject.getString("refundAmount"));
+                        orderAmount = orderAmount * 100;
+                        orderMoneyLog = new OrderMoneyLog(request.getTradeNo(),
+                                orderAmount.intValue());
+                        orderMoneyLog.setTenant(request.getTenant());
+                        orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
+                    }
                     response=ResponseDlb(request,ErrorEnum.SUCCESS,"SUCCESS");
                 }catch (Exception e){
                     e.printStackTrace();
@@ -262,7 +299,7 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
             e.printStackTrace();
             log.error("订单错误的封装 {}",e.getMessage());
             //TODO 如果这里都出错了  基本就KO  不用往下写了
-            return JSONObject.toJSONString(new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
+            return JSONObject.toJSONString(new ResultMsg(false,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
         }
     }
 

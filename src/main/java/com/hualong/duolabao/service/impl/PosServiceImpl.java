@@ -425,7 +425,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             e.printStackTrace();
             log.error("最终返回值封装这里出错了 {}",e.getMessage());
             //TODO 如果这里都出错了  基本就KO  不用往下写了
-            return JSONObject.toJSONString(new ResultMsg(true,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
+            return JSONObject.toJSONString(new ResultMsg(false,GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
         }
     }
     @Override

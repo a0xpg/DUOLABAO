@@ -285,12 +285,24 @@ public class CartInfoMapperTest {
         map.put("items","0002");
         map.put("cardNum","13628672210");
 
+        //扣款的参数
+        map.put("bizType","AppPaySplitBill");
+        map.put("orderId","001");
+        map.put("tradeNo","13");
+        map.put("tenant","0002");
+        map.put("amount",1);
+        map.put("currency","CNY");
+        map.put("authcode","134591718480510437");
+        map.put("appType","WX");
+        map.put("orderIp","192.168.1.1");
+
+
 
         String cipherJson= ThreeDESUtilDLB.encrypt(JSONObject.toJSONString(map),dlbConnfig.getDeskey(),"utf-8");
         String uuid= SignFacotry.getUUID();
         String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
         Map<String,String> mapdata=new HashMap<>();
-        mapdata.put("merchantNo","hualong");
+        mapdata.put("merchantNo","111910949");
         mapdata.put("tenant","0002");
         mapdata.put("storeId","0002");
         mapdata.put("cipherJson", cipherJson);
