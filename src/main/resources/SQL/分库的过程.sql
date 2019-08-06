@@ -220,7 +220,9 @@ print '1001'
 
  --以下是zmy增加
 	UPDATE E
-	SET	E.discountAmount=(C.fLastSettle0-C.fLastSettle)*100,E.amount=C.fLastSettle0*100,E.price=C.fPrice*100
+	SET	E.discountAmount=case when floor((C.fNormalSettle-C.fLastSettle)*100)>0 then floor((C.fNormalSettle-C.fLastSettle)*100) else 0 end,
+	E.amount=case when floor(C.fNormalSettle*100)>0 then  floor(C.fNormalSettle*100) else 0 end,
+	E.price=floor(C.fPrice*100)
 	FROM Posmanagement_main.dbo.tDlbGoodsInfo E,
 			 (SELECT
 				a.cStoreNo,

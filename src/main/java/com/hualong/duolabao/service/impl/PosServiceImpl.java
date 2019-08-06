@@ -268,9 +268,9 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             memberInfoMapper.deleteByPrimaryKey(request.getCartId(),request.getStoreId());
             //TODO 删除购物车的商品
             int info=CommonServiceImpl.deleteBlbGoodsInfo(dlbGoodsInfoMapper,request.getCartId(),request.getStoreId(),null,null);
-            if(info==0){
-                throw  new ApiSysException(ErrorEnum.SSCO010008);
-            }
+//            if(info==0){
+//                throw  new ApiSysException(ErrorEnum.SSCO010008);
+//            }
         }catch (Exception e){
             e.printStackTrace();
             log.error("删除整个购物车的时间出错了:  {}",e.getMessage());
@@ -399,8 +399,8 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 cartInfo.setOrderScore(AddScore);
                 cartInfo.setScoreInfo(new ScoreInfo(new Double(memberInfo.getScore())));
             }
-
-            ResultMsg resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
+            boolean returnStatus=errorEnum==ErrorEnum.SUCCESS ? true:false;
+            ResultMsg resultMsg= new ResultMsg(returnStatus, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
             String s1=JSON.toJSONString(resultMsg, SerializerFeature.WriteNullListAsEmpty,
                     SerializerFeature.WriteNullNumberAsZero,
                     SerializerFeature.WriteNullBooleanAsFalse);

@@ -1,10 +1,14 @@
 
+第一台机器:
 收银员号（对应报文字段cashierNo） 0002
-
 门店号（对应保文字段storeId）     0002
-
 购物车ID（对应报文字段cartId）    0002
+商户ID（对应报文字段tenant）      0002
 
+第二台机器:
+收银员号（对应报文字段cashierNo） 0003
+门店号（对应保文字段storeId）     0002
+购物车ID（对应报文字段cartId）    0003
 商户ID（对应报文字段tenant）      0002
 
 1 会员查询地址
@@ -24,12 +28,12 @@
 8 订单完成同步地址
    http://148.70.87.251:81/DLB/hlyf/api/orderSysn
 
-9 支付下单接口地址(收银机扫用户)
-   http://39.100.115.202:7788/DLB/hlyf/api/pay/payOrder
+9 支付下单接口地址(收银机扫用户)39.100.115.202
+   http://dlb.warelucent.cc:7788/DLB/hlyf/api/pay/payOrder
 10 交易订单查询接口地址
-   http://39.100.115.202:7788/DLB/hlyf/api/pay/queryPayOrder
+   http://dlb.warelucent.cc:7788/DLB/hlyf/api/pay/queryPayOrder
 11 交易撤销接口地址
-   http://39.100.115.202:7788/DLB/hlyf/api/pay/canclePayOrder
+   http://dlb.warelucent.cc:7788/DLB/hlyf/api/pay/canclePayOrder
 
 
 称重商品

@@ -200,7 +200,6 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                         }else{
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"CLOSE");
                         }
-
                     }else {
                         //TODO
                         response=ResponseDlb(request,ErrorEnum.SSCO005009,null);
@@ -210,8 +209,6 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                     log.error("pay 查询失败");
                     response=ResponseDlb(request,ErrorEnum.SSCO005009,null);
                 }
-
-
                 break;
             case canclePayOrder:
                 //TODO 发起退款

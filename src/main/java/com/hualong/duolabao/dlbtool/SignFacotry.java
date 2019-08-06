@@ -79,6 +79,9 @@ public class SignFacotry {
      */
     public static void verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo) throws ApiSysException {
         try{
+            /**
+             * 这个校验没有打开  是因为哆啦宝支付的没有上传  所以这里屏蔽了这个校验
+             */
             // || !jsonObject.getString("merchantNo").equals(merchantNo)
             if(!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("cipherJson") ||
                     !jsonObject.containsKey("sign") || !jsonObject.containsKey("systemId") ||
