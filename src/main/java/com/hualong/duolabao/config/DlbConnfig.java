@@ -27,6 +27,10 @@ public class DlbConnfig {
     @Value("${dlb.timerenabled}")
     private Boolean timerenabled;
 
+    @Value("${dlb.checkmerchantno}")
+    private Boolean checkmerchantno;
+
+
 
 
 }

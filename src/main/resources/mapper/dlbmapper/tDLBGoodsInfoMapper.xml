@@ -46,13 +46,24 @@
         name, amount, discountAmount,
         discountName, basePrice, price,
         qty, weight, isWeight,
-        barcode, unit)
+        barcode, unit
+
+        <if test="receivingCode != null">
+            , receivingCode
+        </if>
+        )
         values (#{cartId,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, #{cartFlowNo,jdbcType=VARCHAR},
         #{cashierNo,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR},
         #{name,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{discountAmount,jdbcType=DECIMAL},
         #{discountName,jdbcType=VARCHAR}, #{basePrice,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL},
         #{qty,jdbcType=INTEGER}, #{weight,jdbcType=DECIMAL}, #{isWeight,jdbcType=BIT},
-        #{barcode,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR})
+        #{barcode,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}
+
+        <if test="receivingCode != null">
+            , #{receivingCode,jdbcType=VARCHAR}
+        </if>
+
+        )
     </insert>
 
     <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.BLBGoodsInfo">
@@ -123,7 +134,7 @@
     -->
     <select id="selectAll" resultMap="BaseResultMap">
         select lineId, id, name, amount, discountAmount,
-        discountName, basePrice, price, qty, weight, isWeight, barcode, unit,merchantOrderId
+        discountName, basePrice, price, qty, weight, isWeight, receivingCode AS barcode, unit,merchantOrderId
         from tDlbGoodsInfo
         where cartId = #{cartId,jdbcType=VARCHAR}
         and storeId = #{storeId,jdbcType=VARCHAR}

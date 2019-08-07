@@ -36,6 +36,11 @@ public class FrushGood {
      */
     private String barcode;
 
+    /**
+     * 接收到的原始码
+     */
+    private String receivingCode;
+
     public FrushGood(boolean isWeight) {
         this.isWeight = isWeight;
     }

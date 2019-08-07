@@ -2,6 +2,7 @@ package com.hualong.duolabao.dlbtool;
 
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.domin.Request;
 import com.hualong.duolabao.exception.ApiSysException;
 import com.hualong.duolabao.exception.ErrorEnum;
@@ -89,6 +90,52 @@ public class SignFacotry {
                     !jsonObject.containsKey("storeId")){
                 log.error(" 上传的参数没有包含所需要的值 ");
                 throw new ApiSysException(ErrorEnum.SSCO001004);
+            }
+
+            try{
+                if(verify(jsonObject.getString("cipherJson") + jsonObject.getString("uuid"), md5Key, jsonObject.getString("sign"))){
+                } else {
+                    log.error(" 校验签名失败  ");
+                    throw new ApiSysException(ErrorEnum.SSCO001004);
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                log.error(Thread.currentThread().getStackTrace()[0].getMethodName()+" 签名校验失败或者不是本商户号的访问 ："+E.getMessage());
+                throw new ApiSysException(ErrorEnum.SSCO001004);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error(Thread.currentThread().getStackTrace()[0].getMethodName()+" 签名校验失败或者不是本商户号的访问 ："+e.getMessage());
+            throw new ApiSysException(ErrorEnum.SSCO001004);
+        }
+    }
+
+    /**
+     * <pre>
+     *     重新的方法 是否开启校验merchantNo
+     *     如果是获取商品基本信息 需要校验
+     *     如果是请求的支付接口   不需要校验
+     * </pre>
+     * @param md5Key
+     * @param jsonObject
+     * @param merchantNo
+     * @param dlbConnfig
+     * @throws ApiSysException
+     */
+    public static void verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo,DlbConnfig dlbConnfig) throws ApiSysException {
+        try{
+            if(!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("cipherJson") ||
+                    !jsonObject.containsKey("sign") || !jsonObject.containsKey("systemId") ||
+                    !jsonObject.containsKey("uuid") || !jsonObject.containsKey("tenant") ||
+                    !jsonObject.containsKey("storeId")){
+                log.error(" 上传的参数没有包含所需要的值 ");
+                throw new ApiSysException(ErrorEnum.SSCO001004);
+            }
+            if(dlbConnfig.getCheckmerchantno()){
+                if(!jsonObject.getString("merchantNo").equals(merchantNo)){
+                    log.error(" merchantNo 校验失败 ");
+                    throw new ApiSysException(ErrorEnum.SSCO001004);
+                }
             }
             try{
                 if(verify(jsonObject.getString("cipherJson") + jsonObject.getString("uuid"), md5Key, jsonObject.getString("sign"))){

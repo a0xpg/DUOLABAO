@@ -166,7 +166,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                                 frushGood.getAllMoney(), 0, null,
                                 NomalPrice,NomalPrice,
                                 0, frushGood.getWeightwight(), true,
-                                storeGoods.getCBarcode(), "kg"));
+                                storeGoods.getCBarcode(), "kg",frushGood.getReceivingCode()));
             }else {
                 //检测购物车是否存在改商品
                 BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper.getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
@@ -195,7 +195,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                                     NomalPrice, 0,
                                     null,  NomalPrice,NomalPrice,
                                     1, 0, false,
-                                    storeGoods.getCBarcode(), "个"));
+                                    storeGoods.getCBarcode(), "个",frushGood.getReceivingCode()));
                 }
             }
         }catch (Exception e){
@@ -451,7 +451,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         log.info(urlType+" "+" 获取的参数: {}",jsonParam.toJSONString());
         Request request=null;
         try{
-            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),jsonParam,dlbConnfig.getMerchantno());
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),jsonParam,dlbConnfig.getMerchantno(),dlbConnfig);
             request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),jsonParam, ErrorEnum.SSCO010015);
             //解密数据
             if(request==null){
@@ -581,6 +581,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
     public FrushGood getIsFrushGood(Request request,PosMain posMain,CommDaoMapper commDaoMapper) throws ApiSysException {
         FrushGood frushGood=new FrushGood(false);
         frushGood.setBarcode(request.getBarcode());
+        frushGood.setReceivingCode(request.getBarcode());
         tDlbPosConfiguration tDlbPosConfiguration = CommonServiceImpl.gettDlbPosConfiguration(request, commDaoMapper);
         posConfig posConfig=this.commDaoMapper.getposConfig(tDlbPosConfiguration.getPosName()+".dbo.Pos_Config","条码秤");
         if(posConfig==null){

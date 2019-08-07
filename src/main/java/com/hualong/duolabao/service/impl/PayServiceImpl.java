@@ -67,7 +67,7 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
         Request request=null;
         DlpPayConfigEntity dlpPayConfigEntity=null;
         try{
-            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),jsonParam,dlbConnfig.getMerchantno());
+            SignFacotry.verifySignAndMerchantNo(dlbConnfig.getMdkey(),jsonParam,dlbConnfig.getMerchantno(),dlbConnfig);
             request=SignFacotry.decryptCipherJsonToRequest(dlbConnfig.getDeskey(),jsonParam, ErrorEnum.SSCO010015);
             //解密数据
             if(request==null){

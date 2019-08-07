@@ -33,7 +33,8 @@ GO
                   weight MONEY DEFAULT 0,
                   isWeight bit DEFAULT 0,
                   barcode VARCHAR(30),
-                  unit VARCHAR(20)
+                  unit VARCHAR(20),
+                  receivingCode  VARCHAR(30) --接收到的原始码
 
                   primary key(lineId)
               )

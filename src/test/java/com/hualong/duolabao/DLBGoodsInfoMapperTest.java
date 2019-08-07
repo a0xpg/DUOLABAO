@@ -105,7 +105,7 @@ public class DLBGoodsInfoMapperTest {
                 "00205", "测试商品5", 6000000, 0,
                 null,  6000000, 6000000,
                 1, 1.069, true,
-                "00205", "个");
+                "00205", "个","589");
 
         Integer integer=dlbGoodsInfoMapper.insert(blbGoodsInfo);
         if(integer!=null){

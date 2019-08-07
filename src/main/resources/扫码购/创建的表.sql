@@ -32,7 +32,7 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGGoodsI
                   primary key(lineId)
               )
 /*
-     超市门店位置表（主要保存门店编号 门店名称 门店地理位置）
+     超市门店位置表（主要保存门店编号 门店名称 门店地理位置,小程序每单限购数量（））
  */
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGStoreLocation]')
                       AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
@@ -44,13 +44,14 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGStoreL
                   unionId VARCHAR(64),
                   province    VARCHAR(64),
                   city    VARCHAR(64),
-                  location    VARCHAR(100),          --集体位置
+                  location    VARCHAR(100),          --具体位置
                   storeId VARCHAR(64),
                   storeName VARCHAR(64),
                   longitude VARCHAR(64),         --经度
                   latitude VARCHAR(64),          --维度
+                  limitNumber INT DEFAULT 1000,          --每单限购多少必须去收银台结账
                   createTime DATETIME DEFAULT (GETDATE()),
-                  updateTime DATETIME DEFAULT (GETDATE())  --订单创建的时间
+                  updateTime DATETIME DEFAULT (GETDATE())  --修改时间
                   primary key(lineId)
               )
 
@@ -94,12 +95,12 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGMoneyS
 
 
 /*
-     微信支付订单表
+     微信支付订单表(可能是充值  也可能是支付)
  */
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGMoneyOnline]')
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGWxPayLog]')
                       AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-          DROP TABLE [dbo].[tSMGMoneyOnline]
-           CREATE TABLE tSMGMoneyOnline(
+          DROP TABLE [dbo].[tSMGWxPayLog]
+           CREATE TABLE tSMGWxPayLog(
                   --下面是商品的基础字段
                   lineId   BIGINT IDENTITY(1,1),  --行号
                   openId VARCHAR(64),
@@ -112,3 +113,52 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGMoneyO
                   createTime DATETIME DEFAULT (GETDATE())
                   primary key(lineId)
               )
+/*
+     支付配置表
+ */
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGPayConfig]')
+            AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE [dbo].[tSMGPayConfig]
+ CREATE TABLE tSMGPayConfig(
+        lineId   BIGINT IDENTITY(1,1),  --行号
+        tenant VARCHAR(64),
+        tenantName VARCHAR(64),        --商户名称
+        accesskey VARCHAR(100),
+        secretkey VARCHAR(100),
+        agentnum VARCHAR(64),
+        customernum VARCHAR(64),
+        sn VARCHAR(64),                  --哆啦宝的机器号
+        machinenum VARCHAR(64),
+        shopnum VARCHAR(64),
+        storeId VARCHAR(64),
+        createTime DATETIME DEFAULT (GETDATE())
+        primary key(tenant,storeId,sn)
+)
+
+--配置表
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGPosConfiguration]')
+            AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE [dbo].[tSMGPosConfiguration]
+ CREATE TABLE tSMGPosConfiguration(
+        storeId VARCHAR(64),
+        --下面是商品的基础字段
+        posName VARCHAR(64), --库名
+        posid  VARCHAR(20), --对应我们的posid  前台收银编号
+        primary key(storeId)
+)
+
+--用户表
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tSMGUsers]')
+            AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE [dbo].[tSMGUsers]
+ CREATE TABLE tSMGUsers(
+        lineId   BIGINT IDENTITY(1,1),  --行号
+        openId VARCHAR(64),
+        unionId VARCHAR(64),
+        storeId VARCHAR(64),           --该字段暂时无用
+        userTel VARCHAR(20),          --电话号码  只有授权电话的才可以购物
+        administration INT  DEFAULT 0,     --默认0 发起支付 1 支付成功
+        createTime DATETIME DEFAULT (GETDATE())
+        primary key(lineId)
+)

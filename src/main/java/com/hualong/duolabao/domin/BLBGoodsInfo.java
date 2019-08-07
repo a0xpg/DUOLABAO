@@ -44,6 +44,37 @@ public class BLBGoodsInfo  extends DlbCommon {
     @JSONField(serialize=false)
     private String merchantOrderId;
 
+    /**
+     * 接收到的原始码
+     */
+    private String receivingCode;
+
+    public BLBGoodsInfo(String storeId, String sn, String cartId, String cartFlowNo,
+                        String cashierNo, String lineId, Long lineIdDelete,
+                        String id, String name, long amount, long discountAmount,
+                        String discountName, long basePrice, long price,
+                        Integer qty, double weight, Boolean isWeight,
+                        String barcode, String unit,String receivingCode) {
+        super(storeId, sn, cartId);
+        this.cartFlowNo = cartFlowNo;
+        this.cashierNo = cashierNo;
+        this.lineId = lineId;
+        this.lineIdDelete = lineIdDelete;
+        this.id = id;
+        this.name = name;
+        this.amount = amount;
+        this.discountAmount = discountAmount;
+        this.discountName = discountName;
+        this.basePrice = basePrice;
+        this.price = price;
+        this.qty = qty;
+        this.weight = weight;
+        this.isWeight = isWeight;
+        this.barcode = barcode;
+        this.unit = unit;
+        this.receivingCode=receivingCode;
+    }
+
     public BLBGoodsInfo() {
     }
 

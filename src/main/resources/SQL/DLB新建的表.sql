@@ -24,7 +24,8 @@
                   weight MONEY DEFAULT 0,
                   isWeight bit DEFAULT 0,
                   barcode VARCHAR(30),
-                  unit VARCHAR(20)
+                  unit VARCHAR(20),
+                  receivingCode  VARCHAR(30) --接收到的原始码
 
                   primary key(lineId)
               )
@@ -69,7 +70,6 @@
                       AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
           DROP TABLE [dbo].[tDlbOrderSysnLog]
            CREATE TABLE tDlbOrderSysnLog(
-
                   lineId   BIGINT IDENTITY(1,1),  --行号
                   merchantOrderId VARCHAR(64),
                   payTypeId VARCHAR(100),
@@ -85,7 +85,7 @@
                   primary key(lineId)
           )
 
-          --会员积分日志表
+        --会员积分日志表
         if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[otherVipUpLog]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
         drop table [dbo].[otherVipUpLog]
         CREATE TABLE otherVipUpLog(
