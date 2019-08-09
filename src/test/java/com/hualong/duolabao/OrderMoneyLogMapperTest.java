@@ -132,7 +132,7 @@ public class OrderMoneyLogMapperTest {
         dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
         dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
         String timeUnix=getTimeUnix();
-        String requestNum="13";
+        String requestNum="201908091125514010010654469531";
         String urlAfter="/v1/agent/order/payresult/"
                 +dlbPayConnfig.getAgentnum()+"/"
                 +dlbPayConnfig.getCustomernum()+"/"
@@ -179,7 +179,7 @@ public class OrderMoneyLogMapperTest {
 
         String timeUnix=getTimeUnix();
         String authCode=null;
-        String requestNum="13";
+        String requestNum="201908091639354010010220073198";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,

@@ -213,37 +213,40 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
             case canclePayOrder:
                 //TODO 发起退款
                 try{
-                    sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),null,
-                            null,dlbPayConnfig.getShopnum(),requestNum,null,null,null);
-                    String body=JSONObject.toJSONString(sweepOrder);
-                    log.info("我是请求体携带的数据 {}",body);
-                    String url = "https://openapi.duolabao.com/v1/agent/order/refund";
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-                    headers.set("accessKey",dlbPayConnfig.getAccesskey());
-                    headers.set("timestamp",timeUnix);
-                    String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
-                            "&path=/v1/agent/order/refund&body="+body;
-                    sign= SHA1.encode(sign).toUpperCase();
-                    headers.set("token",sign);
-                    HttpEntity<String> entity = new HttpEntity<String>(body, headers);
-                    ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
-                    String result = responseEntity.getBody();
-                    log.info("canclePayOrder 拿到的结果 {}",result);
-                    log.info("queryPayOrder 拿到的结果 {}",result);
-                    JSONObject jsonObject=JSON.parseObject(result);
-                    if(jsonObject.containsKey("data") && jsonObject.containsKey("result")
-                            && jsonObject.getString("result").equals("success")) {
-                        //TODO 退款成功记录一下
-                        jsonObject = JSON.parseObject(jsonObject.getString("data"));
-                        Double orderAmount = new Double(jsonObject.getString("refundAmount"));
-                        orderAmount = orderAmount * 100;
-                        orderMoneyLog = new OrderMoneyLog(request.getTradeNo(),
-                                orderAmount.intValue());
-                        orderMoneyLog.setTenant(request.getTenant());
-                        orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
-                    }
                     response=ResponseDlb(request,ErrorEnum.SUCCESS,"SUCCESS");
+                    //如果开启退款功能  则可以退款
+                    if(dlbConnfig.getReturnpay()){
+                        sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),null,
+                                null,dlbPayConnfig.getShopnum(),requestNum,null,null,null);
+                        String body=JSONObject.toJSONString(sweepOrder);
+                        log.info("我是请求体携带的数据 {}",body);
+                        String url = "https://openapi.duolabao.com/v1/agent/order/refund";
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.APPLICATION_JSON);
+                        headers.set("accessKey",dlbPayConnfig.getAccesskey());
+                        headers.set("timestamp",timeUnix);
+                        String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
+                                "&path=/v1/agent/order/refund&body="+body;
+                        sign= SHA1.encode(sign).toUpperCase();
+                        headers.set("token",sign);
+                        HttpEntity<String> entity = new HttpEntity<String>(body, headers);
+                        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
+                        String result = responseEntity.getBody();
+                        log.info("canclePayOrder 拿到的结果 {}",result);
+                        log.info("queryPayOrder 拿到的结果 {}",result);
+                        JSONObject jsonObject=JSON.parseObject(result);
+                        if(jsonObject.containsKey("data") && jsonObject.containsKey("result")
+                                && jsonObject.getString("result").equals("success")) {
+                            //TODO 退款成功记录一下
+                            jsonObject = JSON.parseObject(jsonObject.getString("data"));
+                            Double orderAmount = new Double(jsonObject.getString("refundAmount"));
+                            orderAmount = orderAmount * 100;
+                            orderMoneyLog = new OrderMoneyLog(request.getTradeNo(),
+                                    orderAmount.intValue());
+                            orderMoneyLog.setTenant(request.getTenant());
+                            orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
+                        }
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                     log.error("pay 退款");

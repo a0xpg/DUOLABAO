@@ -144,7 +144,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         try{
             //得到商品信息
             cStoreGoods storeGoods=cStoreGoodsList.get(0);
-            Long NomalPrice=new Double(storeGoods.getFNormalPrice()).longValue()*100;
+            Long NomalPrice=new Double(storeGoods.getFNormalPrice()*100).longValue();
             log.info("查询到的商品信息  {}", JSON.toJSON(storeGoods).toString());
             //如果是生鲜 直接保存到购物车
             if(frushGood.isWeight()){
@@ -214,7 +214,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             log.info("查询到的商品信息  {}", JSON.toJSON(storeGoods).toString());
             //检测购物车是否存在改商品
             BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper.getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
-            Long NomalPrice=new Double(storeGoods.getFNormalPrice()).longValue()*100;
+            Long NomalPrice=new Double(storeGoods.getFNormalPrice()*100).longValue();
             //如果没有改商品保存的购物车   如果存在就更新该购物车
             if(blbGoodsInfo!=null){
                 int num=request.getQuantity();
@@ -343,7 +343,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             log.error("订单完成同步失败:  {}",e.getMessage());
             new ResultMsg(true, ErrorEnum.SSCO001001.getCode(),ErrorEnum.SSCO001001.getMesssage(),null);
         }
-
         String s1=JSON.toJSONString(resultMsg);
         return s1;
     }
@@ -611,7 +610,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 String money=request.getBarcode().substring(posConfig.getIMoneyStart18()-1,posConfig.getIMoneyEnd18());
                 String wight=request.getBarcode().substring(posConfig.getIWeightStart18()-1,posConfig.getIWeightEnd18());
                 //重量 kg
-                double wight2 = new Double(wight) / posConfig.getIRatio();
+                double wight2 = new Double(wight) / 1000;
                 //单位  分
                 double money2 = ((new Double(money) ) * 100) / posConfig.getIRatio();
                 //重新赋值

@@ -125,7 +125,7 @@ public class SignFacotry {
     public static void verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo,DlbConnfig dlbConnfig) throws ApiSysException {
         try{
             if(!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("cipherJson") ||
-                    !jsonObject.containsKey("sign") || !jsonObject.containsKey("systemId") ||
+                    !jsonObject.containsKey("sign")  ||
                     !jsonObject.containsKey("uuid") || !jsonObject.containsKey("tenant") ||
                     !jsonObject.containsKey("storeId")){
                 log.error(" 上传的参数没有包含所需要的值 ");
@@ -134,6 +134,12 @@ public class SignFacotry {
             if(dlbConnfig.getCheckmerchantno()){
                 if(!jsonObject.getString("merchantNo").equals(merchantNo)){
                     log.error(" merchantNo 校验失败 ");
+                    throw new ApiSysException(ErrorEnum.SSCO001004);
+                }
+            }
+            if(dlbConnfig.getChecksystemid()){
+                if(!jsonObject.containsKey("systemId")){
+                    log.error(" systemId 没有上传 ");
                     throw new ApiSysException(ErrorEnum.SSCO001004);
                 }
             }

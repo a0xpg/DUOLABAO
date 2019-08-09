@@ -30,6 +30,14 @@ public class DlbConnfig {
     @Value("${dlb.checkmerchantno}")
     private Boolean checkmerchantno;
 
+    @Value("${dlb.checksystemid}")
+    private Boolean checksystemid;
+
+    @Value("${dlb.returnpay}")
+    private Boolean returnpay;
+
+
+
 
 
 
