@@ -100,7 +100,7 @@ END
 GO
 
 /*
-	 把数据插入到分库的结算表
+	  把数据插入到分库的结算表
     exec p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z '@sheeetno','@storeId','abc'
 */
 IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
@@ -112,7 +112,7 @@ GO
 CREATE PROC [dbo].[p_commitDataProcToPOS_SaleSheetDetailAndJiesuan_z]
  @sheeetno varchar(80),
  @storeId varchar(16),
- @tableName VARCHAR(50)
+ @tableName VARCHAR(100)
  AS
 BEGIN
 
@@ -125,6 +125,153 @@ BEGIN
   PRINT(@SQLWHERE)
 
  EXEC (@SQLWHERE)
+END
+
+GO
+
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_getPos_SerialNoSheetNo_Z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].[p_getPos_SerialNoSheetNo_Z]
+END
+GO
+CREATE procedure [dbo].[p_getPos_SerialNoSheetNo_Z]
+@cStoreNo VARCHAR(32),
+@cPosID VARCHAR(32),
+@Zdriqi VARCHAR(32),
+@callName VARCHAR(80)
+AS
+BEGIN
+  DECLARE @SQLWHERE VARCHAR(8000)
+
+  SET  @SQLWHERE = 'EXEC '+@callName+' '''+@cStoreNo+''','''
+                          +@cPosID+''','''+@Zdriqi+''''
+
+  PRINT(@SQLWHERE)
+
+  EXEC (@SQLWHERE)
+END
+
+GO
+
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_saveSheetNo_Z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].[p_saveSheetNo_Z]
+
+END
+GO
+CREATE procedure [dbo].[p_saveSheetNo_Z]
+@cStoreNo VARCHAR(32),
+@cPosID VARCHAR(32),
+@Zdriqi VARCHAR(32),
+@SerNo VARCHAR(32),
+@iSeed_Max VARCHAR(32),
+@callName VARCHAR(80)
+AS
+BEGIN
+  DECLARE @SQLWHERE VARCHAR(8000)
+
+  SET  @SQLWHERE = 'EXEC '+@callName+' '''+@cStoreNo+''','''
+                          +@cPosID+''','''+@Zdriqi+''','''
+                          +@SerNo+''','+@iSeed_Max
+
+  PRINT(@SQLWHERE)
+
+  EXEC (@SQLWHERE)
+END
+
+GO
+
+--动态调用过程获取数据的过程
+--EXEC p_ProcessPosSheet_Z '0002','02','2019043012011993595','13628672210',100,0,'posstation101.dbo.p_ProcessPosSheet'
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_ProcessPosSheet_Z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].[p_ProcessPosSheet_Z]
+
+END
+GO
+CREATE procedure [dbo].[p_ProcessPosSheet_Z]
+@cStoreNo varchar(32),
+@cPosID varchar(32),
+@cSaleSheetNo varchar(32),
+@cVipNo varchar(32),
+@fVipRate varchar(32),
+@bDiscount varchar(32),
+@callName VARCHAR(80)
+AS
+BEGIN
+  DECLARE @SQLWHERE VARCHAR(800)
+
+  SET  @SQLWHERE = 'EXEC '+@callName+' '''+@cStoreNo+''','''
+                          +@cPosID+''','''+@cSaleSheetNo+''','''
+                          +@cVipNo+''','''+@fVipRate+''','+@bDiscount
+
+  PRINT(@SQLWHERE)
+
+  EXEC (@SQLWHERE)
+END
+
+GO
+
+--获取增加的积分的值
+--EXEC p_getVipScoreAdd '2019043012011993595',100,'posstation006.dbo.p_CountVipScore_Online'
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_getVipScoreAdd]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].[p_getVipScoreAdd]
+
+END
+GO
+CREATE procedure [dbo].[p_getVipScoreAdd]
+@cSaleSheetNo varchar(32),
+@fVipRate varchar(32),
+@callName VARCHAR(80)
+AS
+BEGIN
+  DECLARE @SQLWHERE VARCHAR(800)
+
+  SET  @SQLWHERE = 'SELECT '+@callName+' ('
+                          +''''+@cSaleSheetNo+''','
+                          +@fVipRate+') AS vipAddScore '
+
+  PRINT(@SQLWHERE)
+
+ EXEC (@SQLWHERE)
+END
+
+GO
+
+--积分增减的
+IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_updateVipOther_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE [dbo].[p_updateVipOther_z]
+END
+GO
+CREATE PROC [dbo].[p_updateVipOther_z]
+ @appId varchar(64),
+ @machineId varchar(64),
+ @vipNo varchar(64),
+ @addScore MONEY =0                --增加多少积分
+ AS
+BEGIN
+  DECLARE @iFlag INT
+  SET @iFlag = 0
+
+  --
+  DECLARE @fCurValue_Pos MONEY
+  SET @fCurValue_Pos = (SELECT fCurValue_Pos FROM t_Vip WHERE cVipno=@vipNo)
+
+  UPDATE t_vip SET fcurvalue=fcurvalue+@addScore,fCurValue_Pos=fCurValue_Pos+@addScore where cVipNo=@vipNo
+
+  --判断影响函数
+  SET @iFlag= @@rowcount
+
+  PRINT(@iFlag)
+  IF @iFlag > 0
+  BEGIN
+    INSERT INTO otherVipUpLog ( appId,machineId ,vipNo ,addMoney,oddMoney,newMoney) VALUES
+     (@appId,@machineId,@vipNo,@addScore,@fCurValue_Pos,@fCurValue_Pos+@addScore)
+  END
+
+
 END
 
 GO

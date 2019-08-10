@@ -118,7 +118,9 @@
                   actualAmount Money DEFAULT 0,              --实际付款金额
                   isReturn int DEFAULT 0,                    --是否退款 0 没有 1 退款成功了
                   returnAmount Money DEFAULT 0,               --退款金额
-                  updateKey int DEFAULT 0                     --万能更改语句的中转站
+                  updateKey int DEFAULT 0,                     --万能更改语句的中转站
+                  storeId VARCHAR(32),
+                  sn       VARCHAR(32)
                   primary key(lineId)
           )
 

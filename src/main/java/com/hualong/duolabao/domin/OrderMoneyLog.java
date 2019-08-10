@@ -41,6 +41,10 @@ public class OrderMoneyLog {
 
     private Integer returnAmount;
 
+    private String storeId;
+
+    private String sn;
+
     public OrderMoneyLog(String tradeNo, Integer returnAmount) {
         this.tradeNo = tradeNo;
         this.isReturn = 1;

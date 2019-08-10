@@ -23,10 +23,24 @@
   <insert id="insert" parameterType="com.hualong.duolabao.domin.OrderMoneyLog">
     insert into tDlbOrderMoneyLog ( bizType, orderId,
       tradeNo, tenant, amount, 
-      currency, authcode, orderIp)
+      currency, authcode, orderIp
+      <if test=" storeId !=null ">
+        ,storeId
+      </if>
+      <if test=" sn !=null ">
+        ,sn
+      </if>
+      )
     values (#{bizType,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR},
       #{tradeNo,jdbcType=VARCHAR}, #{tenant,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
       #{currency,jdbcType=VARCHAR}, #{authcode,jdbcType=VARCHAR}, #{orderIp,jdbcType=VARCHAR}
+
+    <if test=" storeId !=null ">
+      ,#{storeId,jdbcType=VARCHAR}
+    </if>
+    <if test=" sn !=null ">
+      ,#{sn,jdbcType=VARCHAR}
+    </if>
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.OrderMoneyLog">

@@ -110,6 +110,8 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                     orderMoneyLog=new OrderMoneyLog(request.getBizType(),request.getOrderId(),
                             request.getTradeNo(),request.getTenant(),request.getAmount(),
                             request.getCurrency(),request.getAuthcode(),request.getOrderIp());
+                    orderMoneyLog.setStoreId(request.getStoreId());
+                    orderMoneyLog.setSn(request.getSn());
                     orderMoneyLogMapper.insert(orderMoneyLog);
                     String amount=String.valueOf((double)request.getAmount()/100);
                     sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),

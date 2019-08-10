@@ -46,7 +46,7 @@
     <!--单店获取商品-->
     <select id="GetcStoreGoodsDanDian" resultType="com.hualong.duolabao.domin.cStoreGoods" >
 
-        SELECT cGoodsNo,cGoodsName,cBarcode,cStoreNo,cStoreName,cUnit,
+        SELECT cGoodsNo,cGoodsName,cBarcode,cUnit,
         cSpec,fNormalPrice,fVipPrice,fVipScore,fCKPrice,isWholePack=1,fVipScore,
         youHuiAmount=0.0,amount=fNormalPrice,num=1,packRate=1 FROM t_Goods
         WHERE 1=1

@@ -53,7 +53,9 @@ public class OrderMoneyLogMapperTest {
 //                String tenant, int amount, String currency,
 //                String authcode, String orderIp)
         OrderMoneyLog orderMoneyLog=new OrderMoneyLog("002","002",
-                "002","002",2,"002","002","002");
+                "002","00205",2,"002","002","002");
+        orderMoneyLog.setSn("568");
+        orderMoneyLog.setStoreId("00205");
         Integer integer=orderMoneyLogMapper.insert(orderMoneyLog);
         log.info("我是影响行数 {}",integer);
     }
@@ -179,7 +181,7 @@ public class OrderMoneyLogMapperTest {
 
         String timeUnix=getTimeUnix();
         String authCode=null;
-        String requestNum="201908091639354010010220073198";
+        String requestNum="201908101622084010010711959612";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,

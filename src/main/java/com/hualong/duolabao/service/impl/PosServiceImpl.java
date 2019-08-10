@@ -326,7 +326,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             //TODO 第四步 如果存在会员卡 增加积分
             if(request.getCardNum()!=null && !request.getCardNum().equals("")){
                 MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
-                if(memberInfo!=null){
+                if(memberInfo!=null && memberInfo.getAddScore()!=0 ){
                     log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
                     try{
                         commDaoMapper.update_Vip(request.getCartId(),request.getSn(),memberInfo.getCardNum(),memberInfo.getAddScore());
@@ -335,6 +335,8 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                         e.printStackTrace();
                         log.error("会员卡{} 增加了 {} 积分 失败", memberInfo.getCardNum(),memberInfo.getAddScore());
                     }
+                }else {
+                    log.info("该单子没有刷会员卡 或者本次积分为0 {}",request.getMerchantOrderId());
                 }
             }
             resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),null);
