@@ -181,7 +181,7 @@ public class OrderMoneyLogMapperTest {
 
         String timeUnix=getTimeUnix();
         String authCode=null;
-        String requestNum="201908101622084010010711959612";
+        String requestNum="201908141139294010010302755807";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,

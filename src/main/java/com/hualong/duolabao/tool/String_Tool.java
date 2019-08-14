@@ -32,7 +32,7 @@ public class String_Tool {
 	}
 
 	public static String String_IS_Two(double d) { // 精确到两位小数
-		DecimalFormat df = new DecimalFormat("0.00");
+		DecimalFormat df = new DecimalFormat("0.0000");
 		return df.format(d);
 	}
 

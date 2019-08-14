@@ -222,7 +222,7 @@ print '1001'
 	UPDATE E
 	SET	E.discountAmount=case when floor((C.fNormalSettle-C.fLastSettle)*100)>0 then floor((C.fNormalSettle-C.fLastSettle)*100) else 0 end,
 	E.amount=case when floor(C.fNormalSettle*100)>0 then  floor(C.fNormalSettle*100) else 0 end,
-	E.price=floor(C.fPrice*100)
+	E.price=floor(C.fPrice_exe*100)
 	FROM Posmanagement_main.dbo.tDlbGoodsInfo E,
 			 (SELECT
 				a.cStoreNo,

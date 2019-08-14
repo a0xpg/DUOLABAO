@@ -36,6 +36,14 @@ public class DlbConnfig {
     @Value("${dlb.returnpay}")
     private Boolean returnpay;
 
+    @Value("${dlb.calprice}")
+    private Boolean calprice;
+
+    @Value("${dlb.databaserecording}")
+    private Boolean databaserecording;
+
+
+
 
 
 

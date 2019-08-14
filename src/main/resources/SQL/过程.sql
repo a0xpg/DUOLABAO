@@ -85,13 +85,13 @@ BEGIN
   SET @SQL =  ' INSERT INTO '+@tableName+'
       (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
        fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
-       cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate )
+       cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate,fNormalSettle )
 
         SELECT isWeight,storeId,'''+@cPosID+''',merchantOrderId,lineId,id,name,barcode,'''+@cPosID+''','''+@cPosID+''',bAuditing=0,
     (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice,(CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fVipPrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
     (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
     convert(varchar(10),getdate(),23), cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'''+@cVipNo+''',
-   (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice_exe,bSettle=0,bVipPrice=0,100  FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
+   (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice_exe,bSettle=0,bVipPrice=0,100,(CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fNormalSettle  FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
 
   PRINT(@SQL)
   EXEC(@SQL)

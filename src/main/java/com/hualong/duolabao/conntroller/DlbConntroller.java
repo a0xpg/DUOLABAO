@@ -38,8 +38,8 @@ public class DlbConntroller {
     @RequestMapping(value = "/api/{urlType}", method = {RequestMethod.POST}) //, produces = "application/json;charset=UTF-8"
     public String getUrlType(@PathVariable String urlType,
                            @RequestBody JSONObject jsonParam) {
-        log.info("我是请求路径 getUrlType urlType{}",urlType);
-        log.info("我是请求路径 jsonParam urlType{}",JSONObject.toJSONString(jsonParam));
+        log.info("我是请求路径 getUrlType urlType {}",urlType);
+        log.info("我是请求路径 jsonParam urlType {}",JSONObject.toJSONString(jsonParam));
 
         return this.posService.CommUrlFun(urlType,jsonParam);
     }
@@ -56,8 +56,8 @@ public class DlbConntroller {
     @RequestMapping(value = "/api/pay/{urlType}", method = {RequestMethod.POST})
     public String getPayUrlType(@PathVariable String urlType,
                              @RequestBody JSONObject jsonParam) {
-        log.info("我是请求路径 pay getPayUrlType urlType{}",urlType);
-        log.info("我是请求路径 pay jsonParam urlType{}",JSONObject.toJSONString(jsonParam));
+        log.info("我是请求路径 pay getPayUrlType urlType {}",urlType);
+        log.info("我是请求路径 pay jsonParam urlType {}",JSONObject.toJSONString(jsonParam));
 
         return this.payService.CommUrlFun(urlType,jsonParam);
     }

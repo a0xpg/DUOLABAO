@@ -76,21 +76,24 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
             }else {
                 log.info("pay 解密出来的 数据 {}",JSONObject.toJSONString(request,SerializerFeature.WriteMapNullValue));
             }
-            //查询商户dlb支付的配置
-            dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey(request.getTenant(),request.getStoreId(),null);
-            if(dlpPayConfigEntity==null){
-                log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
-                log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
-                return ResponseDlb(request,ErrorEnum.SSCO001006,null);
-            }
-            //重新赋值
-            dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
-            dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
-            dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
-            dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
-            dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
-            dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
 
+            //TODO 如果数据库服务器出问题  快速停止数据库操作功能  不影响正常消费
+            if(dlbConnfig.getDatabaserecording()){
+                //查询商户dlb支付的配置
+                dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey(request.getTenant(),request.getStoreId(),null);
+                if(dlpPayConfigEntity==null){
+                    log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+                    log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+                    return ResponseDlb(request,ErrorEnum.SSCO001006,null);
+                }
+                //重新赋值
+                dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
+                dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
+                dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
+                dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
+                dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
+                dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
+            }
         }catch (ApiSysException e){
             e.printStackTrace();
             log.error("pay 出错了 ",e.getExceptionEnum().toString());
@@ -112,7 +115,12 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                             request.getCurrency(),request.getAuthcode(),request.getOrderIp());
                     orderMoneyLog.setStoreId(request.getStoreId());
                     orderMoneyLog.setSn(request.getSn());
-                    orderMoneyLogMapper.insert(orderMoneyLog);
+
+                    //TODO 如果数据库服务器出问题  快速停止数据库操作功能  不影响正常消费
+                    if(dlbConnfig.getDatabaserecording()){
+                        orderMoneyLogMapper.insert(orderMoneyLog);
+                    }
+
                     String amount=String.valueOf((double)request.getAmount()/100);
                     sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),
                             authCode,
@@ -195,7 +203,10 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
 
                              orderMoneyLog=new OrderMoneyLog(request.getTradeNo(),
                                      orderAmount.intValue(),true,request.getTenant());
-                            orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
+                            //TODO 如果数据库服务器出问题  快速停止数据库操作功能  不影响正常消费
+                            if(dlbConnfig.getDatabaserecording()){
+                                orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
+                            }
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"SUCCESS");
                         }else if(jsonObject.getString("status").equals("CANCEL")){
                             response=ResponseDlb(request,ErrorEnum.SUCCESS,"CLOSE");
@@ -246,7 +257,11 @@ public class PayServiceImpl implements PayService,DlbUrlConfig {
                             orderMoneyLog = new OrderMoneyLog(request.getTradeNo(),
                                     orderAmount.intValue());
                             orderMoneyLog.setTenant(request.getTenant());
-                            orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
+                            //TODO 如果数据库服务器出问题  快速停止数据库操作功能  不影响正常消费
+                            if(dlbConnfig.getDatabaserecording()){
+                                orderMoneyLogMapper.updateByPrimaryKey(orderMoneyLog);
+                            }
+
                         }
                     }
                 }catch (Exception e){

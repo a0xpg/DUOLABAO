@@ -64,7 +64,7 @@ server:
 
 logging:
   config: log4j.properties
-  #src/main/resources/log4j.properties
+  #src/main/resources/log4j.properties  java -jar demo.jar --spring.profiles.active=dev
 
 
 

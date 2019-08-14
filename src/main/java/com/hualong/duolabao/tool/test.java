@@ -7,6 +7,10 @@ import java.util.Date;
  */
 public class test {
     public static void main(String[] args) {
+
+        double a=123.056;
+        Long l=new Double(a).longValue();
+        System.out.println("l       :"+l);
         String str="123456789";
         System.out.println(str.substring(3,7));
 

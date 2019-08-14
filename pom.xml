@@ -88,10 +88,11 @@
 			<version>4.2</version>
 		</dependency>
 
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.0.4</version>
+			<version>5.1.39</version>
 		</dependency>
 
 		<dependency>
@@ -148,11 +149,7 @@
 			<version>3.2.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.10</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>

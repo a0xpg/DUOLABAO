@@ -1,4 +1,11 @@
-INSERT INTO tDlbPosConfiguration (cartld,storeId,sn,posName,posid) VALUES ('000281','0002','000201','posstation101','81')
+INSERT INTO tDlbPosConfiguration (cartId,storeId,sn,posName,posid) VALUES ('000281','0002','000201','posstation101','81')
+
+INSERT INTO tDlpPayConfig(tenant, accesskey, secretkey, agentnum, customernum, shopnum,  tenantName, storeId, sn)
+VALUES ('','','','','','','','','')
+
+INSERT INTO tDlpPayConfig(tenant, accesskey, secretkey, agentnum, customernum, shopnum,  tenantName, storeId, sn)
+VALUES ('0002','f048f84aa0d0427abbcb009aae296f45d889ba51','35431249dce84d1bab69e02ec623521690cadbf2','10001015546877943722641'
+,'10001115593570818328273','10001215593579699176098','华隆测试账号','0002',null)
 
 
 

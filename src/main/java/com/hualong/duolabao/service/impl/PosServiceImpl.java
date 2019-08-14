@@ -159,6 +159,11 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     //重新赋值
                     frushGood.setWeightwight(wight);
                 }
+                //TODO 是否计算18位码的显示单价
+                if(dlbConnfig.getCalprice() && request.getBarcode().length()==18){
+                    NomalPrice=new Double(
+                            (double)frushGood.getAllMoney()/frushGood.getWeightwight()).longValue();
+                }
                 CommonServiceImpl.insertBlbGoodsInfo(dlbGoodsInfoMapper,
                         new BLBGoodsInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getCartFlowNo(),
                                 request.getCashierNo(), null, null,
@@ -330,10 +335,10 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
                     try{
                         commDaoMapper.update_Vip(request.getCartId(),request.getSn(),memberInfo.getCardNum(),memberInfo.getAddScore());
-                        log.info("会员卡{} 增加了 {} 积分 成功", memberInfo.getCardNum(),memberInfo.getAddScore());
+                        log.info("会员卡{} 增加了 {} 积分 成功 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(),request.getMerchantOrderId());
                     }catch (Exception e){
                         e.printStackTrace();
-                        log.error("会员卡{} 增加了 {} 积分 失败", memberInfo.getCardNum(),memberInfo.getAddScore());
+                        log.error("会员卡{} 增加了 {} 积分 失败 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(),request.getMerchantOrderId());
                     }
                 }else {
                     log.info("该单子没有刷会员卡 或者本次积分为0 {}",request.getMerchantOrderId());
@@ -379,7 +384,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 for(BLBGoodsInfo t:blbGoodsInfo){
                     totalFee=totalFee+t.getAmount();
                     discountFee=discountFee+t.getDiscountAmount();
-                    merchantOrderId=t.getMerchantOrderId()==null ? merchantOrderId:t.getMerchantOrderId();
+                    merchantOrderId=t.getMerchantOrderId()==null ? merchantOrderId:request.getStoreId()+t.getMerchantOrderId();
                 }
                 actualFee=totalFee-discountFee;
             }
