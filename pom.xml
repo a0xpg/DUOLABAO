@@ -208,9 +208,37 @@
 
 	</dependencies>
 
-
+	<profiles>
+		<!--连接的 sqlserver-->
+		<profile>
+			<id>sqlserver</id>
+			<properties>
+				<spring.profiles.active>sqlserver</spring.profiles.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<!--连接的 mysql-->
+		<profile>
+			<id>mysql</id>
+			<properties>
+				<spring.profiles.active>mysql</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
 	<build>
 		<finalName>DLB</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources.${spring.profiles.active}</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 
 		<plugins>
 			<plugin>

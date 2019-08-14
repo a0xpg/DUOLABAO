@@ -1,24 +1,30 @@
 
 dlb:
-  merchantno:
-  deskey:
-  mdkey:
+  merchantno: hualong
+  deskey: 6l7HDfs0bumRv6dF6SPf5XXpXkWwyP30
+  mdkey: D8C2313325E1E049FE19AFAC122B987F
   isdandian: false
   timerenabled: true
-
+  checkmerchantno: false
+  checksystemid: false
+  returnpay: false
+  calprice: true
+  databaserecording: true
 dlbpay:
   #公钥
-  accesskey:
+  accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51
   #公钥
-  secretkey:
+  secretkey: 35431249dce84d1bab69e02ec623521690cadbf2
   #代理商编号
-  agentnum:
+  agentnum: 10001015546877943722641
   #商户编号
-  customernum:
+  customernum: 10001115593570818328273
   #机具编号
-  machinenum:
+  machinenum: mysql
   #店铺编号
-  shopnum:
+  shopnum: 10001215593579699176098
+
+
 spring:
   thymeleaf:
     cache: true
@@ -27,16 +33,16 @@ spring:
     default-domain: com.hualong.duolabao.domin
 cluster:
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://:2468;databaseName=Posmanagement_main
-    username: sa
-    password: pcserver123.
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/DLB?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: 123456
   #连接池的配置信息
   druid:
-    initialSize: 5   # 初始化大小，最小，最大
+    initialSize: 5
     minIdle: 5
     maxActive: 40
-    maxWait: 60000    # 配置获取连接等待超时的时间
+    maxWait: 60000
     timeBetweenEvictionRunsMillis: 60000  # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
     minEvictableIdleTimeMillis: 300000    # 配置一个连接在池中最小生存的时间，单位是毫秒
     validationQuery: SELECT 1
@@ -50,10 +56,10 @@ cluster:
 
 master:
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://:2468;databaseName=Posmanagement_main
-    username: sa
-    password: pcserver123.
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/DLB?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: 123456
 server:
   port: 12379
   servlet:
@@ -64,7 +70,7 @@ server:
 
 logging:
   config: log4j.properties
-  #src/main/resources/log4j.properties  java -jar demo.jar --spring.profiles.active=dev
+  #src/main/resources/log4j.properties
 
 
 

@@ -48,6 +48,12 @@ public class OrderMoneyLogMapperTest {
     private RestTemplate restTemplate;
 
     @Test
+    public void testDlbPayConnfig(){
+
+        log.info("我是 Machinenum {}",dlbPayConnfig.getMachinenum());
+    }
+
+    @Test
     public void insertOrderMoneyLogMapper(){
 //        (String bizType, String orderId, String tradeNo,
 //                String tenant, int amount, String currency,
