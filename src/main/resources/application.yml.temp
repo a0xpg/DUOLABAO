@@ -1,8 +1,8 @@
 
 dlb:
-  merchantno: hualong
-  deskey: 6l7HDfs0bumRv6dF6SPf5XXpXkWwyP30
-  mdkey: D8C2313325E1E049FE19AFAC122B987F
+  merchantno:
+  deskey:
+  mdkey:
   isdandian: false
   timerenabled: true
   checkmerchantno: false
@@ -12,17 +12,17 @@ dlb:
   databaserecording: true
 dlbpay:
   #公钥
-  accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51
+  accesskey:
   #公钥
-  secretkey: 35431249dce84d1bab69e02ec623521690cadbf2
+  secretkey:
   #代理商编号
-  agentnum: 10001015546877943722641
+  agentnum:
   #商户编号
-  customernum: 10001115593570818328273
+  customernum:
   #机具编号
-  machinenum: mysql
+  machinenum:
   #店铺编号
-  shopnum: 10001215593579699176098
+  shopnum:
 
 
 spring:
