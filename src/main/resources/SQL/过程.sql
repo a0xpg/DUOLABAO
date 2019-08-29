@@ -58,7 +58,7 @@ GO
                   addScore Money default 0 --应该增加的积分
                   primary key(cartId)
           )
-END
+    END
 
 GO
 

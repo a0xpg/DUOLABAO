@@ -17,22 +17,29 @@
 购物车ID（对应报文字段cartId）    0005
 商户ID（对应报文字段tenant）      0002
 
+明天会场演示的机器
+地址 ： http://188.131.132.236:81
+收银员号（对应报文字段cashierNo） 0006
+门店号（对应保文字段storeId）     0002
+购物车ID（对应报文字段cartId）    0006
+商户ID（对应报文字段tenant）      0002
+
 1 会员查询地址
-   http://148.70.87.251:81/DLB/hlyf/api/selectMemberInfo
+   http://188.131.132.236:81/DLB/hlyf/api/selectMemberInfo
 2 商品查询地址
-   http://148.70.87.251:81/DLB/hlyf/api/selectGoods
+   http://188.131.132.236:81/DLB/hlyf/api/selectGoods
 3 商品更新地址
-   http://148.70.87.251:81/DLB/hlyf/api/updateGoods
+   http://188.131.132.236:81/DLB/hlyf/api/updateGoods
 4 商品删除地址
-   http://148.70.87.251:81/DLB/hlyf/api/deleteGoods
+   http://188.131.132.236:81/DLB/hlyf/api/deleteGoods
 5 清空购物车地址
-   http://148.70.87.251:81/DLB/hlyf/api/clearCartInfo
+   http://188.131.132.236:81/DLB/hlyf/api/clearCartInfo
 6 提交购物车地址
-   http://148.70.87.251:81/DLB/hlyf/api/commitCartInfo
+   http://188.131.132.236:81/DLB/hlyf/api/commitCartInfo
 7 取消订单地址
-   http://148.70.87.251:81/DLB/hlyf/api/cancleOrder
+   http://188.131.132.236:81/DLB/hlyf/api/cancleOrder
 8 订单完成同步地址
-   http://148.70.87.251:81/DLB/hlyf/api/orderSysn
+   http://188.131.132.236:81/DLB/hlyf/api/orderSysn
 
 9 支付下单接口地址(收银机扫用户)39.100.115.202
    http://dlb.warelucent.cc:7788/DLB/hlyf/api/pay/payOrder

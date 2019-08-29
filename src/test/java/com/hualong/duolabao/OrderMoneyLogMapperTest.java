@@ -94,8 +94,8 @@ public class OrderMoneyLogMapperTest {
         dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
         dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
         dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
-        String timeUnix=getTimeUnix();
 
+        String timeUnix=getTimeUnix();
         String authCode="134644544715709674";
         String requestNum="13";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
@@ -126,19 +126,19 @@ public class OrderMoneyLogMapperTest {
 
     @Test
     public void testqueryPay(){
-        DlpPayConfigEntity dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey("0002",null,null);
-        if(dlpPayConfigEntity==null){
-            log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
-            log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
-            return;
-        }
-        //重新赋值
-        dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
-        dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
-        dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
-        dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
-        dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
-        dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
+//        DlpPayConfigEntity dlpPayConfigEntity=this.dlpPayConfigEntityMapper.selectByPrimaryKey("0002",null,null);
+//        if(dlpPayConfigEntity==null){
+//            log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+//            log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+//            return;
+//        }
+//        //重新赋值
+//        dlbPayConnfig.setAccesskey(dlpPayConfigEntity.getAccesskey());
+//        dlbPayConnfig.setSecretkey(dlpPayConfigEntity.getSecretkey());
+//        dlbPayConnfig.setAgentnum(dlpPayConfigEntity.getAgentnum());
+//        dlbPayConnfig.setCustomernum(dlpPayConfigEntity.getCustomernum());
+//        dlbPayConnfig.setMachinenum(dlpPayConfigEntity.getMachinenum());
+//        dlbPayConnfig.setShopnum(dlpPayConfigEntity.getShopnum());
         String timeUnix=getTimeUnix();
         String requestNum="201908091125514010010654469531";
         String urlAfter="/v1/agent/order/payresult/"
@@ -187,7 +187,7 @@ public class OrderMoneyLogMapperTest {
 
         String timeUnix=getTimeUnix();
         String authCode=null;
-        String requestNum="201908141139294010010302755807";
+        String requestNum="201908161053274010010551400986";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
         SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,

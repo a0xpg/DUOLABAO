@@ -66,8 +66,8 @@
         					#{cartId,mode=IN,jdbcType=VARCHAR},
         					#{storeId,mode=IN,jdbcType=VARCHAR},
         					#{cVipNo,mode=IN,jdbcType=VARCHAR},
-        					#{cPosID,mode=IN,jdbcType=INTEGER},
-        					#{tableName,mode=IN,jdbcType=INTEGER}
+        					#{cPosID,mode=IN,jdbcType=VARCHAR},
+        					#{tableName,mode=IN,jdbcType=VARCHAR}
         					)
         		}
     	]]>
@@ -119,7 +119,7 @@
         					#{cStoreNo,mode=IN,jdbcType=VARCHAR},
         					#{cPosID,mode=IN,jdbcType=VARCHAR},
         					#{Zdriqi,mode=IN,jdbcType=VARCHAR},
-        					#{callName,mode=IN,jdbcType=INTEGER}
+        					#{callName,mode=IN,jdbcType=VARCHAR}
         					)
         		}
     	]]>
@@ -133,7 +133,6 @@
         cardNum, cashierNo
         )
         values
-
          (#{merchantOrderId,jdbcType=VARCHAR}, #{payTypeId,jdbcType=VARCHAR},
             #{payNo,jdbcType=VARCHAR}, #{payAmount,jdbcType=DECIMAL}, #{cartFlowNo,jdbcType=VARCHAR},
             #{items,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR},
@@ -142,7 +141,6 @@
 
 
     </insert>
-
 
     <select id="GetResultProc" resultType="com.hualong.duolabao.domin.ResultProc" parameterType="java.lang.String">
         <![CDATA[

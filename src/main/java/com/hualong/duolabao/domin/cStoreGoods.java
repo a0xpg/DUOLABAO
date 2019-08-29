@@ -16,6 +16,7 @@ import java.io.Serializable;
 @Data
 @Accessors(chain=true)
 public class cStoreGoods implements Serializable {
+
     private String cGoodsNo;
     private String cGoodsName;
     private String cBarcode;
@@ -33,6 +34,10 @@ public class cStoreGoods implements Serializable {
     private Integer packRate;
     private Double fVipScore_base;
     private Double fVipScore;
+    private Boolean bWeight;
+
+
+
 
 
 }

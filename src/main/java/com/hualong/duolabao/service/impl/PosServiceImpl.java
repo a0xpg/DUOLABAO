@@ -173,11 +173,14 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                                 0, frushGood.getWeightwight(), true,
                                 storeGoods.getCBarcode(), "kg",frushGood.getReceivingCode()));
             }else {
+                //TODO 判断是否是跳过称码直接输入的称重条码
+                if(storeGoods.getBWeight()){
+                    throw  new ApiSysException(ErrorEnum.SSCO010004);
+                }
+
                 //检测购物车是否存在改商品
-                BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper.getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
-
-
-
+                BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper
+                        .getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
                 //如果没有改商品保存的购物车   如果存在就更新该购物车
                 if(blbGoodsInfo!=null){
                     int num=blbGoodsInfo.getQty()+1;

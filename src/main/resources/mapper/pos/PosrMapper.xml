@@ -16,7 +16,7 @@
 
         SELECT cGoodsNo,cGoodsName,cBarcode,cStoreNo,cStoreName,cUnit,
         cSpec,fNormalPrice,fVipPrice,fVipScore,fCKPrice,isWholePack=1,fVipScore,
-        youHuiAmount=0.0,amount=fNormalPrice,num=1,packRate=1 FROM t_cStoreGoods
+        youHuiAmount=0.0,amount=fNormalPrice,num=1,packRate=1,bWeight=isnull(bWeight,0) FROM t_cStoreGoods
         WHERE cStoreNo=#{cStoreNo,jdbcType=VARCHAR}
         AND  <![CDATA[ ( ]]> cBarcode IN
         <foreach collection="barcodeList" item="barcode" index="index"
@@ -48,7 +48,7 @@
 
         SELECT cGoodsNo,cGoodsName,cBarcode,cUnit,
         cSpec,fNormalPrice,fVipPrice,fVipScore,fCKPrice,isWholePack=1,fVipScore,
-        youHuiAmount=0.0,amount=fNormalPrice,num=1,packRate=1 FROM t_Goods
+        youHuiAmount=0.0,amount=fNormalPrice,num=1,packRate=1,bWeight=isnull(bWeight,0) FROM t_Goods
         WHERE 1=1
         AND  <![CDATA[ ( ]]> cBarcode IN
         <foreach collection="barcodeList" item="barcode" index="index"

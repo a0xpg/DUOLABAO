@@ -10,7 +10,6 @@
                   cashierNo VARCHAR(64),
                   sn VARCHAR(64),
                   merchantOrderId VARCHAR(64),--我们的单号
-
                   --下面是商品的基础字段
                   lineId   BIGINT IDENTITY(1,1),  --行号
                   id VARCHAR(30),
@@ -26,7 +25,6 @@
                   barcode VARCHAR(30),
                   unit VARCHAR(20),
                   receivingCode  VARCHAR(30) --接收到的原始码
-
                   primary key(lineId)
               )
 
