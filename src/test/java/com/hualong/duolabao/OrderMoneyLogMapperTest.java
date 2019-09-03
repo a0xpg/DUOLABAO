@@ -185,32 +185,35 @@ public class OrderMoneyLogMapperTest {
     @Test
     public void testReturnPay(){
 
-        String timeUnix=getTimeUnix();
-        String authCode=null;
-        String requestNum="201908161053274010010551400986";
+
+            String timeUnix=getTimeUnix();
+            String authCode=null;
+            String requestNum="201909031548374010010093733075";
 //        SweepOrder(String agentNum, String customerNum, String authCode, String machineNum, String shopNum,
 //                String requestNum, String amount, String source, String tableNum)
-        SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,
-                null,dlbPayConnfig.getShopnum(),requestNum,null,null,null);
-        String body=JSONObject.toJSONString(sweepOrder);
-        log.info("我是请求体携带的数据 {}",body);
-        String url = "https://openapi.duolabao.com/v1/agent/order/refund";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("accessKey",dlbPayConnfig.getAccesskey());
-        headers.set("timestamp",timeUnix);
-        String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
-                "&path=/v1/agent/order/refund&body="+body;
-        log.info("带签名的字符串 {}",sign);
-        sign= SHA1.encode(sign).toUpperCase();
-        log.info("签名后的字符串 {}",sign);
-        headers.set("token",sign);
+            SweepOrder sweepOrder=new SweepOrder(dlbPayConnfig.getAgentnum(),dlbPayConnfig.getCustomernum(),authCode,
+                    null,dlbPayConnfig.getShopnum(),requestNum,null,null,null);
+            String body=JSONObject.toJSONString(sweepOrder);
+            log.info("我是请求体携带的数据 {}",body);
+            String url = "https://openapi.duolabao.com/v1/agent/order/refund";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("accessKey",dlbPayConnfig.getAccesskey());
+            headers.set("timestamp",timeUnix);
+            String sign="secretKey="+dlbPayConnfig.getSecretkey()+"&timestamp="+timeUnix +
+                    "&path=/v1/agent/order/refund&body="+body;
+            log.info("带签名的字符串 {}",sign);
+            sign= SHA1.encode(sign).toUpperCase();
+            log.info("签名后的字符串 {}",sign);
+            headers.set("token",sign);
 
-        HttpEntity<String> entity = new HttpEntity<String>(body, headers);
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
-        String result = responseEntity.getBody();
+            HttpEntity<String> entity = new HttpEntity<String>(body, headers);
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
+            String result = responseEntity.getBody();
 
-        log.info("我是拿到的返回结果 {}",result);
+            log.info("我是拿到的返回结果 {}",result);
+
+
 
     }
 }

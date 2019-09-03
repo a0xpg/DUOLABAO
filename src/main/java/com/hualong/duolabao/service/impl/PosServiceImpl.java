@@ -317,13 +317,20 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             //TODO 第一步 记录单据到数据库
             String orderLog=JSON.toJSONString(request);
             log.info("记录单据到数据库 CommitOrderSysn Log {}",orderLog);
-            commDaoMapper.insert(new OrderSysnLog(request.getCartId(),request.getMerchantOrderId(),request.getPayTypeId(),request.getPayNo(),
+
+            //这个单号比较绕  哆啦宝平台 一个商户（单号不允许重复 部分门店） 这里我在返回哆啦宝单号的时间在单号前面加了门店号 这样就避免了一个商户下
+            //单号的重复  但是在同步订单的时间  我们的单号保存的是没有前面的门店编号的  所以要先把哆啦宝上传的订单号的前面的门店的编号去除掉才是我们的单号
+            String merchantOrderId = request.getMerchantOrderId().substring(
+                    request.getStoreId().length(),
+                    request.getMerchantOrderId().length()
+            );
+            commDaoMapper.insert(new OrderSysnLog(request.getCartId(), merchantOrderId,request.getPayTypeId(),request.getPayNo(),
                     request.getPayAmount(),request.getCartFlowNo(),request.getItems(),request.getStoreId(),
                     null,null,request.getSn(),request.getCardNum(),request.getCashierNo()));
             //TODO 第二步 查询分库库名
             tDlbPosConfiguration tDlbPosConfiguration = CommonServiceImpl.gettDlbPosConfiguration(request, commDaoMapper);
             //TODO 第三步 同步数据到分库
-            ResultProc resultProc=commDaoMapper.GetResultProc(request.getMerchantOrderId(),request.getStoreId(),
+            ResultProc resultProc=commDaoMapper.GetResultProc(merchantOrderId,request.getStoreId(),
                     tDlbPosConfiguration.getPosName()+".dbo.p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z");
             if(!resultProc.getResultCode().equals("1")){
                 log.info("同步数据到分库失败 {} ",JSON.toJSONString(resultProc));
@@ -338,13 +345,13 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
                     try{
                         commDaoMapper.update_Vip(request.getCartId(),request.getSn(),memberInfo.getCardNum(),memberInfo.getAddScore());
-                        log.info("会员卡{} 增加了 {} 积分 成功 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(),request.getMerchantOrderId());
+                        log.info("会员卡{} 增加了 {} 积分 成功 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(), merchantOrderId);
                     }catch (Exception e){
                         e.printStackTrace();
-                        log.error("会员卡{} 增加了 {} 积分 失败 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(),request.getMerchantOrderId());
+                        log.error("会员卡{} 增加了 {} 积分 失败 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(), merchantOrderId);
                     }
                 }else {
-                    log.info("该单子没有刷会员卡 或者本次积分为0 {}",request.getMerchantOrderId());
+                    log.info("该单子没有刷会员卡 或者本次积分为0 {}", merchantOrderId);
                 }
             }
             resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),null);

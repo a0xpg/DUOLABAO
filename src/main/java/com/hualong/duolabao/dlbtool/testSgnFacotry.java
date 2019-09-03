@@ -13,8 +13,11 @@ public class testSgnFacotry {
 
     public static void main(String[] args) {
 
-        int a=1;
-        System.out.println(String.valueOf((double) a/100));
+//        int a=1;
+//        System.out.println(String.valueOf((double) a/100));
+        String a="000281201909030001",b="0002";
+        System.out.println(a.substring(b.length(),a.length()));
+
 //        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 //        System.out.println(uuid);
 //        System.out.println(uuid.length());
