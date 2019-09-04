@@ -42,6 +42,12 @@ public class DlbConnfig {
     @Value("${dlb.databaserecording}")
     private Boolean databaserecording;
 
+    @Value("${dlb.tenant}")
+    private String tenant;
+
+    @Value("${dlb.checktenant}")
+    private Boolean checktenant;
+
 
 
 

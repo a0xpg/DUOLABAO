@@ -124,9 +124,10 @@ public class SignFacotry {
      */
     public static void verifySignAndMerchantNo(String md5Key,JSONObject jsonObject,String merchantNo,DlbConnfig dlbConnfig) throws ApiSysException {
         try{
-            if(!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("cipherJson") ||
+            //!jsonObject.containsKey("merchantNo") || !jsonObject.containsKey("tenant") ||
+            if( !jsonObject.containsKey("cipherJson") ||
                     !jsonObject.containsKey("sign")  ||
-                    !jsonObject.containsKey("uuid") || !jsonObject.containsKey("tenant") ||
+                    !jsonObject.containsKey("uuid") ||
                     !jsonObject.containsKey("storeId")){
                 log.error(" 上传的参数没有包含所需要的值 ");
                 throw new ApiSysException(ErrorEnum.SSCO001004);
@@ -141,6 +142,12 @@ public class SignFacotry {
                 if(!jsonObject.containsKey("systemId")){
                     log.error(" systemId 没有上传 ");
                     throw new ApiSysException(ErrorEnum.SSCO001004);
+                }
+            }
+            if(dlbConnfig.getChecktenant()){
+                if(!jsonObject.getString("tenant").equals(dlbConnfig.getTenant())){
+                    log.error(" tenant 校验失败  ");
+                    throw new ApiSysException(ErrorEnum.SSCO002001);
                 }
             }
             try{

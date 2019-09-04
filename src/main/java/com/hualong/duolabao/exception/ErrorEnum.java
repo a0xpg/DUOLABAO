@@ -15,6 +15,8 @@ public enum  ErrorEnum implements ExceptionEnum {
     SSCO001006("SSCO001006", "报文验签失败"),
 
 
+    //商户相关(SSCO002)
+    SSCO002001("SSCO002001", "查询商户信息失败!"),
 
 
     //会员相关(SSCO008)
