@@ -24,8 +24,6 @@ import java.util.List;
 public class CommonServiceImpl {
     private static final Logger log= LoggerFactory.getLogger(CommonServiceImpl.class);
 
-
-
     /**
      *    <pre>
      *        保存数据到购物车

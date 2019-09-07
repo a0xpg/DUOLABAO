@@ -1,4 +1,4 @@
-
+  -- ALTER TABLE `tdlbordermoneylog` ADD istest INT DEFAULT 1  0 测试的 1 正式的数
   --tDlbOrderMoneyLog  支付记录表
           IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tDlbOrderMoneyLog]')
                       AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
@@ -9,12 +9,12 @@
                   orderId VARCHAR(64),
                   tradeNo VARCHAR(64),
                   tenant VARCHAR(20),
-                  amount Money DEFAULT 0 ,
+                  amount Money DEFAULT 0,
                   currency VARCHAR(10),
                   authcode VARCHAR(64),
                   orderIp VARCHAR(32),
-                  createTime DATETIME DEFAULT (GETDATE()),  --接收的时间
-                  paycomplited bit DEFAULT 0,               --是否支付成功
+                  createTime DATETIME DEFAULT (GETDATE()),    --接收的时间
+                  paycomplited bit DEFAULT 0,                --是否支付成功
                   actualAmount Money DEFAULT 0,              --实际付款金额
                   isReturn int DEFAULT 0,                    --是否退款 0 没有 1 退款成功了
                   returnAmount Money DEFAULT 0,               --退款金额
