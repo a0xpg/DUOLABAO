@@ -48,6 +48,11 @@ public class DlbConnfig {
     @Value("${dlb.checktenant}")
     private Boolean checktenant;
 
+    @Value("${dlb.lossprevention}")
+    private Boolean lossprevention;
+
+
+
 
 
 

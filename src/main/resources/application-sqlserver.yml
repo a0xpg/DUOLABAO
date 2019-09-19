@@ -12,6 +12,7 @@ dlb:
   databaserecording: true
   tenant:
   checktenant: false
+  lossprevention: true
 dlbpay:
   #公钥
   accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51
@@ -36,9 +37,9 @@ spring:
 cluster:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://47.104.246.36:2468;databaseName=Posmanagement_main
+    url: jdbc:sqlserver://;databaseName=Posmanagement_main
     username: sa
-    password: pcserver123.
+    password:
   #连接池的配置信息
   druid:
     initialSize: 5
@@ -59,9 +60,9 @@ cluster:
 master:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://47.104.246.36:2468;databaseName=Posmanagement_main
+    url: jdbc:sqlserver://:2468;databaseName=Posmanagement_main
     username: sa
-    password: pcserver123.
+    password:
 server:
   port: 12379
   servlet:

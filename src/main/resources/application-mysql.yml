@@ -12,6 +12,7 @@ dlb:
   databaserecording: true
   tenant:
   checktenant: false
+  lossprevention: true
 dlbpay:
   #公钥
   accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51

@@ -173,6 +173,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                                 0, frushGood.getWeightwight(), true,
                                 storeGoods.getCBarcode(), "kg",frushGood.getReceivingCode()));
             }else {
+
                 //TODO 判断是否是跳过称码直接输入的称重条码
                 if(storeGoods.getBWeight()){
                     throw  new ApiSysException(ErrorEnum.SSCO010004);
@@ -397,6 +398,12 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     merchantOrderId=t.getMerchantOrderId()==null ? merchantOrderId:request.getStoreId()+t.getMerchantOrderId();
                 }
                 actualFee=totalFee-discountFee;
+
+                //TODO 防止金额小于2分 如果金额是两分  只写返回一千元  这样顾客就不敢支付了
+                //是否开启金额 防损
+                if(dlbConnfig.getLossprevention()){
+                    actualFee=actualFee<2.0? 100000:actualFee;
+                }
             }
             MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
 

@@ -1,0 +1,3 @@
+spring:    #java -jar DLB.jar --server.port=81 --spring.profiles.active=sqlserver
+  profiles:
+    active: mysql
