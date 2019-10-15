@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,7 +145,17 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         try{
             //得到商品信息
             cStoreGoods storeGoods=cStoreGoodsList.get(0);
+
             Long NomalPrice=new Double(storeGoods.getFNormalPrice()*100).longValue();
+
+            log.info("我是BigDecimal 前的单价 {}  商品  {}", NomalPrice,storeGoods.getCGoodsName());
+            //TODO 后来加的
+            BigDecimal var1 = new BigDecimal("100");
+            BigDecimal var2 = new BigDecimal(String.valueOf(storeGoods.getFNormalPrice()));
+            BigDecimal var3 = var1.multiply(var2);
+            NomalPrice=var3.longValue();
+            log.info("我是BigDecimal后的单价 {}  商品  {}", NomalPrice,storeGoods.getCGoodsName());
+
             log.info("查询到的商品信息  {}", JSON.toJSON(storeGoods).toString());
             //如果是生鲜 直接保存到购物车
             if(frushGood.isWeight()){
@@ -224,6 +235,15 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             //检测购物车是否存在改商品
             BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper.getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
             Long NomalPrice=new Double(storeGoods.getFNormalPrice()*100).longValue();
+
+            log.info("我是BigDecimal 前的单价 {}  商品  {}", NomalPrice,storeGoods.getCGoodsName());
+            //TODO 后来加的
+            BigDecimal var1 = new BigDecimal("100");
+            BigDecimal var2 = new BigDecimal(String.valueOf(storeGoods.getFNormalPrice()));
+            BigDecimal var3 = var1.multiply(var2);
+            NomalPrice=var3.longValue();
+            log.info("我是BigDecimal后的单价 {}  商品  {}", NomalPrice,storeGoods.getCGoodsName());
+
             //如果没有改商品保存的购物车   如果存在就更新该购物车
             if(blbGoodsInfo!=null){
                 int num=request.getQuantity();

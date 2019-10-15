@@ -51,6 +51,10 @@ public class DlbConnfig {
     @Value("${dlb.lossprevention}")
     private Boolean lossprevention;
 
+    @Value("${dlb.iftestpay}")
+    private Boolean iftestpay;
+
+
 
 
 

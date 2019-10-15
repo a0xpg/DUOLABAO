@@ -115,7 +115,7 @@ public class ThreeDESUtilDLB {
         return uuid;
     }
     public static void main(String[] args) throws Exception {
-        test04();
+        test03();
     }
 
     private static void test04() throws Exception {

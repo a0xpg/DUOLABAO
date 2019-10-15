@@ -8,6 +8,10 @@ VALUES ('0002','f048f84aa0d0427abbcb009aae296f45d889ba51','35431249dce84d1bab69e
 ,'10001115593570818328273','10001215593579699176098','华隆测试账号','0002',null)
 
 
+INSERT INTO tDlpPayConfig(tenant, accesskey, secretkey, agentnum, customernum, shopnum,  tenantName, storeId, sn)
+VALUES ('29010927','b20fc79703ae440198c121640d31ef330354cf0d','8e3ed733f9cf4982a0f8244576e54605d75c1e5d','10001015465911345452493'
+,'10001115655910144969126','10001215655912953522315','加州华联超市','1002',null)
+
 
 SELECT * FROM tDlbPosConfiguration
 
