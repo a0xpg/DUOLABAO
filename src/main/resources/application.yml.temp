@@ -10,8 +10,10 @@ dlb:
   returnpay: false
   calprice: true
   databaserecording: true
-  tenant:
-  checktenant: false
+  tenant:                                 #外部商户号
+  checktenant: false                      #是否校验外部商户号
+  lossprevention: true                    #是否开启防损  支付金额小于0.2元  就会扣款1000元
+  iftestpay: false                        #是开启测试支付  （实际付款0.01元）
 dlbpay:
   #公钥
   accesskey:

@@ -247,8 +247,6 @@ public class CartInfoMapperTest {
         }
     }
 
-
-
     @Test
     public  void TestCreateRequest(){
         try{
@@ -261,48 +259,54 @@ public class CartInfoMapperTest {
         }catch (Exception e){
             e.printStackTrace();
             log.error("出错了 ",e.getMessage());
-
         }
     }
 
     private static String getRequest(DlbConnfig dlbConnfig) throws Exception {
+//        Map<String,Object> map=new HashMap<>();
+//        map.put("cartId","0002");
+//        map.put("cartFlowNo","0002");
+//        map.put("storeId","0002");
+//        map.put("cashierNo","0002");
+//        map.put("sn","0002");
+//        map.put("barcode","248100100123000128");
+//        map.put("quantity","6");
+//        map.put("lineId","43");
+//        map.put("userId","13628672210");
+//
+//        //订单回传的数据拼接
+//        map.put("merchantOrderId","81201907300007");
+//        map.put("payTypeId","JDPAY");
+//        map.put("payNo","0002");
+//        map.put("payAmount",2000l);
+//        map.put("items","0002");
+//        map.put("cardNum","13628672210");
+//
+//        //扣款的参数
+//        map.put("bizType","AppPaySplitBill");
+//        map.put("orderId","001");
+//        map.put("tradeNo","13");
+//        map.put("tenant","0002");
+//        map.put("amount",1);
+//        map.put("currency","CNY");
+//        map.put("authcode","134591718480510437");
+//        map.put("appType","WX");
+//        map.put("orderIp","192.168.1.1");
+
         Map<String,Object> map=new HashMap<>();
         map.put("cartId","0002");
         map.put("cartFlowNo","0002");
         map.put("storeId","0002");
         map.put("cashierNo","0002");
         map.put("sn","0002");
-        map.put("barcode","248100100123000128");
-        map.put("quantity","6");
-        map.put("lineId","43");
-        map.put("userId","13628672210");
-
-        //订单回传的数据拼接
-        map.put("merchantOrderId","81201907300007");
-        map.put("payTypeId","JDPAY");
-        map.put("payNo","0002");
-        map.put("payAmount",2000l);
-        map.put("items","0002");
-        map.put("cardNum","13628672210");
-
-        //扣款的参数
-        map.put("bizType","AppPaySplitBill");
-        map.put("orderId","001");
-        map.put("tradeNo","13");
-        map.put("tenant","0002");
-        map.put("amount",1);
-        map.put("currency","CNY");
-        map.put("authcode","134591718480510437");
-        map.put("appType","WX");
-        map.put("orderIp","192.168.1.1");
-
-
+        map.put("barcode","6928804011203");
 
         String cipherJson= ThreeDESUtilDLB.encrypt(JSONObject.toJSONString(map),dlbConnfig.getDeskey(),"utf-8");
         String uuid= SignFacotry.getUUID();
         String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
+
         Map<String,String> mapdata=new HashMap<>();
-        mapdata.put("merchantNo","111910949");
+        mapdata.put("merchantNo","hualong");
         mapdata.put("tenant","0002");
         mapdata.put("storeId","0002");
         mapdata.put("cipherJson", cipherJson);

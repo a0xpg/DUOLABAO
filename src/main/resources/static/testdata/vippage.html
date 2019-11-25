@@ -1,0 +1,49 @@
+
+<div >
+    <fieldset class="layui-elem-field" style="margin-top:10px;">
+        <legend>会员查询</legend>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">验证手机</label>
+                <div class="layui-input-inline">
+                    <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">验证邮箱</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="email" lay-verify="email" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-inline">
+
+                <div class="layui-button-inline">
+                    <button type="button" class="layui-btn">查询</button>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+    </fieldset>
+
+    <table class="layui-hide" id="test" lay-filter="test" style="height: 100%;"></table>
+
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+
+</div>

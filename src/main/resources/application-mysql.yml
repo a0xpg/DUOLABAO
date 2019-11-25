@@ -31,10 +31,20 @@ dlbpay:
 
 spring:
   thymeleaf:
-    cache: true
+    cache: false
     prefix: classpath:/templates/
+    servlet:
+      content-type: text/html
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
   jmx:
     default-domain: com.hualong.duolabao.domin
+  mvc:
+      static-path-pattern: /**
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:C:/Users/Administrator/Desktop/Dubbo/android
+
 cluster:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
@@ -67,7 +77,7 @@ master:
 server:
   port: 12379
   servlet:
-    context-path: /DLB
+    context-path: /HLDLB
   tomcat:
     max-http-post-size: -1
 

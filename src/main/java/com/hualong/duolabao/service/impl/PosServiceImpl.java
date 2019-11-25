@@ -190,33 +190,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     throw  new ApiSysException(ErrorEnum.SSCO010004);
                 }
 
-                //检测购物车是否存在改商品
-                BLBGoodsInfo blbGoodsInfo=this.dlbGoodsInfoMapper
-                        .getOneBLBGoodsInfo(request.getCartId(),request.getStoreId(),storeGoods.getCBarcode());
-                //如果没有改商品保存的购物车   如果存在就更新该购物车
-                if(blbGoodsInfo!=null){
-                    int num=blbGoodsInfo.getQty()+1;
-                    Long amount=NomalPrice*num;
-                    CommonServiceImpl.updateBlbGoodsInfo(dlbGoodsInfoMapper,
-                            new BLBGoodsInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getCartFlowNo(),
-                                    request.getCashierNo(), null, null,
-                                    storeGoods.getCGoodsNo(), storeGoods.getCGoodsName(),
-                                    amount,
-                                    0, null,
-                                    NomalPrice,NomalPrice,
-                                    blbGoodsInfo.getQty()+1, 0, false,
-                                    storeGoods.getCBarcode(), "个"));
-                }else{
-
-                    CommonServiceImpl.insertBlbGoodsInfo(dlbGoodsInfoMapper,
-                            new BLBGoodsInfo(request.getStoreId(), request.getSn(), request.getCartId(), request.getCartFlowNo(),
-                                    request.getCashierNo(), null, null,
-                                    storeGoods.getCGoodsNo(), storeGoods.getCGoodsName(),
-                                    NomalPrice, 0,
-                                    null,  NomalPrice,NomalPrice,
-                                    1, 0, false,
-                                    storeGoods.getCBarcode(), "个",frushGood.getReceivingCode()));
-                }
+                ComGoodServiceImp.InsertOrUpdateGoods(dlbGoodsInfoMapper,request, frushGood, storeGoods, NomalPrice);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -224,6 +198,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             throw  new ApiSysException(ErrorEnum.SSCO001001);
         }
     }
+
     @Override
     public void updateGoodsS(Request request,
                              List<cStoreGoods> cStoreGoodsList,

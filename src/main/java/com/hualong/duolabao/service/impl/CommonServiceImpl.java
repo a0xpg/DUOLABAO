@@ -1,22 +1,37 @@
 package com.hualong.duolabao.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.hualong.duolabao.dao.cluster.CommDaoMapper;
-import com.hualong.duolabao.dao.cluster.DlbDao;
-import com.hualong.duolabao.dao.cluster.MemberInfoMapper;
-import com.hualong.duolabao.dao.cluster.tDLBGoodsInfoMapper;
+import com.hualong.duolabao.config.DlbConnfig;
+import com.hualong.duolabao.dao.cluster.*;
+import com.hualong.duolabao.dlbtool.SignFacotry;
+import com.hualong.duolabao.dlbtool.ThreeDESUtilDLB;
 import com.hualong.duolabao.domin.*;
+import com.hualong.duolabao.domin.payentity.DlpPayConfigEntity;
+import com.hualong.duolabao.domin.payentity.PayOrderResult;
+import com.hualong.duolabao.domin.payentity.SweepOrder;
 import com.hualong.duolabao.exception.ApiSysException;
 import com.hualong.duolabao.exception.ErrorEnum;
+import com.hualong.duolabao.result.GlobalEumn;
+import com.hualong.duolabao.result.ResultMsg;
+import com.hualong.duolabao.result.ResultMsgDlb;
+import com.hualong.duolabao.tool.SHA1;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import static com.hualong.duolabao.tool.String_Tool.getTimeUnix;
 
 /**
  * Created by Administrator on 2019-07-19.
@@ -226,6 +241,141 @@ public class CommonServiceImpl {
         }
 
     }
+
+    /**
+     *<pre>
+     *     下单的方法需要同步  避免并发 但是里面的动态对象仍需要克隆  否则一样会出问题
+     *</pre>
+     * @param request
+     * @param dlpPayConfigEntityMapper
+     * @param dlbConnfig
+     * @param restTemplate
+     * @param orderMoneyLogMapper
+     * @return
+     * @throws ApiSysException
+     */
+    public static synchronized String  payOrder(Request request, DlpPayConfigEntityMapper dlpPayConfigEntityMapper,
+                                                DlbConnfig dlbConnfig, RestTemplate restTemplate,OrderMoneyLogMapper orderMoneyLogMapper) {
+
+        String response="";
+        try{
+            DlpPayConfigEntity dlpPayConfigEntity=null;
+            //查询商户dlb支付的配置
+            dlpPayConfigEntity=dlpPayConfigEntityMapper.selectByPrimaryKey(request.getTenant(),request.getStoreId(),null);
+            if(dlpPayConfigEntity==null){
+                log.info("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+                log.error("dlpPayConfigEntity {}","查询出来的dlb支付配置为空");
+                return ResponseDlb(request,ErrorEnum.SSCO003000,null,dlbConnfig);
+            }
+            String timeUnix=getTimeUnix();
+            String authCode=request.getAuthcode();
+            //这里就用DLB 的 京东交易号
+            String requestNum=request.getTradeNo();
+            SweepOrder sweepOrder=null;
+            String amount=dlbConnfig.getIftestpay() ? "0.01":String.valueOf((double)request.getAmount()/100);
+            sweepOrder=new SweepOrder(dlpPayConfigEntity.getAgentnum(),dlpPayConfigEntity.getCustomernum(),
+                    authCode,
+                    null,dlpPayConfigEntity.getShopnum(),
+                    requestNum,amount,
+                    "API",null);
+            String body=JSONObject.toJSONString(sweepOrder);
+            log.info("payOrder 我是请求体携带的数据 {}",body);
+            String url = "https://openapi.duolabao.com/v1/agent/passive/create";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("accessKey",dlpPayConfigEntity.getAccesskey());
+            headers.set("timestamp",timeUnix);
+            String sign="secretKey="+dlpPayConfigEntity.getSecretkey()+"&timestamp="+timeUnix +
+                    "&path=/v1/agent/passive/create&body="+body;
+            sign= SHA1.encode(sign);
+            headers.set("token",sign.toUpperCase());
+            HttpEntity<String> entity = new HttpEntity<String>(body, headers);
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
+            String result = responseEntity.getBody();
+            log.info("payOrder 单号 {} 消费金额 {}元  拿到的结果 {}",requestNum,amount,result);
+            JSONObject jsonObject= JSON.parseObject(result);
+            if(jsonObject.containsKey("data") && jsonObject.containsKey("result")
+                    && jsonObject.getString("result").equals("success")){
+                //TODO 下单成功
+                response=ResponseDlb(request,ErrorEnum.SUCCESS,"DOING",dlbConnfig);
+                if(dlbConnfig.getDatabaserecording()){
+                    //TODO 如果下单成功  记录到数据库
+                    //TODO 放到这里  提升性能  (这里还可以优化  使用消息队列 交给队列去处理 无需线程同步)
+                    OrderMoneyLog orderMoneyLog=null;
+                    orderMoneyLog=new OrderMoneyLog(request.getBizType(),request.getOrderId(),
+                            request.getTradeNo(),request.getTenant(),request.getAmount(),
+                            request.getCurrency(),request.getAuthcode(),request.getOrderIp());
+                    orderMoneyLog.setStoreId(request.getStoreId());
+                    orderMoneyLog.setSn(request.getSn());
+                    orderMoneyLogMapper.insert(orderMoneyLog);
+                }
+
+            }else {
+                //TODO 下单失败
+                response=ResponseDlb(request,ErrorEnum.SSCO003000,null,dlbConnfig);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("pay 下单失败");
+            response=ResponseDlb(request,ErrorEnum.SSCO003000,null,dlbConnfig);
+        }
+
+        return response;
+    }
+
+    /**
+     *
+     * @param request
+     * @param errorEnum
+     * @param status
+     * @param dlbConnfig
+     * @return
+     */
+    public static String ResponseDlb(Request request, ErrorEnum errorEnum,String status,DlbConnfig dlbConnfig) {
+        try{
+            status=status==null ? "FAIL":status;
+            PayOrderResult payOrderResult=null;
+            switch(request.getBizType()){
+                case "AppPaySplitBill":
+//                    PayOrderResult(String retCode, String retMsg, String bizType,
+//                            String serialNo, String amount, String currency, String status)
+                    payOrderResult=new PayOrderResult(errorEnum.getCode(),errorEnum.getMesssage(),
+                            request.getBizType(),request.getTradeNo(),
+                            request.getAmount()+"",request.getCurrency(),status);
+                    break;
+                case "AppPayQuery":
+                    payOrderResult=new PayOrderResult(errorEnum.getCode(),errorEnum.getMesssage(),
+                            request.getBizType(),request.getTradeNo(),
+                            request.getAmount()+"",request.getCurrency(),status);
+                    break;
+                case "AppPayCancle":
+                    payOrderResult=new PayOrderResult(errorEnum.getCode(),errorEnum.getMesssage(),
+                            request.getBizType(),null,
+                            null,null,"SUCCESS");
+                    break;
+                default:
+                    log.info("对方上传的参数有误");
+                    break;
+
+            }
+            String content=JSON.toJSONString(payOrderResult);
+            String cipherJson= ThreeDESUtilDLB.encrypt(content,dlbConnfig.getDeskey(),"UTF-8");
+            String uuid= SignFacotry.getUUID();
+            String sign=ThreeDESUtilDLB.md5(cipherJson+uuid,dlbConnfig.getMdkey());
+            return ResultMsgDlb.ResultMsgDlb(request,cipherJson,sign,uuid);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("订单错误的封装 {}",e.getMessage());
+            //TODO 如果这里都出错了  基本就KO  不用往下写了
+            return JSONObject.toJSONString(new ResultMsg(false, GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
+        }
+    }
+
+
+
+
+
+
 
 
 }

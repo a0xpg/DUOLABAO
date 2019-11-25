@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hualong.duolabao.dao.cluster.tDlbSnConfigMapper">
+  <resultMap id="BaseResultMap" type="com.hualong.duolabao.domin.hldomin.tDlbSnConfig">
+    <id column="lineId" jdbcType="INTEGER" property="lineId" />
+    <id column="sn" jdbcType="VARCHAR" property="sn" />
+    <result column="tenant" jdbcType="VARCHAR" property="tenant" />
+    <result column="cartId" jdbcType="VARCHAR" property="cartId" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="storeId" jdbcType="VARCHAR" property="storeId" />
+    <result column="sotreName" jdbcType="VARCHAR" property="sotreName" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from tDlbSnConfig
+    where lineId = #{lineId,jdbcType=INTEGER} and sn = #{sn,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.hualong.duolabao.domin.hldomin.tDlbSnConfig">
+    insert into tDlbSnConfig (lineId, sn, tenant, 
+      cartId, ip, storeId, 
+      sotreName)
+    values (#{lineId,jdbcType=INTEGER}, #{sn,jdbcType=VARCHAR}, #{tenant,jdbcType=VARCHAR}, 
+      #{cartId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{storeId,jdbcType=VARCHAR}, 
+      #{sotreName,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertBySn" parameterType="java.lang.String">
+    insert into tDlbSnConfig ( sn )
+    values ( #{sn,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.hualong.duolabao.domin.hldomin.tDlbSnConfig">
+    update tDlbSnConfig
+    set tenant = #{tenant,jdbcType=VARCHAR},
+      cartId = #{cartId,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      storeId = #{storeId,jdbcType=VARCHAR},
+      sotreName = #{sotreName,jdbcType=VARCHAR}
+    where lineId = #{lineId,jdbcType=INTEGER}
+      and sn = #{sn,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel
+    from tDlbSnConfig
+    where  sn = #{sn,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel
+    from tDlbSnConfig
+  </select>
+</mapper>

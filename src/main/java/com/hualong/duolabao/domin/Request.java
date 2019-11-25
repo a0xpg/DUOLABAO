@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Data
 @Accessors(chain=true)
-public class Request {
+public class Request implements Cloneable{
     private String storeId;
     private String cashierNo;
     private String sn;
@@ -77,5 +77,17 @@ public class Request {
         this.cartId = cartId;
         this.cartFlowNo = cartFlowNo;
     }
+    //这里实现 浅克隆
+    @Override
+    public Object clone() {
+        Request request = null;
+        try{
+            request = (Request)super.clone();
+        }catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return request;
+    }
+
 
 }

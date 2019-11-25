@@ -3,19 +3,19 @@ dlb:
   merchantno: hualong
   deskey: 6l7HDfs0bumRv6dF6SPf5XXpXkWwyP30
   mdkey: D8C2313325E1E049FE19AFAC122B987F
-  isdandian: false
-  timerenabled: true
-  checkmerchantno: false
-  checksystemid: false
-  returnpay: false
-  calprice: true
-  databaserecording: true
-  tenant:
-  checktenant: false
-  lossprevention: true
-  iftestpay: false
+  isdandian: false                        #是否是单店版本的
+  timerenabled: true                      #是否开启定时器 主要是为了每天凌晨删除重建购物车表
+  checkmerchantno: false                  #是否校验商户号
+  checksystemid: false                    #是否校验接收到的systemid这个值
+  returnpay: false                        #是否开启退款功能  建议不用开启
+  calprice: true                          #称重商品是否显示计算出来的单价 而不是显示从数据库中查询出来的单价
+  databaserecording: true                 #是否使用数据库存储 （仅仅是支付 这里支付接口和商品基本信息接口写到了一起 支付启动的是-mysql.yml 使用的数据库是mysql 记得更换数据库配置）
+  tenant:                                 #外部商户号
+  checktenant: false                      #是否校验外部商户号
+  lossprevention: true                    #是否开启防损  支付金额小于0.2元  就会扣款1000元
+  iftestpay: false                        #是开启测试支付  （实际付款0.01元）
 dlbpay:
-  #公钥
+  #公钥 （一下都是哆啦宝的支付品台的参数  在这里设置没用  但是建议给个默认值  最终是根据数据库配置 动态根据外部商户号读出来的 ）
   accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51
   #公钥
   secretkey: 35431249dce84d1bab69e02ec623521690cadbf2
@@ -31,16 +31,27 @@ dlbpay:
 
 spring:
   thymeleaf:
-    cache: true
+    cache: false
     prefix: classpath:/templates/
+    servlet:
+      content-type: text/html
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
   jmx:
     default-domain: com.hualong.duolabao.domin
+  mvc:
+      static-path-pattern: /**
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:C:/Users/Administrator/Desktop/Dubbo/android
+
+
 cluster:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://;databaseName=Posmanagement_main
+    url: jdbc:sqlserver://47.104.246.36:2468;databaseName=Posmanagement_main
     username: sa
-    password:
+    password: pcserver123.
   #连接池的配置信息
   druid:
     initialSize: 5
@@ -61,13 +72,13 @@ cluster:
 master:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://:2468;databaseName=Posmanagement_main
+    url: jdbc:sqlserver://47.104.246.36:2468;databaseName=Posmanagement_main
     username: sa
-    password:
+    password: pcserver123.
 server:
-  port: 12379
+  port: 12378
   servlet:
-    context-path: /DLB
+    context-path: /HLDLB
   tomcat:
     max-http-post-size: -1
 

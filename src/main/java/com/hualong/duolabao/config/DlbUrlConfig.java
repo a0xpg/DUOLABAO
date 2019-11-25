@@ -60,14 +60,14 @@ public interface DlbUrlConfig {
 
     /**
      * <pre>
-     *     支付下单
+     *     查询支付结果
      * </pre>
      */
     String queryPayOrder="queryPayOrder";
 
     /**
      * <pre>
-     *     支付下单
+     *     取消支付下单
      * </pre>
      */
     String canclePayOrder="canclePayOrder";
