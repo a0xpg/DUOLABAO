@@ -36,8 +36,6 @@ public class ClusterDataSourceConfig {
     @Value("${cluster.datasource.driver-class-name}")
     private String driverClass;
 
-
-
     @Value("${cluster.druid.initialSize}")
     private int initialSize;
     @Value("${cluster.druid.initialSize}")

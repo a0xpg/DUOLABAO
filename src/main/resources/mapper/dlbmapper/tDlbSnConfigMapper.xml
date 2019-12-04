@@ -11,6 +11,10 @@
     <result column="sotreName" jdbcType="VARCHAR" property="sotreName" />
     <result column="tel" jdbcType="VARCHAR" property="tel" />
     <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="logoImg" jdbcType="VARCHAR" property="logoImg" />
+    <result column="tenantName" jdbcType="VARCHAR" property="tenantName" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="map">
     delete from tDlbSnConfig
@@ -40,11 +44,13 @@
     where lineId = #{lineId,jdbcType=INTEGER}
       and sn = #{sn,jdbcType=VARCHAR}
   </update>
+
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel
+    select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel,logoImg,tenantName,remarks
     from tDlbSnConfig
     where  sn = #{sn,jdbcType=VARCHAR}
   </select>
+
   <select id="selectAll" resultMap="BaseResultMap">
     select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel
     from tDlbSnConfig

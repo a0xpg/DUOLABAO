@@ -14,6 +14,9 @@ dlb:
   checktenant: false
   lossprevention: true
   iftestpay: false
+  version: 1.1.2
+  forcedupdate: 0
+  updatemessage: 123
 dlbpay:
   #公钥
   accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51

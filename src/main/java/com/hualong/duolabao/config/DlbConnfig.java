@@ -54,8 +54,15 @@ public class DlbConnfig {
     @Value("${dlb.iftestpay}")
     private Boolean iftestpay;
 
+    @Value("${dlb.version}")
+    private String version;
 
+    //是否强制更新
+    @Value("${dlb.forcedupdate}")
+    private String forcedupdate;
 
+    @Value("${dlb.updatemessage}")
+    private String updatemessage;
 
 
 

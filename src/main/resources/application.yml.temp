@@ -14,6 +14,9 @@ dlb:
   checktenant: false                      #是否校验外部商户号
   lossprevention: true                    #是否开启防损  支付金额小于0.2元  就会扣款1000元
   iftestpay: false                        #是开启测试支付  （实际付款0.01元）
+  version: 1.1.2
+  forcedupdate: 0
+  updatemessage: 123
 dlbpay:
   #公钥
   accesskey:

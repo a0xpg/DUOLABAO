@@ -14,6 +14,9 @@ dlb:
   checktenant: false                      #是否校验外部商户号
   lossprevention: true                    #是否开启防损  支付金额小于0.2元  就会扣款1000元
   iftestpay: false                        #是开启测试支付  （实际付款0.01元）
+  version: 1.1.2
+  forcedupdate: 0                        # 是否强制更新 0 不强制更新 1 强制更新  2 不更新
+  updatemessage: 123                     # 更新提示内容  暂时没用
 dlbpay:
   #公钥 （一下都是哆啦宝的支付品台的参数  在这里设置没用  但是建议给个默认值  最终是根据数据库配置 动态根据外部商户号读出来的 ）
   accesskey: f048f84aa0d0427abbcb009aae296f45d889ba51
@@ -43,7 +46,7 @@ spring:
   mvc:
       static-path-pattern: /**
   resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:C:/Users/Administrator/Desktop/Dubbo/android
+    static-locations: file:C:/Users/Administrator/Desktop/Dubbo/android,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
 
 
 cluster:
@@ -76,7 +79,7 @@ master:
     username: sa
     password: pcserver123.
 server:
-  port: 12378
+  port: 12379
   servlet:
     context-path: /HLDLB
   tomcat:

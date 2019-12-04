@@ -13,4 +13,6 @@ public interface OwnService {
     String InsertSnConfig(String sn);
 
     String SelectSnConfig(String sn);
+
+    String checkUpdate(String sn, String versionName);
 }

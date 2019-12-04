@@ -30,4 +30,8 @@ public class tDlbSnConfig {
     private String tel;
     private String address;
 
+    private String logoImg;
+    private String tenantName;
+    private String remarks;
+
 }

@@ -23,8 +23,6 @@ import java.io.IOException;
 public class IndexFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(IndexFilter.class);
 
-
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 

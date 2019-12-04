@@ -2,6 +2,7 @@ package com.hualong.duolabao.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.config.DlbPayConnfig;
 import com.hualong.duolabao.dao.cluster.tDlbSnConfigMapper;
 import com.hualong.duolabao.domin.hldomin.tDlbSnConfig;
@@ -23,6 +24,9 @@ public class OwnServiceImpl implements OwnService {
 
     @Autowired
     private tDlbSnConfigMapper tDlbSnConfigMapper;
+
+    @Autowired
+    private DlbConnfig dlbConnfig;
 
     @Override
     public String InsertSnConfig(String sn) {
@@ -65,6 +69,22 @@ public class OwnServiceImpl implements OwnService {
         }catch (Exception e){
             e.printStackTrace();
             log.error("SelectSnConfig 出错了 {}",e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public String checkUpdate(String sn, String versionName) {
+        String result=JSON.toJSONString(new ResultMsg(
+                false, GlobalEumn.SSCO010003.getCode(),GlobalEumn.SSCO010003.getMesssage(),null));
+        try{
+            if(Integer.valueOf(dlbConnfig.getVersion().replace(".",""))>Integer.valueOf(versionName.replace(".","")) ){
+                result=JSON.toJSONString(new ResultMsg(
+                        true, GlobalEumn.SUCCESS.getCode(),GlobalEumn.SUCCESS.getMesssage(),null));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+
         }
         return result;
     }
