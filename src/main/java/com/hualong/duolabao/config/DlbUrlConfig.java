@@ -39,6 +39,13 @@ public interface DlbUrlConfig {
      * </pre>
      */
     String clearCartInfo="clearCartInfo";
+
+    /**
+     * <pre>
+     *     查询购物车
+     * </pre>
+     */
+    String selectCartInfo="selectCartInfo";
     /**
      * <pre>
      *     提交购物车
@@ -78,4 +85,9 @@ public interface DlbUrlConfig {
      * </pre>
      */
     String orderSysn="orderSysn";
+
+
+    //下面是我自己的无人自助机用到的刷脸的下单 和查询的接口
+
+
 }

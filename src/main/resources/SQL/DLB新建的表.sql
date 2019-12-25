@@ -24,7 +24,8 @@
                   isWeight bit DEFAULT 0,
                   barcode VARCHAR(30),
                   unit VARCHAR(20),
-                  receivingCode  VARCHAR(30) --接收到的原始码
+                  receivingCode  VARCHAR(30), --接收到的原始码
+                  iswightamount MONEY DEFAULT 0
                   primary key(lineId)
               )
 

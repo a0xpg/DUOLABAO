@@ -21,7 +21,7 @@ public class Request implements Cloneable{
     private String cashierNo;
     private String sn;
     private String cartId;
-    private String cartFlowNo;
+    private String cartFlowNo; //00000
 
     private String userId;
     private String barcode;

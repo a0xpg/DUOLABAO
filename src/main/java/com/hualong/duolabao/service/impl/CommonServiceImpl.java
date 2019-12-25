@@ -41,7 +41,7 @@ public class CommonServiceImpl {
 
     /**
      *    <pre>
-     *        保存数据到购物车
+     *        保存数据到购物车 我来了
      *    </pre>
      * @param dlbGoodsInfoMapper
      * @param blbGoodsInfo1

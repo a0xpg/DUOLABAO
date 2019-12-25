@@ -14,7 +14,7 @@
     <result column="logoImg" jdbcType="VARCHAR" property="logoImg" />
     <result column="tenantName" jdbcType="VARCHAR" property="tenantName" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
-
+    <result column="limit" jdbcType="INTEGER" property="limit" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="map">
     delete from tDlbSnConfig
@@ -46,7 +46,7 @@
   </update>
 
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel,logoImg,tenantName,remarks
+    select lineId, sn, tenant, cartId, ip, storeId, sotreName,address,tel,logoImg,tenantName,remarks,limit
     from tDlbSnConfig
     where  sn = #{sn,jdbcType=VARCHAR}
   </select>

@@ -34,8 +34,8 @@ GO
                   isWeight bit DEFAULT 0,
                   barcode VARCHAR(30),
                   unit VARCHAR(20),
-                  receivingCode  VARCHAR(30) --接收到的原始码
-
+                  receivingCode  VARCHAR(30), --接收到的原始码
+                  iswightamount MONEY  DEFAULT 0        --称重商品计算出来的实际金额
                   primary key(lineId)
               )
 
@@ -69,7 +69,6 @@ GO
 IF EXISTS (SELECT * FROM DBO.SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[p_Dataconversion_z]') and OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 BEGIN
 	DROP PROCEDURE [dbo].[p_Dataconversion_z]
-
 END
 GO
 CREATE PROC [dbo].[p_Dataconversion_z]
@@ -85,13 +84,15 @@ BEGIN
   SET @SQL =  ' INSERT INTO '+@tableName+'
       (bWeight,cStoreNo,cPosID,cSaleSheetno_time,iSeed,cGoodsNo,cGoodsName,cBarcode,cOperatorno,cOperatorName,bAuditing,
        fPrice,fVipPrice,fQuantity,fLastSettle,fLastSettle0,dSaleDate,
-       cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate,fNormalSettle )
+       cSaleTime,dFinanceDate,cVipNo,fPrice_exe,bSettle,bVipPrice,fVipRate,fNormalSettle,iswightamount )
 
         SELECT isWeight,storeId,'''+@cPosID+''',merchantOrderId,lineId,id,name,barcode,'''+@cPosID+''','''+@cPosID+''',bAuditing=0,
-    (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice,(CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fVipPrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
-    (CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle,(CASE  WHEN amount=0 THEN 0 ELSE amount/100  END) AS fLastSettle0,
+    (basePrice/100 ) AS  fPrice,(basePrice/100) AS  fVipPrice,fQuantity=(CASE  WHEN isWeight=0 THEN qty ELSE weight  END),
+    (iswightamount/100) AS fLastSettle,(iswightamount/100) AS fLastSettle0,
     convert(varchar(10),getdate(),23), cSaleTime=convert(varchar(10),getdate(),108),convert(varchar(10),getdate(),23),'''+@cVipNo+''',
-   (CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fPrice_exe,bSettle=0,bVipPrice=0,100,(CASE  WHEN basePrice=0 THEN 0 ELSE basePrice/100  END) AS  fNormalSettle  FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
+   (basePrice/100) AS  fPrice_exe,
+    bSettle=0,bVipPrice=0,100,(CASE  WHEN isWeight=1 THEN iswightamount/100 ELSE amount/100  END) AS  fNormalSettle,
+   (iswightamount/100) AS iswightamount   FROM tDlbGoodsInfo WHERE cartId='''+@cartId+''' AND storeId='''+@storeId+''' '
 
   PRINT(@SQL)
   EXEC(@SQL)

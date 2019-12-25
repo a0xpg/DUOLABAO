@@ -21,6 +21,8 @@
         <result column="barcode" jdbcType="VARCHAR" property="barcode" />
         <result column="unit" jdbcType="VARCHAR" property="unit" />
         <result column="merchantOrderId" jdbcType="VARCHAR" property="merchantOrderId" />
+
+
     </resultMap>
 
     <delete id="deleteBLBGoodsInfo" parameterType="java.lang.String">
@@ -46,8 +48,7 @@
         name, amount, discountAmount,
         discountName, basePrice, price,
         qty, weight, isWeight,
-        barcode, unit
-
+        barcode, unit,iswightamount
         <if test="receivingCode != null">
             , receivingCode
         </if>
@@ -57,7 +58,7 @@
         #{name,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{discountAmount,jdbcType=DECIMAL},
         #{discountName,jdbcType=VARCHAR}, #{basePrice,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL},
         #{qty,jdbcType=INTEGER}, #{weight,jdbcType=DECIMAL}, #{isWeight,jdbcType=BIT},
-        #{barcode,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}
+        #{barcode,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}
 
         <if test="receivingCode != null">
             , #{receivingCode,jdbcType=VARCHAR}
@@ -92,6 +93,7 @@
         update tDlbGoodsInfo
         set
         amount = #{amount,jdbcType=DECIMAL},
+        iswightamount = #{amount,jdbcType=DECIMAL},
         discountAmount = #{discountAmount,jdbcType=DECIMAL},
         basePrice = #{basePrice,jdbcType=DECIMAL},
         price = #{price,jdbcType=DECIMAL},

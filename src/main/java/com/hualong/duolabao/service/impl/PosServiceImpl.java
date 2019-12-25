@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.hualong.duolabao.exception.ErrorEnum.SSCO001001;
+
 /**
  * Created by Administrator on 2019-07-15.
  */
@@ -77,7 +79,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName()+"获取本地商品数据出错了 {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001001);
+            throw  new ApiSysException(SSCO001001);
         }
         return list;
     }
@@ -134,7 +136,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("查询商品的时间出错了:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001001);
+            throw  new ApiSysException(SSCO001001);
         }
     }
 
@@ -163,7 +165,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 if(request.getBarcode().length()==13){
                     if(NomalPrice==0){
                         log.error("查询商品的时间出错了: 查询出来的单价是 0");
-                        throw  new ApiSysException(ErrorEnum.SSCO001001);
+                        throw  new ApiSysException(SSCO001001);
                     }
                    double wight=(double)frushGood.getAllMoney()/(double)NomalPrice;
                     wight=new Double(String_Tool.String_IS_Two(wight)) ;
@@ -195,7 +197,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("查询商品的时间出错了:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001001);
+            throw  new ApiSysException(SSCO001001);
         }
     }
 
@@ -243,7 +245,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("修改商品数量的时间出错了:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001001);
+            throw  new ApiSysException(SSCO001001);
         }
     }
     @Override
@@ -330,7 +332,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     tDlbPosConfiguration.getPosName()+".dbo.p_commitDataProcToJieSuanAndPOS_SaleSheetDetail_z");
             if(!resultProc.getResultCode().equals("1")){
                 log.info("同步数据到分库失败 {} ",JSON.toJSONString(resultProc));
-                errorEnum=ErrorEnum.SSCO001001;
+                errorEnum= SSCO001001;
                 resultMsg= new ResultMsg(true, errorEnum.getCode(),errorEnum.getMesssage(),null);
                 return JSON.toJSONString(resultMsg);
             }
@@ -354,7 +356,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (ApiSysException e){
             e.printStackTrace();
             log.error("订单完成同步失败:  {}",e.getMessage());
-            new ResultMsg(true, ErrorEnum.SSCO001001.getCode(),ErrorEnum.SSCO001001.getMesssage(),null);
+            new ResultMsg(true, SSCO001001.getCode(), SSCO001001.getMesssage(),null);
         }
         String s1=JSON.toJSONString(resultMsg);
         return s1;
@@ -395,13 +397,13 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 actualFee=totalFee-discountFee;
 
                 //TODO 防止金额小于2分 如果金额是两分  只写返回一千元  这样顾客就不敢支付了
-                //是否开启金额 防损
+                //TODO 是否开启金额 防损
                 if(dlbConnfig.getLossprevention()){
                     actualFee=actualFee<2.0? 100000:actualFee;
                 }
             }
-            MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
 
+            MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
             Double AddScore=(double) 0;
             if(memberInfo!=null){
                 log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
@@ -426,7 +428,7 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
         }catch (Exception e){
             e.printStackTrace();
             log.error("查询购物车:  {}",e.getMessage());
-            throw  new ApiSysException(ErrorEnum.SSCO001001);
+            throw  new ApiSysException(SSCO001001);
         }
     }
     @Override
@@ -557,6 +559,16 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                     log.error("删除购物车出错了 ",e.getExceptionEnum().toString());
                     log.error("删除购物车出错了 ",e.getMessage());
                     return this.ResponseDlb(request,SignFacotry.getErrorEnumByCode(e.getExceptionEnum().getCode()));
+                }
+                break;
+            case selectCartInfo:
+                // 查询购物车
+                try{
+                    response=this.ResponseDlb(request,ErrorEnum.SUCCESS);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    log.error("删除购物车出错了 ",e.getMessage());
+                    return this.ResponseDlb(request,SSCO001001);
                 }
                 break;
             case commitCartInfo:

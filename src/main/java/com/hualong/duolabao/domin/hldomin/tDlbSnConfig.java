@@ -34,4 +34,7 @@ public class tDlbSnConfig {
     private String tenantName;
     private String remarks;
 
+    //每单限购数量
+    private int limit;
+
 }
