@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hualong.duolabao.config.DlbConnfig;
+import com.hualong.duolabao.config.MailConfig;
 import com.hualong.duolabao.dao.cluster.*;
 import com.hualong.duolabao.dlbtool.SignFacotry;
 import com.hualong.duolabao.dlbtool.ThreeDESUtilDLB;
@@ -25,6 +26,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
@@ -100,7 +103,6 @@ public class CommonServiceImpl {
                                           String barcode, String lineIdDelete) throws ApiSysException {
         try{
             Integer integer=dlbGoodsInfoMapper.deleteBLBGoodsInfo(cartId, storeId, barcode, lineIdDelete);
-
             return integer;
         }catch (Exception e){
             e.printStackTrace();
@@ -369,6 +371,33 @@ public class CommonServiceImpl {
             //TODO 如果这里都出错了  基本就KO  不用往下写了
             return JSONObject.toJSONString(new ResultMsg(false, GlobalEumn.SSCO001001.getCode(),GlobalEumn.SSCO001001.getMesssage(),(String)null));
         }
+    }
+
+    /**
+     * <pre>
+     *     发送邮件的统一封装
+     *     <div>该方法和业务有冲突</div>
+     * </pre>
+     * @param mailSender
+     * @param mailConfig
+     * @param content
+     */
+    public static void sendErrorMail(JavaMailSender mailSender, MailConfig mailConfig, String content) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom(mailConfig.getMailaddr());
+                message.setTo(mailConfig.getToaddr());
+                message.setSubject(mailConfig.getTenant() +" "+mailConfig.getTenantname() +" 程序异常");
+                message.setText("程序异常信息如下: "+"  \n"
+                        + "商户编号: "+mailConfig.getTenant()+"  \n"
+                        + "商户名称: "+mailConfig.getTenantname()+"  \n"
+                        + "异常content:"+content );
+                mailSender.send(message);
+            }
+        }).start();
+
     }
 
 

@@ -122,8 +122,6 @@
                   sn       VARCHAR(32)
                   primary key(lineId)
           )
-
-
           --tDlpPayConfig  支付配置表
           IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[tDlpPayConfig]')
                       AND OBJECTPROPERTY(id, N'IsUserTable') = 1)

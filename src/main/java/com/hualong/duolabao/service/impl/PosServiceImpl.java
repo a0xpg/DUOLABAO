@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hualong.duolabao.config.DlbConnfig;
 import com.hualong.duolabao.config.DlbUrlConfig;
+import com.hualong.duolabao.config.MailConfig;
 import com.hualong.duolabao.conntroller.DlbConntroller;
 import com.hualong.duolabao.dao.cluster.CommDaoMapper;
 import com.hualong.duolabao.dao.cluster.DlbDao;
@@ -27,6 +28,7 @@ import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.hualong.duolabao.exception.ErrorEnum.SSCO001001;
+import static com.hualong.duolabao.service.impl.CommonServiceImpl.sendErrorMail;
 
 /**
  * Created by Administrator on 2019-07-15.
@@ -62,6 +65,13 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
 
     @Autowired
     private CommDaoMapper commDaoMapper;
+
+    //下面两个是发送异常邮件使用的
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private MailConfig mailConfig;
 
 
     @Override
@@ -263,7 +273,6 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             log.error("删除商品的时间出错了:  {}",e.getMessage());
             throw  new ApiSysException(ErrorEnum.SSCO010004);
         }
-
     }
     @Override
     public void deleteCartInfo(Request request,
@@ -316,8 +325,10 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             String orderLog=JSON.toJSONString(request);
             log.info("记录单据到数据库 CommitOrderSysn Log {}",orderLog);
 
-            //这个单号比较绕  哆啦宝平台 一个商户（单号不允许重复 部分门店） 这里我在返回哆啦宝单号的时间在单号前面加了门店号 这样就避免了一个商户下
-            //单号的重复  但是在同步订单的时间  我们的单号保存的是没有前面的门店编号的  所以要先把哆啦宝上传的订单号的前面的门店的编号去除掉才是我们的单号
+            //这个单号比较绕  哆啦宝平台 一个商户（单号不允许重复 部分门店）
+            // 这里我在返回哆啦宝单号的时间在单号前面加了门店号 这样就避免了一个商户下
+            //单号的重复  但是在同步订单的时间  我们的单号保存的是没有前面的门店编号的
+            // 所以要先把哆啦宝上传的订单号的前面的门店的编号去除掉才是我们的单号
             String merchantOrderId = request.getMerchantOrderId().substring(
                     request.getStoreId().length(),
                     request.getMerchantOrderId().length()
@@ -340,13 +351,13 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             if(request.getCardNum()!=null && !request.getCardNum().equals("")){
                 MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
                 if(memberInfo!=null && memberInfo.getAddScore()!=0 ){
-                    log.info("获取到的会员信息是  {}", JSONObject.toJSONString(memberInfo));
+                    log.info("获取到的会员信息是123  {}", JSONObject.toJSONString(memberInfo));
                     try{
                         commDaoMapper.update_Vip(request.getCartId(),request.getSn(),memberInfo.getCardNum(),memberInfo.getAddScore());
                         log.info("会员卡{} 增加了 {} 积分 成功 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(), merchantOrderId);
                     }catch (Exception e){
-                        e.printStackTrace();
                         log.error("会员卡{} 增加了 {} 积分 失败 单号 {}", memberInfo.getCardNum(),memberInfo.getAddScore(), merchantOrderId);
+                        e.printStackTrace();
                     }
                 }else {
                     log.info("该单子没有刷会员卡 或者本次积分为0 {}", merchantOrderId);
@@ -388,19 +399,16 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
             long discountFee=0;
             long actualFee=0;
             String merchantOrderId=null;
+            boolean isErrorPrice=false; //判断单价 金额  是否异常
             if(blbGoodsInfo!=null && blbGoodsInfo.size()>0){
+
                 for(BLBGoodsInfo t:blbGoodsInfo){
+                    isErrorPrice=t.getAmount()<=1 ? true:false;
                     totalFee=totalFee+t.getAmount();
                     discountFee=discountFee+t.getDiscountAmount();
                     merchantOrderId=t.getMerchantOrderId()==null ? merchantOrderId:request.getStoreId()+t.getMerchantOrderId();
                 }
                 actualFee=totalFee-discountFee;
-
-                //TODO 防止金额小于2分 如果金额是两分  只写返回一千元  这样顾客就不敢支付了
-                //TODO 是否开启金额 防损
-                if(dlbConnfig.getLossprevention()){
-                    actualFee=actualFee<2.0? 100000:actualFee;
-                }
             }
 
             MemberInfo memberInfo=memberInfoMapper.selectByPrimaryKey(request.getCartId(),request.getStoreId());
@@ -412,6 +420,12 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 AddScore=memberInfo.getAddScore();
                 memberInfo.setAddScore(null);
             }
+            //TODO 防止金额小于2分 如果金额是两分  只写返回一千元  这样顾客就不敢支付了
+            //TODO 是否开启金额 防损
+            if(dlbConnfig.getLossprevention()){
+                isErrorPrice=actualFee<=2.0 ? true:false;
+                actualFee=actualFee<2.0? 100000:actualFee;
+            }
             CartInfo cartInfo=new CartInfo(request.getStoreId(), request.getSn(), request.getCartId(), merchantOrderId,
                     totalFee, discountFee, actualFee, blbGoodsInfo, memberInfo);
             //TODO 计算积分  可以在这里进行
@@ -420,10 +434,18 @@ public class PosServiceImpl implements PosService,DlbUrlConfig {
                 cartInfo.setScoreInfo(new ScoreInfo(new Double(memberInfo.getScore())));
             }
             boolean returnStatus=errorEnum==ErrorEnum.SUCCESS ? true:false;
+//            if(isErrorPrice){
+//                returnStatus=false;
+//                errorEnum=ErrorEnum.SSCO001002;
+//            }
             ResultMsg resultMsg= new ResultMsg(returnStatus, errorEnum.getCode(),errorEnum.getMesssage(),cartInfo);
             String s1=JSON.toJSONString(resultMsg, SerializerFeature.WriteNullListAsEmpty,
                     SerializerFeature.WriteNullNumberAsZero,
                     SerializerFeature.WriteNullBooleanAsFalse);
+            //TODO 这里返回价格异常 并发送邮件给我 这里和前台逻辑有冲突  暂时不开启
+//            if(isErrorPrice){
+//                sendErrorMail(mailSender,mailConfig,s1);
+//            }
             return s1;
         }catch (Exception e){
             e.printStackTrace();

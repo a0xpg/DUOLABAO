@@ -107,7 +107,7 @@
         					#{appId,mode=IN,jdbcType=VARCHAR},
         					#{machineId,mode=IN,jdbcType=VARCHAR},
         					#{vipNo,mode=IN,jdbcType=VARCHAR},
-        					#{addScore,mode=IN,jdbcType=INTEGER}
+        					#{addScore,mode=IN,jdbcType=DECIMAL}
         					)
         		}
     	]]>
